@@ -6,18 +6,28 @@
 #include <cpputils/collections/Iterator.hpp>
 #include <type_traits>
 
+#define CPPUTILS_COLLECTIONS_DEREFERENCER_TEMPLATE template<typename TClass, typename TView>
+
+#define CPPUTILS_COLLECTIONS_DEREFERENCER_ARGS <TClass, TView>
+
+#define CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINT requires internal::IsValidDereferencer CPPUTILS_COLLECTIONS_DEREFERENCER_ARGS
+
+#define CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINED_TEMPLATE CPPUTILS_COLLECTIONS_DEREFERENCER_TEMPLATE CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINT
+
+#define CPPUTILS_COLLECTIONS_DEREFERENCER Iterable CPPUTILS_COLLECTIONS_DEREFERENCER_ARGS
+
 namespace cpputils::collections
 {
 
 	namespace internal
 	{
-		template<typename TClass, typename TView> concept IsValidDereferencer
+		CPPUTILS_COLLECTIONS_DEREFERENCER_ARGS concept IsValidDereferencer
 			= std::is_class_v<TClass> && std::is_class_v<TClass>
 			&& (std::is_convertible_v<TClass*, TView*> || std::is_base_of_v<TClass, TView>);
 
 	}
 
-	template<typename TClass, typename TView = TClass> requires internal::IsValidDereferencer<TClass, TView>
+	template<typename TClass, typename TView = TClass> CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINT
 	class Dereferencer final : private mixins::StaticClass
 	{
 
@@ -62,5 +72,11 @@ namespace cpputils::collections
 #define CPPUTILS_COLLECTIONS_DEREFERENCER_IMPLEMENTATION
 #include <cpputils-IMPL/collections/Dereferencer.tpp>
 #undef CPPUTILS_COLLECTIONS_DEREFERENCER_IMPLEMENTATION
+
+#undef CPPUTILS_COLLECTIONS_DEREFERENCER_TEMPLATE
+#undef CPPUTILS_COLLECTIONS_DEREFERENCER_ARGS
+#undef CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINT
+#undef CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINED_TEMPLATE
+#undef CPPUTILS_COLLECTIONS_DEREFERENCER
 
 #endif
