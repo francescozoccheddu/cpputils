@@ -71,7 +71,7 @@ namespace cpputils::collections
 		typename TDifferenceType = typename TIterable::iterator::difference_type
 	>
 		CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINT
-		class Iterable final : public internal::IterableBase<TIterable>
+		class Iterable : public internal::IterableBase<TIterable>
 	{
 
 	private:
