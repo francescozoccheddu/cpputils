@@ -10,7 +10,7 @@ namespace cpputils::serialization
 {
 
 	template<typename TSerializer = Serializer> requires std::is_base_of_v<Serializer, TSerializer>
-	class StringSerializer : public TSerializer
+	class StringSerializer final : public TSerializer
 	{
 
 	private:
