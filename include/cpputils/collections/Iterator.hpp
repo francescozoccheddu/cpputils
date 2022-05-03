@@ -38,7 +38,7 @@ namespace cpputils::collections
 
 	namespace internal
 	{
-		template<typename TIterator> requires std::input_or_output_iterator<TIterator>
+		template<typename TIterator>
 		class IteratorBase
 		{
 

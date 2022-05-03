@@ -37,6 +37,30 @@ namespace cpputils::collections
 
 	}
 
+	CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE class Iterable;
+
+	namespace internal
+	{
+		template<typename TIterable>
+		class IterableBase
+		{
+
+		private:
+
+			CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE friend class collections::Iterable;
+
+			TIterable* m_iterable;
+
+			IterableBase(TIterable& _iterator);
+
+		public:
+
+			bool operator==(const IterableBase& _other) const = default;
+			bool operator!=(const IterableBase& _other) const = default;
+
+		};
+
+	}
 	template<
 		typename TIterable,
 		typename TDereferenceResult = std::remove_pointer_t<typename TIterable::iterator::value_type>&,
@@ -47,12 +71,12 @@ namespace cpputils::collections
 		typename TDifferenceType = typename TIterable::iterator::difference_type
 	>
 		CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINT
-		class Iterable final
+		class Iterable final : public internal::IterableBase<TIterable>
 	{
 
 	private:
 
-		TIterable* m_iterable;
+		using internal::IterableBase<TIterable>::m_iterable;
 
 	public:
 

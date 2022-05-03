@@ -13,12 +13,12 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		template<typename TIterator> requires std::input_or_output_iterator<TIterator>
+		template<typename TIterator>
 		IteratorBase<TIterator>::IteratorBase(const TIterator& _iterator)
 			: m_iterator{ _iterator }
 		{}
 
-		template<typename TIterator> requires std::input_or_output_iterator<TIterator>
+		template<typename TIterator>
 		IteratorBase<TIterator>::IteratorBase(TIterator&& _iterator)
 			: m_iterator{ std::move(_iterator) }
 		{}

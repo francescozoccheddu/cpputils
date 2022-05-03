@@ -9,9 +9,14 @@
 namespace cpputils::collections
 {
 
+	template<typename TIterable>
+	internal::IterableBase<TIterable>::IterableBase(TIterable& _iterable)
+		: m_iterable{ std::addressof(_iterable) }
+	{}
+
 	CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERABLE::Iterable(TIterable& _iterable) 
-		: m_iterable{ std::addressof(_iterable) }
+		: internal::IterableBase<TIterable>{ _iterable }
 	{}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE
