@@ -13,13 +13,13 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		template<typename TIterator>
-		IteratorBase<TIterator>::IteratorBase(const TIterator& _iterator)
+		template<typename TIteratorBase>
+		IteratorBase<TIteratorBase>::IteratorBase(const TIteratorBase& _iterator)
 			: m_iterator{ _iterator }
 		{}
 
-		template<typename TIterator>
-		IteratorBase<TIterator>::IteratorBase(TIterator&& _iterator)
+		template<typename TIteratorBase>
+		IteratorBase<TIteratorBase>::IteratorBase(TIteratorBase&& _iterator)
 			: m_iterator{ std::move(_iterator) }
 		{}
 
@@ -61,10 +61,10 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE
-	CPPUTILS_COLLECTIONS_ITERATOR CPPUTILS_COLLECTIONS_ITERATOR::operator++(int) const requires std::forward_iterator<TIterator>
+	CPPUTILS_COLLECTIONS_ITERATOR CPPUTILS_COLLECTIONS_ITERATOR::operator++(int) requires std::forward_iterator<TIterator>
 	{
 		Iterator clone{ *this };
-		clone.m_iterator++;
+		m_iterator++;
 		return clone;
 	}
 
@@ -83,10 +83,10 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE
-	CPPUTILS_COLLECTIONS_ITERATOR CPPUTILS_COLLECTIONS_ITERATOR::operator--(int) const requires std::bidirectional_iterator<TIterator>
+	CPPUTILS_COLLECTIONS_ITERATOR CPPUTILS_COLLECTIONS_ITERATOR::operator--(int) requires std::bidirectional_iterator<TIterator>
 	{
 		Iterator clone{ *this };
-		clone.m_iterator--;
+		m_iterator--;
 		return clone;
 	}
 

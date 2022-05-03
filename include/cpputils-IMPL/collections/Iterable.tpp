@@ -9,8 +9,8 @@
 namespace cpputils::collections
 {
 
-	template<typename TIterable>
-	internal::IterableBase<TIterable>::IterableBase(TIterable& _iterable)
+	template<typename TIterableBase>
+	internal::IterableBase<TIterableBase>::IterableBase(TIterableBase& _iterable)
 		: m_iterable{ std::addressof(_iterable) }
 	{}
 
@@ -56,7 +56,7 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE
-		CPPUTILS_COLLECTIONS_ITERABLE::iterator CPPUTILS_COLLECTIONS_ITERABLE::rbegin() requires std::bidirectional_iterator<typename TIterable::iterator>
+		CPPUTILS_COLLECTIONS_ITERABLE::iterator CPPUTILS_COLLECTIONS_ITERABLE::rbegin() requires std::bidirectional_iterator<typename internal::TIterableIterator<TIterable>>
 	{
 		return iterator{ m_iterable->rbegin() };
 	}
@@ -74,7 +74,7 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE
-		CPPUTILS_COLLECTIONS_ITERABLE::iterator CPPUTILS_COLLECTIONS_ITERABLE::rend() requires std::bidirectional_iterator<typename TIterable::iterator>
+		CPPUTILS_COLLECTIONS_ITERABLE::iterator CPPUTILS_COLLECTIONS_ITERABLE::rend() requires std::bidirectional_iterator<typename internal::TIterableIterator<TIterable>>
 	{
 		return iterator{ m_iterable->rend() };
 	}

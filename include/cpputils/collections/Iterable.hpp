@@ -10,9 +10,9 @@
 	template<\
 		typename TIterable, \
 		typename TDereferenceResult, \
-		TDereferenceResult(*TDereference)(const TIterable::iterator&), \
+		TDereferenceResult(*TDereference)(const internal::TIterableIterator<TIterable>&), \
 		typename TDereferenceConstResult, \
-		TDereferenceConstResult(*TDereferenceConst)(const TIterable::const_iterator&), \
+		TDereferenceConstResult(*TDereferenceConst)(const typename TIterable::const_iterator&), \
 		typename TCategory, \
 		typename TDifferenceType, \
 		typename TConstCategory, \
@@ -33,8 +33,11 @@ namespace cpputils::collections
 	namespace internal
 	{
 
+		template<typename TIterable>
+		using TIterableIterator = std::conditional_t<std::is_const_v<TIterable>, typename TIterable::const_iterator, typename TIterable::iterator>;
+
 		template<typename TIterable, typename TCategory, typename TConstCategory> concept IsValidIterable
-			= internal::IsValidIterator<typename TIterable::iterator, TCategory>
+			= internal::IsValidIterator<TIterableIterator<TIterable>, TCategory>
 			&& internal::IsValidIterator<typename TIterable::const_iterator, TConstCategory>;
 
 	}
@@ -43,7 +46,7 @@ namespace cpputils::collections
 
 	namespace internal
 	{
-		template<typename TIterable>
+		template<typename TIterableBase>
 		class IterableBase
 		{
 
@@ -51,9 +54,9 @@ namespace cpputils::collections
 
 			CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE friend class collections::Iterable;
 
-			TIterable* m_iterable;
+			TIterableBase* m_iterable;
 
-			IterableBase(TIterable& _iterator);
+			IterableBase(TIterableBase& _iterator);
 
 		public:
 
@@ -65,12 +68,12 @@ namespace cpputils::collections
 	}
 	template<
 		typename TIterable,
-		typename TDereferenceResult = typename TIterable::iterator::value_type&,
-		TDereferenceResult(*TDereference)(const TIterable::iterator&) = [](const TIterable::iterator& _iterator) -> TDereferenceResult { return (TDereferenceResult)(*_iterator); },
+		typename TDereferenceResult = typename internal::TIterableIterator<TIterable>::value_type&,
+		TDereferenceResult(*TDereference)(const internal::TIterableIterator<TIterable>&) = [](const internal::TIterableIterator<TIterable>& _iterator) -> TDereferenceResult { return (TDereferenceResult)(*_iterator); },
 		typename TDereferenceConstResult = typename TIterable::const_iterator::value_type&,
-		TDereferenceConstResult(*TDereferenceConst)(const TIterable::const_iterator&) = [](const TIterable::const_iterator& _iterator) -> TDereferenceConstResult { return (TDereferenceConstResult)(*_iterator); },
-		typename TCategory = typename TIterable::iterator::iterator_category,
-		typename TDifferenceType = typename TIterable::iterator::difference_type,
+		TDereferenceConstResult(*TDereferenceConst)(const typename TIterable::const_iterator&) = [](const TIterable::const_iterator& _iterator) -> TDereferenceConstResult { return (TDereferenceConstResult)(*_iterator); },
+		typename TCategory = typename internal::TIterableIterator<TIterable>::iterator_category,
+		typename TDifferenceType = typename internal::TIterableIterator<TIterable>::difference_type,
 		typename TConstCategory = typename TIterable::const_iterator::iterator_category,
 		typename TConstDifferenceType = typename TIterable::const_iterator::difference_type
 	>
@@ -84,7 +87,7 @@ namespace cpputils::collections
 
 	public:
 
-		using iterator = Iterator<typename TIterable::iterator, TDereferenceResult, TDereference, TCategory, TDifferenceType>;
+		using iterator = Iterator<internal::TIterableIterator<TIterable>, TDereferenceResult, TDereference, TCategory, TDifferenceType>;
 		using const_iterator = Iterator<typename TIterable::const_iterator, TDereferenceConstResult, TDereferenceConst, TConstCategory, TConstDifferenceType>;
 
 		Iterable(TIterable& _iterator);
@@ -97,11 +100,11 @@ namespace cpputils::collections
 		const_iterator cend() const;
 		const_iterator end() const;
 
-		iterator rbegin() requires std::bidirectional_iterator<typename TIterable::iterator>;
+		iterator rbegin() requires std::bidirectional_iterator<typename internal::TIterableIterator<TIterable>>;
 		const_iterator crbegin() const requires std::bidirectional_iterator<typename TIterable::const_iterator>;
 		const_iterator rbegin() const requires std::bidirectional_iterator<typename TIterable::const_iterator>;
 
-		iterator rend() requires std::bidirectional_iterator<typename TIterable::iterator>;
+		iterator rend() requires std::bidirectional_iterator<typename internal::TIterableIterator<TIterable>>;
 		const_iterator crend() const requires std::bidirectional_iterator<typename TIterable::const_iterator>;
 		const_iterator rend() const requires std::bidirectional_iterator<typename TIterable::const_iterator>;
 

@@ -38,7 +38,7 @@ namespace cpputils::collections
 
 	namespace internal
 	{
-		template<typename TIterator>
+		template<typename TIteratorBase>
 		class IteratorBase
 		{
 
@@ -46,10 +46,10 @@ namespace cpputils::collections
 
 			CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE friend class collections::Iterator;
 
-			TIterator m_iterator;
+			TIteratorBase m_iterator;
 
-			IteratorBase(const TIterator& _iterator);
-			IteratorBase(TIterator&& _iterator);
+			IteratorBase(const TIteratorBase& _iterator);
+			IteratorBase(TIteratorBase&& _iterator);
 
 		public:
 
@@ -90,11 +90,11 @@ namespace cpputils::collections
 		reference operator[](difference_type _offset) const requires std::random_access_iterator<TIterator>;
 
 		Iterator& operator++() requires std::forward_iterator<TIterator>;
-		Iterator operator++(int) const requires std::forward_iterator<TIterator>;
+		Iterator operator++(int) requires std::forward_iterator<TIterator>;
 		Iterator& operator+=(difference_type _offset) requires std::random_access_iterator<TIterator>;
 
 		Iterator& operator--() requires std::bidirectional_iterator<TIterator>;
-		Iterator operator--(int) const requires std::bidirectional_iterator<TIterator>;
+		Iterator operator--(int) requires std::bidirectional_iterator<TIterator>;
 		Iterator& operator-=(difference_type _offset) requires std::random_access_iterator<TIterator>;
 
 		Iterator operator+(difference_type _other) const requires std::random_access_iterator<TIterator>;
