@@ -28,7 +28,7 @@ namespace cpputils::collections
 	}
 
 	template<typename TClass, typename TView = TClass> CPPUTILS_COLLECTIONS_DEREFERENCER_CONSTRAINT
-	class Dereferencer final : private mixins::StaticClass
+		class Dereferencer final : private mixins::StaticClass
 	{
 
 	public:
@@ -36,33 +36,52 @@ namespace cpputils::collections
 		static TView& dereference(TClass* _pointer);
 		static const TView& dereferenceConst(const TClass* _pointer);
 
-		template<typename TIterator, typename TCategory = typename TIterator::iterator_category, typename TDifferenceType = typename TIterator::difference_type> requires internal::IsValidIterator<TIterator, TCategory>
-		using Iterator = collections::Iterator<
+		template<
+			typename TIterator,
+			typename TCategory = typename TIterator::iterator_category,
+			typename TDifferenceType = typename TIterator::difference_type
+		>
+			requires internal::IsValidIterator<TIterator, TCategory>
+		using Iterator = collections::Iterator <
 			TIterator,
 			TView&,
-			[](const typename TIterator::iterator& _it) -> TView& { return dereference(*_it); },
+			[](const TIterator& _it) -> TView& { return dereference(*_it); },
 			TCategory,
 			TDifferenceType
 		>;
 
-		template<typename TIterator, typename TCategory = typename TIterator::iterator_category, typename TDifferenceType = typename TIterator::difference_type> requires internal::IsValidIterator<TIterator, TCategory>
-		using ConstIterator = collections::Iterator<
+		template<
+			typename TIterator,
+			typename TCategory = typename TIterator::iterator_category,
+			typename TDifferenceType = typename TIterator::difference_type
+		>
+			requires internal::IsValidIterator<TIterator, TCategory>
+		using ConstIterator = collections::Iterator <
 			TIterator,
 			const TView&,
-			[](const typename TIterator::const_iterator& _it) -> const TView& { return dereferenceConst(*_it); },
+			[](const TIterator& _it) -> const TView& { return dereferenceConst(*_it); },
 			TCategory,
 			TDifferenceType
 		>;
 
-		template<typename TIterable, typename TCategory = typename TIterable::iterator::iterator_category, typename TDifferenceType = typename TIterable::iterator::difference_type> requires internal::IsValidIterable<TIterable, TCategory>
-		using Iterable = collections::Iterable<
+		template<
+			typename TIterable,
+			typename TCategory = typename TIterable::iterator::iterator_category,
+			typename TDifferenceType = typename TIterable::iterator::difference_type,
+			typename TConstCategory = typename TIterable::const_iterator::iterator_category,
+			typename TConstDifferenceType = typename TIterable::const_iterator::difference_type
+		>
+			requires internal::IsValidIterable<TIterable, TCategory, TConstCategory>
+		using Iterable = collections::Iterable <
 			TIterable,
 			TView&,
 			[](const typename TIterable::iterator& _it) -> TView& { return dereference(*_it); },
 			const TView&,
 			[](const typename TIterable::const_iterator& _it) -> const TView& { return dereferenceConst(*_it); },
 			TCategory,
-			TDifferenceType
+			TDifferenceType,
+			TConstCategory,
+			TConstDifferenceType
 		>;
 
 	};

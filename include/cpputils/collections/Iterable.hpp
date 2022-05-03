@@ -14,12 +14,14 @@
 		typename TDereferenceConstResult, \
 		TDereferenceConstResult(*TDereferenceConst)(const TIterable::const_iterator&), \
 		typename TCategory, \
-		typename TDifferenceType \
+		typename TDifferenceType, \
+		typename TConstCategory, \
+		typename TConstDifferenceType \
 	>
 
-#define CPPUTILS_COLLECTIONS_ITERABLE_ARGS <TIterable, TDereferenceResult, TDereference, TDereferenceConstResult, TDereferenceConst, TCategory, TDifferenceType>
+#define CPPUTILS_COLLECTIONS_ITERABLE_ARGS <TIterable, TDereferenceResult, TDereference, TDereferenceConstResult, TDereferenceConst, TCategory, TDifferenceType, TConstCategory, TConstDifferenceType>
 
-#define CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINT requires internal::IsValidIterable<TIterable, TCategory>
+#define CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINT requires internal::IsValidIterable<TIterable, TCategory, TConstCategory>
 
 #define CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINED_TEMPLATE CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINT
 
@@ -31,9 +33,9 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		template<typename TIterable, typename TCategory> concept IsValidIterable
+		template<typename TIterable, typename TCategory, typename TConstCategory> concept IsValidIterable
 			= internal::IsValidIterator<typename TIterable::iterator, TCategory>
-			&& internal::IsValidIterator<typename TIterable::const_iterator, TCategory>;
+			&& internal::IsValidIterator<typename TIterable::const_iterator, TConstCategory>;
 
 	}
 
@@ -63,12 +65,14 @@ namespace cpputils::collections
 	}
 	template<
 		typename TIterable,
-		typename TDereferenceResult = std::remove_pointer_t<typename TIterable::iterator::value_type>&,
+		typename TDereferenceResult = typename TIterable::iterator::value_type&,
 		TDereferenceResult(*TDereference)(const TIterable::iterator&) = [](const TIterable::iterator& _iterator) -> TDereferenceResult { return (TDereferenceResult)(*_iterator); },
-		typename TDereferenceConstResult = std::remove_pointer_t<typename TIterable::const_iterator::value_type>&,
+		typename TDereferenceConstResult = typename TIterable::const_iterator::value_type&,
 		TDereferenceConstResult(*TDereferenceConst)(const TIterable::const_iterator&) = [](const TIterable::const_iterator& _iterator) -> TDereferenceConstResult { return (TDereferenceConstResult)(*_iterator); },
 		typename TCategory = typename TIterable::iterator::iterator_category,
-		typename TDifferenceType = typename TIterable::iterator::difference_type
+		typename TDifferenceType = typename TIterable::iterator::difference_type,
+		typename TConstCategory = typename TIterable::const_iterator::iterator_category,
+		typename TConstDifferenceType = typename TIterable::const_iterator::difference_type
 	>
 		CPPUTILS_COLLECTIONS_ITERABLE_CONSTRAINT
 		class Iterable : public internal::IterableBase<TIterable>
@@ -81,7 +85,7 @@ namespace cpputils::collections
 	public:
 
 		using iterator = Iterator<typename TIterable::iterator, TDereferenceResult, TDereference, TCategory, TDifferenceType>;
-		using const_iterator = Iterator<typename TIterable::const_iterator, TDereferenceConstResult, TDereferenceConst, TCategory, TDifferenceType>;
+		using const_iterator = Iterator<typename TIterable::const_iterator, TDereferenceConstResult, TDereferenceConst, TConstCategory, TConstDifferenceType>;
 
 		Iterable(TIterable& _iterator);
 
