@@ -2,13 +2,15 @@
 #define CPPUTILS_SERIALIZATION_STRINGSERIALIZER_INCLUDED
 
 #include <cpputils/serialization/Serializer.hpp>
+#include <type_traits>
 #include <sstream>
 #include <string>
 
 namespace cpputils::serialization
 {
 
-	class StringSerializer : public Serializer
+	template<typename TSerializer = Serializer> requires std::is_base_of_v<Serializer, TSerializer>
+	class StringSerializer : public TSerializer
 	{
 
 	private:

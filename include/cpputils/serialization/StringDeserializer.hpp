@@ -2,13 +2,15 @@
 #define CPPUTILS_SERIALIZATION_STRINGDESERIALIZER_INCLUDED
 
 #include <cpputils/serialization/Deserializer.hpp>
+#include <type_traits>
 #include <sstream>
 #include <string>
 
 namespace cpputils::serialization
 {
 
-	class StringDeserializer : public Deserializer
+	template<typename TDeserializer = Deserializer> requires std::is_base_of_v<Deserializer, TDeserializer>
+	class StringDeserializer : public TDeserializer
 	{
 
 	private:

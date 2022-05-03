@@ -7,16 +7,19 @@
 namespace cpputils::serialization
 {
 
-	inline StringSerializer::StringSerializer()
-		: m_stream{}, Serializer{ m_stream }
+	template<typename TSerializer> requires std::is_base_of_v<Serializer, TSerializer>
+	inline StringSerializer<TSerializer>::StringSerializer()
+		: m_stream{}, TSerializer{ m_stream }
 	{}
 
-	inline std::string StringSerializer::string() const
+	template<typename TSerializer> requires std::is_base_of_v<Serializer, TSerializer>
+	inline std::string StringSerializer<TSerializer>::string() const
 	{
 		return m_stream.str();
 	}
 
-	inline std::ostream& operator<<(std::ostream& _stream, const StringSerializer& _serializer)
+	template<typename TSerializer> requires std::is_base_of_v<Serializer, TSerializer>
+	inline std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TSerializer>& _serializer)
 	{
 		return _stream << _serializer.string();
 	}

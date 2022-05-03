@@ -7,8 +7,9 @@
 namespace cpputils::serialization
 {
 
-	inline StringDeserializer::StringDeserializer(const std::string& _string)
-		: m_stream{ _string }, Deserializer{ m_stream }
+	template<typename TDeserializer> requires std::is_base_of_v<Deserializer, TDeserializer>
+	inline StringDeserializer<TDeserializer>::StringDeserializer(const std::string& _string)
+		: m_stream{ _string }, TDeserializer{ m_stream }
 	{}
 
 }
