@@ -13,7 +13,8 @@ namespace cpputils::collections
 		typename TDereferenceResult,
 		TDereferenceResult(*)(types::DereferenceResult<TIterator>)
 	>
-		class Iterator;
+		requires std::input_or_output_iterator<TIterator>
+	class Iterator;
 
 	namespace internal
 	{
@@ -29,7 +30,8 @@ namespace cpputils::collections
 				typename TDereferenceResult,
 				TDereferenceResult(*)(types::DereferenceResult<TIteratorIterator>)
 			>
-				friend class collections::Iterator;
+				requires std::input_or_output_iterator<TIteratorIterator>
+			friend class collections::Iterator;
 
 			TIterator m_iterator;
 
@@ -49,7 +51,8 @@ namespace cpputils::collections
 		typename TDereferenceResult = types::DereferenceResult<TIterator>,
 		TDereferenceResult(*TConverter)(types::DereferenceResult<TIterator>) = types::cast<types::DereferenceResult<TIterator>, TDereferenceResult>
 	>
-		class Iterator : public internal::IteratorBase<TIterator>
+		requires std::input_or_output_iterator<TIterator>
+	class Iterator : public internal::IteratorBase<TIterator>
 	{
 
 	protected:
@@ -69,21 +72,21 @@ namespace cpputils::collections
 		Iterator(TIterator&& _iterator);
 
 		reference operator*() const;
-		pointer operator->() const;
-		reference operator[](difference_type _offset) const;
+		pointer operator->() const requires std::is_reference_v<TDereferenceResult>;
+		reference operator[](difference_type _offset) const requires std::random_access_iterator<TIterator>;
 
 		Iterator& operator++();
 		Iterator operator++(int);
-		Iterator& operator+=(difference_type _offset);
+		Iterator& operator+=(difference_type _offset) requires std::random_access_iterator<TIterator>;
 
-		Iterator& operator--();
-		Iterator operator--(int);
-		Iterator& operator-=(difference_type _offset);
+		Iterator& operator--() requires std::bidirectional_iterator<TIterator>;
+		Iterator operator--(int) requires std::bidirectional_iterator<TIterator>;
+		Iterator& operator-=(difference_type _offset) requires std::random_access_iterator<TIterator>;
 
-		Iterator operator+(difference_type _other) const;
-		Iterator operator-(difference_type _other) const;
+		Iterator operator+(difference_type _other) const requires std::random_access_iterator<TIterator>;
+		Iterator operator-(difference_type _other) const requires std::random_access_iterator<TIterator>;
 
-		difference_type operator-(const Iterator& _other) const;
+		difference_type operator-(const Iterator& _other) const requires std::random_access_iterator<TIterator>;
 
 	};
 

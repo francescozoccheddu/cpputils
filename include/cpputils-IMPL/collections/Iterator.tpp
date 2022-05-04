@@ -12,7 +12,9 @@ template<\
 	typename TIterator,\
 	typename TDereferenceResult,\
 	TDereferenceResult(*TConverter)(types::DereferenceResult<TIterator>)\
->
+>\
+	requires std::input_or_output_iterator<TIterator>
+
 
 #define CPPUTILS_COLLECTIONS_ITERATOR \
 Iterator<TIterator, TDereferenceResult, TConverter>
@@ -74,14 +76,14 @@ namespace cpputils::collections
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR::pointer
-		CPPUTILS_COLLECTIONS_ITERATOR::operator->() const
+		CPPUTILS_COLLECTIONS_ITERATOR::operator->() const requires std::is_reference_v<TDereferenceResult>
 	{
 		return std::addressof(**this);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR::reference
-		CPPUTILS_COLLECTIONS_ITERATOR::operator[](difference_type _offset) const
+		CPPUTILS_COLLECTIONS_ITERATOR::operator[](difference_type _offset) const requires std::random_access_iterator<TIterator>
 	{
 		return TConverter(*(iterator() + _offset));
 	}
@@ -105,7 +107,7 @@ namespace cpputils::collections
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR&
-		CPPUTILS_COLLECTIONS_ITERATOR::operator+=(difference_type _offset)
+		CPPUTILS_COLLECTIONS_ITERATOR::operator+=(difference_type _offset) requires std::random_access_iterator<TIterator>
 	{
 		iterator() += _offset;
 		return *this;
@@ -113,7 +115,7 @@ namespace cpputils::collections
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR&
-		CPPUTILS_COLLECTIONS_ITERATOR::operator--()
+		CPPUTILS_COLLECTIONS_ITERATOR::operator--() requires std::bidirectional_iterator<TIterator>
 	{
 		--iterator();
 		return *this;
@@ -121,7 +123,7 @@ namespace cpputils::collections
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR
-		CPPUTILS_COLLECTIONS_ITERATOR::operator--(int)
+		CPPUTILS_COLLECTIONS_ITERATOR::operator--(int) requires std::bidirectional_iterator<TIterator>
 	{
 		Iterator clone{ *this };
 		iterator()--;
@@ -130,7 +132,7 @@ namespace cpputils::collections
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR&
-		CPPUTILS_COLLECTIONS_ITERATOR::operator-=(difference_type _offset)
+		CPPUTILS_COLLECTIONS_ITERATOR::operator-=(difference_type _offset) requires std::random_access_iterator<TIterator>
 	{
 		iterator() -= _offset;
 		return *this;
@@ -138,21 +140,21 @@ namespace cpputils::collections
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR
-		CPPUTILS_COLLECTIONS_ITERATOR::operator+(difference_type _other) const
+		CPPUTILS_COLLECTIONS_ITERATOR::operator+(difference_type _other) const requires std::random_access_iterator<TIterator>
 	{
 		return Iterator{ iterator() + _other };
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR
-		CPPUTILS_COLLECTIONS_ITERATOR::operator-(difference_type _other) const
+		CPPUTILS_COLLECTIONS_ITERATOR::operator-(difference_type _other) const requires std::random_access_iterator<TIterator>
 	{
 		return Iterator{ iterator() + _other };
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
 		CPPUTILS_COLLECTIONS_ITERATOR::difference_type
-		CPPUTILS_COLLECTIONS_ITERATOR::operator-(const Iterator& _other) const
+		CPPUTILS_COLLECTIONS_ITERATOR::operator-(const Iterator& _other) const requires std::random_access_iterator<TIterator>
 	{
 		return iterator() - _other.iterator();
 	}
