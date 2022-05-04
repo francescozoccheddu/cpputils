@@ -127,6 +127,7 @@ namespace cpputils::collections
 		if (candidate != end)
 		{
 			_result = candidate;
+			return 1;
 		}
 		return 0;
 	}
@@ -152,6 +153,7 @@ namespace cpputils::collections
 		if (candidate != end)
 		{
 			_result = candidate;
+			return 1;
 		}
 		return 0;
 	}
