@@ -5,51 +5,40 @@
 #include <iterator>
 #include <functional>
 
-#define CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE \
-	template< \
-		typename TIterator, \
-		typename TDereferenceResult, \
-		TDereferenceResult (*TDereference)(const TIterator&), \
-		typename TCategory, \
-		typename TDifferenceType \
-	>
-
-#define CPPUTILS_COLLECTIONS_ITERATOR_ARGS <TIterator, TDereferenceResult, TDereference, TCategory, TDifferenceType>
-
-#define CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINT requires internal::IsValidIterator<TIterator, TCategory>
-
-#define CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINT
-
-#define CPPUTILS_COLLECTIONS_ITERATOR Iterator CPPUTILS_COLLECTIONS_ITERATOR_ARGS
-
 namespace cpputils::collections
 {
 
-	namespace internal
-	{
-
-		template<typename TIterator, typename TCategory> concept IsValidIterator
-			= std::input_or_output_iterator<TIterator>
-			&& (std::is_base_of_v<std::input_iterator_tag, TCategory> || std::is_base_of_v<std::output_iterator_tag, TCategory>);
-
-	}
-
-	CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE class Iterator;
+	template<
+		typename TIterator,
+		typename TDereferenceResult,
+		TDereferenceResult(*)(const TIterator&),
+		typename TCategory,
+		typename
+	>
+		class Iterator;
 
 	namespace internal
 	{
-		template<typename TIteratorBase>
+
+		template<typename TIterator>
 		class IteratorBase
 		{
 
 		private:
 
-			CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE friend class collections::Iterator;
+			template<
+				typename TIteratorIterator,
+				typename TDereferenceResult,
+				TDereferenceResult(*)(const TIteratorIterator&),
+				typename TCategory,
+				typename
+			>
+				friend class collections::Iterator;
 
-			TIteratorBase m_iterator;
+			TIterator m_iterator;
 
-			IteratorBase(const TIteratorBase& _iterator);
-			IteratorBase(TIteratorBase&& _iterator);
+			IteratorBase(const TIterator& _iterator);
+			IteratorBase(TIterator&& _iterator);
 
 		public:
 
@@ -57,22 +46,25 @@ namespace cpputils::collections
 
 		};
 
+		template<typename TIterator, typename TDereferenceResult>
+		inline constexpr TDereferenceResult iteratorDereferenceCCast(const TIterator& _iterator);
+
 	}
 
 	template<
 		typename TIterator,
 		typename TDereferenceResult = typename TIterator::reference,
-		TDereferenceResult(*TDereference)(const TIterator&) = [](const TIterator& _iterator) -> TDereferenceResult { return (TDereferenceResult)(*_iterator); },
+		TDereferenceResult(*TDereference)(const TIterator&) = internal::iteratorDereferenceCCast<TIterator, TDereferenceResult>,
 		typename TCategory = typename TIterator::iterator_category,
 		typename TDifferenceType = typename TIterator::difference_type
 	>
-		CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINT
-		class Iterator final : public internal::IteratorBase<TIterator>
+		class Iterator : public internal::IteratorBase<TIterator>
 	{
 
-	private:
+	protected:
 
-		using internal::IteratorBase<TIterator>::m_iterator;
+		TIterator& iterator();
+		const TIterator& iterator() const;
 
 	public:
 
@@ -86,21 +78,21 @@ namespace cpputils::collections
 		Iterator(TIterator&& _iterator);
 
 		reference operator*() const;
-		pointer operator->() const requires std::is_reference_v<reference>;
-		reference operator[](difference_type _offset) const requires std::random_access_iterator<TIterator>;
+		pointer operator->() const;
+		reference operator[](difference_type _offset) const;
 
-		Iterator& operator++() requires std::forward_iterator<TIterator>;
-		Iterator operator++(int) requires std::forward_iterator<TIterator>;
-		Iterator& operator+=(difference_type _offset) requires std::random_access_iterator<TIterator>;
+		Iterator& operator++();
+		Iterator operator++(int);
+		Iterator& operator+=(difference_type _offset);
 
-		Iterator& operator--() requires std::bidirectional_iterator<TIterator>;
-		Iterator operator--(int) requires std::bidirectional_iterator<TIterator>;
-		Iterator& operator-=(difference_type _offset) requires std::random_access_iterator<TIterator>;
+		Iterator& operator--();
+		Iterator operator--(int);
+		Iterator& operator-=(difference_type _offset);
 
-		Iterator operator+(difference_type _other) const requires std::random_access_iterator<TIterator>;
-		Iterator operator-(difference_type _other) const requires std::random_access_iterator<TIterator>;
+		Iterator operator+(difference_type _other) const;
+		Iterator operator-(difference_type _other) const;
 
-		difference_type operator-(const Iterator& _other) const requires std::random_access_iterator<TIterator>;
+		difference_type operator-(const Iterator& _other) const;
 
 	};
 
@@ -109,11 +101,5 @@ namespace cpputils::collections
 #define CPPUTILS_COLLECTIONS_ITERATOR_IMPLEMENTATION
 #include <cpputils-IMPL/collections/Iterator.tpp>
 #undef CPPUTILS_COLLECTIONS_ITERATOR_IMPLEMENTATION
-
-#undef CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
-#undef CPPUTILS_COLLECTIONS_ITERATOR_ARGS
-#undef CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINT
-#undef CPPUTILS_COLLECTIONS_ITERATOR_CONSTRAINED_TEMPLATE
-#undef CPPUTILS_COLLECTIONS_ITERATOR
 
 #endif
