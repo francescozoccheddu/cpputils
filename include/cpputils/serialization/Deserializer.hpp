@@ -1,7 +1,7 @@
 #ifndef CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
 #define CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
 
-#include <mixins/ReferenceClass.hpp>
+#include <cpputils/mixins/ReferenceClass.hpp>
 #include <type_traits>
 #include <string>
 #include <istream>

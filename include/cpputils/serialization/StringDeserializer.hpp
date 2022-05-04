@@ -10,16 +10,20 @@ namespace cpputils::serialization
 {
 
 	template<typename TDeserializer = Deserializer> requires std::is_base_of_v<Deserializer, TDeserializer>
-	class StringDeserializer final : public TDeserializer
+	class StringDeserializer final
 	{
 
 	private:
 
 		std::istringstream m_stream;
+		TDeserializer m_deserializer;
 
 	public:
 
-		inline explicit StringDeserializer(const std::string& _string);
+		explicit StringDeserializer(const std::string& _string);
+
+		TDeserializer& deserializer();
+		const TDeserializer& deserializer() const;
 
 	};
 
