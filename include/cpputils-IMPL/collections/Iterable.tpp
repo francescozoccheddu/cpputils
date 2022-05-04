@@ -5,6 +5,7 @@
 #include <cpputils/collections/Iterable.hpp>
 
 #include <memory>
+#include <stdexcept>
 
 #define CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE \
 template<\
