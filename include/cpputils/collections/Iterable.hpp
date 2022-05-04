@@ -1,35 +1,22 @@
 #ifndef CPPUTILS_COLLECTIONS_ITERABLE_INCLUDED
 #define CPPUTILS_COLLECTIONS_ITERABLE_INCLUDED
 
+#include <cpputils/collections/types.hpp>
 #include <cpputils/collections/Iterator.hpp>
 #include <type_traits>
 #include <iterator>
 #include <functional>
+#include <cstddef>
 
 namespace cpputils::collections
 {
 
-	namespace internal
-	{
-
-		template<typename TIterable>
-		using IterableIterator = std::conditional_t<std::is_const_v<TIterable>, typename TIterable::const_iterator, typename TIterable::iterator>;
-
-		template<typename TIterable>
-		using IterableConstIterator = typename TIterable::const_iterator;
-
-	}
-
 	template<
 		typename TIterable,
 		typename TDereferenceResult,
-		TDereferenceResult(*)(const internal::IterableIterator<TIterable>&),
 		typename TDereferenceConstResult,
-		TDereferenceConstResult(*)(const internal::IterableConstIterator<TIterable>&),
-		typename TCategory,
-		typename,
-		typename TConstCategory,
-		typename
+		TDereferenceResult(*)(types::DereferenceResult<types::Iterator<TIterable>>),
+		TDereferenceConstResult(*)(types::DereferenceResult<types::ConstIterator<TIterable>>)
 	>
 		class Iterable;
 
@@ -44,13 +31,9 @@ namespace cpputils::collections
 			template<
 				typename TIterableIterable,
 				typename TDereferenceResult,
-				TDereferenceResult(*)(const internal::IterableIterator<TIterableIterable>&),
 				typename TDereferenceConstResult,
-				TDereferenceConstResult(*)(const internal::IterableConstIterator<TIterableIterable>&),
-				typename TCategory,
-				typename,
-				typename TConstCategory,
-				typename
+				TDereferenceResult(*)(types::DereferenceResult<types::Iterator<TIterableIterable>>),
+				TDereferenceConstResult(*)(types::DereferenceResult<types::ConstIterator<TIterableIterable>>)
 			>
 				friend class collections::Iterable;
 
@@ -68,17 +51,32 @@ namespace cpputils::collections
 	}
 	template<
 		typename TIterable,
-		typename TDereferenceResult = typename internal::IterableIterator<TIterable>::value_type&,
-		TDereferenceResult(*TDereference)(const internal::IterableIterator<TIterable>&) = internal::iteratorDereferenceCCast<internal::IterableIterator<TIterable>, TDereferenceResult>,
-		typename TDereferenceConstResult = typename internal::IterableConstIterator<TIterable>::value_type&,
-		TDereferenceConstResult(*TDereferenceConst)(const typename internal::IterableConstIterator<TIterable>&) = internal::iteratorDereferenceCCast<internal::IterableConstIterator<TIterable>, TDereferenceConstResult>,
-		typename TCategory = typename internal::IterableIterator<TIterable>::iterator_category,
-		typename TDifferenceType = typename internal::IterableIterator<TIterable>::difference_type,
-		typename TConstCategory = typename internal::IterableConstIterator<TIterable>::iterator_category,
-		typename TConstDifferenceType = typename internal::IterableConstIterator<TIterable>::difference_type
+		typename TDereferenceResult = typename types::Iterator<TIterable>::value_type&,
+		typename TDereferenceConstResult = typename types::ConstIterator<TIterable>::value_type&,
+		TDereferenceResult(*TConvert)(types::DereferenceResult<types::Iterator<TIterable>>) = types::cast<types::DereferenceResult<types::Iterator<TIterable>>, TDereferenceResult>,
+		TDereferenceConstResult(*TConvertConst)(types::DereferenceResult<types::ConstIterator<TIterable>>) = types::cast<types::DereferenceResult<types::ConstIterator<TIterable>>, TDereferenceConstResult>
 	>
 		class Iterable : public internal::IterableBase<TIterable>
 	{
+
+	public:
+
+		using Predicate = std::function<bool(const TDereferenceResult&)>;
+		using PredicateConst = std::function<bool(const TDereferenceConstResult&)>;
+
+		using iterator = Iterator<types::Iterator<TIterable>, TDereferenceResult, TConvert>;
+		using const_iterator = Iterator<types::ConstIterator<TIterable>, TDereferenceConstResult, TConvertConst>;
+		using reverse_iterator = Iterator<typename types::ReverseIterator<TIterable>, TDereferenceResult, TConvert>;
+		using const_reverse_iterator = Iterator<typename types::ConstReverseIterator<TIterable>, TDereferenceConstResult, TConvertConst>;
+
+	private:
+
+		bool tryFirst(iterator& _result, const Predicate& _predicate);
+		bool tryCFirst(const_iterator& _result, const PredicateConst& _predicate) const;
+		bool tryLast(reverse_iterator& _result, const Predicate& _predicate);
+		bool tryCLast(const_reverse_iterator& _result, const PredicateConst& _predicate) const;
+		std::size_t trySingle(iterator& _result, const Predicate& _predicate);
+		std::size_t tryCSingle(const_iterator& _result, const PredicateConst& _predicate) const;
 
 	protected:
 
@@ -86,8 +84,8 @@ namespace cpputils::collections
 
 	public:
 
-		using iterator = Iterator<internal::IterableIterator<TIterable>, TDereferenceResult, TDereference, TCategory, TDifferenceType>;
-		using const_iterator = Iterator<internal::IterableConstIterator<TIterable>, TDereferenceConstResult, TDereferenceConst, TConstCategory, TConstDifferenceType>;
+		static const Predicate truePredicate;
+		static const PredicateConst truePredicateConst;
 
 		Iterable(TIterable& _iterator);
 
@@ -99,13 +97,52 @@ namespace cpputils::collections
 		const_iterator cend() const;
 		const_iterator end() const;
 
-		iterator rbegin();
-		const_iterator crbegin() const;
-		const_iterator rbegin() const;
+		reverse_iterator rbegin();
+		const_reverse_iterator crbegin() const;
+		const_reverse_iterator rbegin() const;
 
-		iterator rend();
-		const_iterator crend() const;
-		const_iterator rend() const;
+		reverse_iterator rend();
+		const_reverse_iterator crend() const;
+		const_reverse_iterator rend() const;
+
+		std::size_t size() const;
+		bool empty() const;
+
+		TDereferenceResult operator[](std::size_t _index);
+		TDereferenceConstResult operator[](std::size_t _index) const;
+
+		TDereferenceResult first(const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult cfirst(const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult first(const PredicateConst& _predicate = truePredicateConst) const;
+
+		TDereferenceResult last(const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult clast(const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult last(const PredicateConst& _predicate = truePredicateConst) const;
+
+		TDereferenceResult single(const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult csingle(const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult single(const PredicateConst& _predicate = truePredicateConst) const;
+
+		TDereferenceResult first(TDereferenceResult& _else, const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult cfirst(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult first(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+
+		TDereferenceResult last(TDereferenceResult& _else, const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult clast(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult last(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+
+		TDereferenceResult single(TDereferenceResult& _else, const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult csingle(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult single(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+
+		std::size_t count(const Predicate& _predicate);
+		std::size_t count(const PredicateConst& _predicate) const;
+
+		bool any(const Predicate& _predicate);
+		bool any(const PredicateConst& _predicate) const;
+
+		bool all(const Predicate& _predicate);
+		bool all(const PredicateConst& _predicate) const;
 
 	};
 

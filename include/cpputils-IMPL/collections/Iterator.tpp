@@ -11,13 +11,11 @@
 template<\
 	typename TIterator,\
 	typename TDereferenceResult,\
-	TDereferenceResult(*TDereference)(const TIterator&),\
-	typename TCategory,\
-	typename TDifferenceType\
+	TDereferenceResult(*TConverter)(types::DereferenceResult<TIterator>)\
 >
 
 #define CPPUTILS_COLLECTIONS_ITERATOR \
-Iterator<TIterator, TDereferenceResult, TDereference, TCategory, TDifferenceType>
+Iterator<TIterator, TDereferenceResult, TConverter>
 
 namespace cpputils::collections
 {
@@ -35,10 +33,10 @@ namespace cpputils::collections
 			: m_iterator{ std::move(_iterator) }
 		{}
 
-		template<typename TIterator, typename TDereferenceResult>
-		inline constexpr TDereferenceResult iteratorDereferenceCCast(const TIterator& _iterator)
+		template<typename TFrom, typename TTo>
+		inline constexpr TTo naiveCast(TFrom& _from)
 		{
-			return (TDereferenceResult)(*_iterator);
+			return (TTo)(_from);
 		}
 
 	}
@@ -71,7 +69,7 @@ namespace cpputils::collections
 		CPPUTILS_COLLECTIONS_ITERATOR::reference
 		CPPUTILS_COLLECTIONS_ITERATOR::operator*() const
 	{
-		return TDereference(iterator());
+		return TConverter(*iterator());
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
@@ -85,7 +83,7 @@ namespace cpputils::collections
 		CPPUTILS_COLLECTIONS_ITERATOR::reference
 		CPPUTILS_COLLECTIONS_ITERATOR::operator[](difference_type _offset) const
 	{
-		return TDereference(iterator() + _offset);
+		return TConverter(*(iterator() + _offset));
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE

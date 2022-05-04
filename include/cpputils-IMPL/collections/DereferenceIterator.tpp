@@ -4,28 +4,19 @@
 
 #include <cpputils/collections/DereferenceIterator.hpp>
 
+#include <utility>
+
 namespace cpputils::collections
 {
 
-	namespace internal
-	{
-
-		template<typename TIterator, typename TDereferenceResult>
-		inline constexpr TDereferenceResult dereferenceIteratorDereferenceCCast(const TIterator& _iterator)
-		{
-			return (TDereferenceResult)(**_iterator);
-		}
-
-	}
-
-	template<typename TIterator, typename TDereferenceResult, typename TCategory, typename TDifferenceType>
-	DereferenceIterator<TIterator, TDereferenceResult, TCategory, TDifferenceType>::DereferenceIterator(const TIterator& _iterator)
-		: collections::Iterator <TIterator, TDereferenceResult, internal::dereferenceIteratorDereferenceCCast<TIterator, TDereferenceResult>, TCategory, TDifferenceType>{ _iterator }
+	template<typename TIterator, typename TDereferenceResult>
+	DereferenceIterator<TIterator, TDereferenceResult>::DereferenceIterator(const TIterator& _iterator)
+		: collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<TIterator>, TDereferenceResult>>{ _iterator }
 	{}
 
-	template<typename TIterator, typename TDereferenceResult, typename TCategory, typename TDifferenceType>
-	DereferenceIterator<TIterator, TDereferenceResult, TCategory, TDifferenceType>::DereferenceIterator(TIterator&& _iterator)
-		: collections::Iterator <TIterator, TDereferenceResult, internal::dereferenceIteratorDereferenceCCast<TIterator, TDereferenceResult>, TCategory, TDifferenceType>{ std::move(_iterator) }
+	template<typename TIterator, typename TDereferenceResult>
+	DereferenceIterator<TIterator, TDereferenceResult>::DereferenceIterator(TIterator&& _iterator)
+		: collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<TIterator>, TDereferenceResult>>{ std::move(_iterator) }
 	{}
 
 }

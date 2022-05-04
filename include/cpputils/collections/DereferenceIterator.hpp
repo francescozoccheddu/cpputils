@@ -1,27 +1,18 @@
 #ifndef CPPUTILS_COLLECTIONS_DEREFERENCEITERATOR_INCLUDED
 #define CPPUTILS_COLLECTIONS_DEREFERENCEITERATOR_INCLUDED
 
+#include <cpputils/collections/types.hpp>
 #include <cpputils/collections/Iterator.hpp>
 #include <type_traits>
 
 namespace cpputils::collections
 {
 
-	namespace internal
-	{
-
-		template<typename TIterator, typename TDereferenceResult>
-		inline constexpr TDereferenceResult dereferenceIteratorDereferenceCCast(const TIterator& _iterator);
-
-	}
-
 	template<
 		typename TIterator,
-		typename TDereferenceResult = std::remove_pointer_t<typename TIterator::value_type>&,
-		typename TCategory = typename TIterator::iterator_category,
-		typename TDifferenceType = typename TIterator::difference_type
+		typename TDereferenceResult = std::remove_pointer_t<std::remove_reference_t<types::DereferenceResult<TIterator>>>&
 	>
-		class DereferenceIterator : public collections::Iterator <TIterator, TDereferenceResult, internal::dereferenceIteratorDereferenceCCast<TIterator, TDereferenceResult>, TCategory, TDifferenceType>
+		class DereferenceIterator : public collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<TIterator>, TDereferenceResult>>
 	{
 
 	public:

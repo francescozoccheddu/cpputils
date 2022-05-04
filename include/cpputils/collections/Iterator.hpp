@@ -1,9 +1,9 @@
 #ifndef CPPUTILS_COLLECTIONS_ITERATOR_INCLUDED
 #define CPPUTILS_COLLECTIONS_ITERATOR_INCLUDED
 
+#include <cpputils/collections/types.hpp>
 #include <type_traits>
 #include <iterator>
-#include <functional>
 
 namespace cpputils::collections
 {
@@ -11,9 +11,7 @@ namespace cpputils::collections
 	template<
 		typename TIterator,
 		typename TDereferenceResult,
-		TDereferenceResult(*)(const TIterator&),
-		typename TCategory,
-		typename
+		TDereferenceResult(*)(types::DereferenceResult<TIterator>)
 	>
 		class Iterator;
 
@@ -29,9 +27,7 @@ namespace cpputils::collections
 			template<
 				typename TIteratorIterator,
 				typename TDereferenceResult,
-				TDereferenceResult(*)(const TIteratorIterator&),
-				typename TCategory,
-				typename
+				TDereferenceResult(*)(types::DereferenceResult<TIteratorIterator>)
 			>
 				friend class collections::Iterator;
 
@@ -46,17 +42,12 @@ namespace cpputils::collections
 
 		};
 
-		template<typename TIterator, typename TDereferenceResult>
-		inline constexpr TDereferenceResult iteratorDereferenceCCast(const TIterator& _iterator);
-
 	}
 
 	template<
 		typename TIterator,
-		typename TDereferenceResult = typename TIterator::reference,
-		TDereferenceResult(*TDereference)(const TIterator&) = internal::iteratorDereferenceCCast<TIterator, TDereferenceResult>,
-		typename TCategory = typename TIterator::iterator_category,
-		typename TDifferenceType = typename TIterator::difference_type
+		typename TDereferenceResult = types::DereferenceResult<TIterator>,
+		TDereferenceResult(*TConverter)(types::DereferenceResult<TIterator>) = types::cast<types::DereferenceResult<TIterator>, TDereferenceResult>
 	>
 		class Iterator : public internal::IteratorBase<TIterator>
 	{
@@ -71,8 +62,8 @@ namespace cpputils::collections
 		using value_type = std::remove_reference_t<TDereferenceResult>;
 		using reference = TDereferenceResult;
 		using pointer = value_type*;
-		using difference_type = TDifferenceType;
-		using iterator_category = TCategory;
+		using difference_type = typename TIterator::difference_type;
+		using iterator_category = typename TIterator::iterator_category;
 
 		Iterator(const TIterator& _iterator);
 		Iterator(TIterator&& _iterator);
