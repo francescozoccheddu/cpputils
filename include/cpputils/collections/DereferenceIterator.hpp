@@ -17,7 +17,7 @@ namespace cpputils::collections
 
 	template<
 		typename TIterator,
-		typename TDereferenceResult = std::remove_pointer_t<typename TIterator::value_type>,
+		typename TDereferenceResult = std::remove_pointer_t<typename TIterator::value_type>&,
 		typename TCategory = typename TIterator::iterator_category,
 		typename TDifferenceType = typename TIterator::difference_type
 	>

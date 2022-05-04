@@ -13,7 +13,7 @@ namespace cpputils::collections
 		template<typename TIterator, typename TDereferenceResult>
 		inline constexpr TDereferenceResult dereferenceIteratorDereferenceCCast(const TIterator& _iterator)
 		{
-			return *(TDereferenceResult*)(*_iterator);
+			return (TDereferenceResult)(**_iterator);
 		}
 
 	}

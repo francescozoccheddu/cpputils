@@ -10,8 +10,8 @@ namespace cpputils::collections
 
 	template<
 		typename TIterable,
-		typename TDereferenceResult = std::remove_pointer_t<typename internal::IterableIterator<TIterable>::value_type>,
-		typename TDereferenceConstResult = std::remove_pointer_t<typename internal::IterableConstIterator<TIterable>::value_type>,
+		typename TDereferenceResult = std::remove_pointer_t<typename internal::IterableIterator<TIterable>::value_type>&,
+		typename TDereferenceConstResult = std::remove_pointer_t<typename internal::IterableConstIterator<TIterable>::value_type>&,
 		typename TCategory = typename internal::IterableIterator<TIterable>::iterator_category,
 		typename TDifferenceType = typename internal::IterableIterator<TIterable>::difference_type,
 		typename TConstCategory = typename internal::IterableConstIterator<TIterable>::iterator_category,
