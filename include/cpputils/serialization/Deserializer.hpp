@@ -1,6 +1,7 @@
 #ifndef CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
 #define CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
 
+#include <mixins/ReferenceClass.hpp>
 #include <type_traits>
 #include <string>
 #include <istream>
@@ -8,7 +9,7 @@
 namespace cpputils::serialization
 {
 
-	class Deserializer
+	class Deserializer : public virtual mixins::ReferenceClass
 	{
 
 	private:
@@ -17,7 +18,7 @@ namespace cpputils::serialization
 
 	public:
 
-		inline Deserializer(std::istream& _stream);
+		inline explicit Deserializer(std::istream& _stream);
 
 		template<typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
 		void operator>>(TArithmetic& _data);

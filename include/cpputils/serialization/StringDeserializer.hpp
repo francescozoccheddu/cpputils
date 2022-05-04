@@ -19,7 +19,7 @@ namespace cpputils::serialization
 
 	public:
 
-		inline StringDeserializer(const std::string& _string);
+		inline explicit StringDeserializer(const std::string& _string);
 
 	};
 

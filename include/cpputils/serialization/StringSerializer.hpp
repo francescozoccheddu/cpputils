@@ -19,7 +19,7 @@ namespace cpputils::serialization
 
 	public:
 
-		inline StringSerializer();
+		inline explicit StringSerializer();
 
 		inline std::string string() const;
 

@@ -18,7 +18,7 @@ namespace cpputils::serialization
 
 	public:
 
-		inline Serializer(std::ostream& _stream);
+		inline explicit Serializer(std::ostream& _stream);
 
 		template<typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
 		void operator<<(TArithmetic _data);

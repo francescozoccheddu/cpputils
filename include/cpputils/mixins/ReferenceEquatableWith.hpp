@@ -2,12 +2,11 @@
 #define CPPUTILS_MIXINS_REFERENCEEQUATABLEWITH_INCLUDED
 
 #include <cpputils/mixins/WithVirtualDestructor.hpp>
-#include <type_traits>
 
 namespace cpputils::mixins
 {
 
-	template<typename TOther> requires std::is_class_v<TOther> && (!std::is_const_v<TOther>)
+	template<typename TOther>
 	class ReferenceEquatableWith : public virtual WithVirtualDestructor
 	{
 
