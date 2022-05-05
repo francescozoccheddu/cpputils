@@ -295,57 +295,66 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceResult _else) requires concepts::HasBegin<TIterable>
+		template<std::constructible_from<TDereferenceResult> TElse>
+	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::first(TElse _else) requires concepts::HasBegin<TIterable>
 	{
-		return first(_else, truePredicate);
+		return first(std::forward<TElse>(_else), truePredicate);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::cfirst(TDereferenceConstResult _else) const requires concepts::HasCBegin<TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::cfirst(TElse _else) const requires concepts::HasCBegin<TIterable>
 	{
-		return cfirst(_else, truePredicateConst);
+		return cfirst(std::forward<TElse>(_else), truePredicateConst);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceConstResult _else) const requires concepts::HasBegin<const TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::first(TElse _else) const requires concepts::HasBegin<const TIterable>
 	{
-		return first(_else, truePredicateConst);
+		return first(std::forward<TElse>(_else), truePredicateConst);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceResult _else) requires concepts::HasRBegin<TIterable>
+		template<std::constructible_from<TDereferenceResult> TElse>
+	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::last(TElse _else) requires concepts::HasRBegin<TIterable>
 	{
-		return last(_else, truePredicate);
+		return last(std::forward<TElse>(_else), truePredicate);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::clast(TDereferenceConstResult _else) const requires concepts::HasCRBegin<TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::clast(TElse _else) const requires concepts::HasCRBegin<TIterable>
 	{
-		return clast(_else, truePredicateConst);
+		return clast(std::forward<TElse>(_else), truePredicateConst);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceConstResult _else) const requires concepts::HasRBegin<const TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::last(TElse _else) const requires concepts::HasRBegin<const TIterable>
 	{
-		return last(_else, truePredicateConst);
+		return last(std::forward<TElse>(_else), truePredicateConst);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceResult _else, bool _throwIfNoMatch, bool _throwIfMultipleMatches) requires concepts::HasBegin<TIterable>
+		template<std::constructible_from<TDereferenceResult> TElse>
+	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::single(TElse _else, bool _throwIfNoMatch, bool _throwIfMultipleMatches) requires concepts::HasBegin<TIterable>
 	{
-		return single(_else, truePredicate, _throwIfNoMatch, _throwIfMultipleMatches);
+		return single(std::forward<TElse>(_else), truePredicate, _throwIfNoMatch, _throwIfMultipleMatches);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::csingle(TDereferenceConstResult _else, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasCBegin<TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::csingle(TElse _else, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasCBegin<TIterable>
 	{
-		return csingle(_else, truePredicateConst, _throwIfNoMatch, _throwIfMultipleMatches);
+		return csingle(std::forward<TElse>(_else), truePredicateConst, _throwIfNoMatch, _throwIfMultipleMatches);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceConstResult _else, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasBegin<const TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::single(TElse _else, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasBegin<const TIterable>
 	{
-		return single(_else, truePredicateConst, _throwIfNoMatch, _throwIfMultipleMatches);
+		return single(std::forward<TElse>(_else), truePredicateConst, _throwIfNoMatch, _throwIfMultipleMatches);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
@@ -499,56 +508,56 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceResult&> TPredicate>
-	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceResult _else, TPredicate&& _predicate) requires concepts::HasBegin<TIterable>
+		template<std::constructible_from<TDereferenceResult> TElse, std::predicate<const TDereferenceResult&> TPredicate>
+	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::first(TElse _else, TPredicate&& _predicate) requires concepts::HasBegin<TIterable>
 	{
 		auto it{ end() };
 		return algorithms::first(begin(), end(), it, _predicate) ? std::forward<TDereferenceResult>(*it) : std::forward<TDereferenceResult>(_else);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::cfirst(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasCBegin<TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::cfirst(TElse _else, TPredicate&& _predicate) const requires concepts::HasCBegin<TIterable>
 	{
 		auto it{ cend() };
 		return algorithms::first(cbegin(), cend(), it, _predicate) ? std::forward<TDereferenceResult>(*it) : std::forward<TDereferenceResult>(_else);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasBegin<const TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::first(TElse _else, TPredicate&& _predicate) const requires concepts::HasBegin<const TIterable>
 	{
 		auto it{ end() };
 		return algorithms::first(begin(), end(), it, _predicate) ? std::forward<TDereferenceResult>(*it) : std::forward<TDereferenceResult>(_else);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceResult&> TPredicate>
-	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceResult _else, TPredicate&& _predicate) requires concepts::HasRBegin<TIterable>
+		template<std::constructible_from<TDereferenceResult> TElse, std::predicate<const TDereferenceResult&> TPredicate>
+	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::last(TElse _else, TPredicate&& _predicate) requires concepts::HasRBegin<TIterable>
 	{
 		auto it{ end() };
 		return algorithms::first(rbegin(), rend(), it, _predicate) ? std::forward<TDereferenceResult>(*it) : std::forward<TDereferenceResult>(_else);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::clast(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasCRBegin<TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::clast(TElse _else, TPredicate&& _predicate) const requires concepts::HasCRBegin<TIterable>
 	{
 		auto it{ end() };
 		return algorithms::first(crbegin(), crend(), it, _predicate) ? std::forward<TDereferenceConstResult>(*it) : std::forward<TDereferenceConstResult>(_else);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasRBegin<const TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::last(TElse _else, TPredicate&& _predicate) const requires concepts::HasRBegin<const TIterable>
 	{
 		auto it{ end() };
 		return algorithms::first(rbegin(), rend(), it, _predicate) ? std::forward<TDereferenceConstResult>(*it) : std::forward<TDereferenceConstResult>(_else);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceResult&> TPredicate>
-	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceResult _else, TPredicate&& _predicate, bool _throwIfNoMatch, bool _throwIfMultipleMatches) requires concepts::HasBegin<TIterable>
+		template<std::constructible_from<TDereferenceResult> TElse, std::predicate<const TDereferenceResult&> TPredicate>
+	TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::single(TElse _else, TPredicate&& _predicate, bool _throwIfNoMatch, bool _throwIfMultipleMatches) requires concepts::HasBegin<TIterable>
 	{
 		auto it{ end() };
 		switch (algorithms::single(begin(), end(), it, std::forward<TPredicate>(_predicate)))
@@ -563,8 +572,8 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::csingle(TDereferenceConstResult _else, TPredicate&& _predicate, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasCBegin<TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::csingle(TElse _else, TPredicate&& _predicate, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasCBegin<TIterable>
 	{
 		auto it{ cend() };
 		switch (algorithms::single(cbegin(), cend(), it, std::forward<TPredicate>(_predicate)))
@@ -579,8 +588,8 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceConstResult _else, TPredicate&& _predicate, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasBegin<const TIterable>
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+	TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::single(TElse _else, TPredicate&& _predicate, bool _throwIfNoMatch, bool _throwIfMultipleMatches) const requires concepts::HasBegin<const TIterable>
 	{
 		auto it{ end() };
 		switch (algorithms::single(begin(), end(), it, std::forward<TPredicate>(_predicate)))

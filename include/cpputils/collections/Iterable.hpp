@@ -160,15 +160,15 @@ namespace cpputils::collections
 		using reverse_iterator = typename internal::RBeginIteratorTypeStruct<TIterable, TDereferenceResult, TConvert>::Type;
 		using const_reverse_iterator = typename internal::CRBeginIteratorTypeStruct<const TIterable, TDereferenceConstResult, TConvertConst>::Type;
 
+		static constexpr bool truePredicate(const TDereferenceResult&) { return true; }
+		static constexpr bool truePredicateConst(const TDereferenceConstResult&) { return true; }
+
 	protected:
 
 		TIterable& iterable();
 		const TIterable& iterable() const;
 
 	public:
-
-		static constexpr bool truePredicate(const TDereferenceResult&) { return true; }
-		static constexpr bool truePredicateConst(const TDereferenceConstResult&) { return true; }
 
 		Iterable(TIterable& _iterator);
 
@@ -206,17 +206,32 @@ namespace cpputils::collections
 		TDereferenceConstResult csingle() const requires concepts::HasCBegin<TIterable>;
 		TDereferenceConstResult single() const requires concepts::HasBegin<const TIterable>;
 
-		TDereferenceResult first(TDereferenceResult _else) requires concepts::HasBegin<TIterable>;
-		TDereferenceConstResult cfirst(TDereferenceConstResult _else) const requires concepts::HasCBegin<TIterable>;
-		TDereferenceConstResult first(TDereferenceConstResult _else) const requires concepts::HasBegin<const TIterable>;
+		template<std::constructible_from<TDereferenceResult> TElse>
+		TDereferenceResult first(TElse _else) requires concepts::HasBegin<TIterable>;
 
-		TDereferenceResult last(TDereferenceResult _else) requires concepts::HasRBegin<TIterable>;
-		TDereferenceConstResult clast(TDereferenceConstResult _else) const requires concepts::HasCRBegin<TIterable>;
-		TDereferenceConstResult last(TDereferenceConstResult _else) const requires concepts::HasRBegin<const TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+		TDereferenceConstResult cfirst(TElse _else) const requires concepts::HasCBegin<TIterable>;
 
-		TDereferenceResult single(TDereferenceResult _else, bool _throwIfNoMatch=false, bool _throwIfMultipleMatches=false) requires concepts::HasBegin<TIterable>;
-		TDereferenceConstResult csingle(TDereferenceConstResult _else, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasCBegin<TIterable>;
-		TDereferenceConstResult single(TDereferenceConstResult _else, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasBegin<const TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+		TDereferenceConstResult first(TElse _else) const requires concepts::HasBegin<const TIterable>;
+
+		template<std::constructible_from<TDereferenceResult> TElse>
+		TDereferenceResult last(TElse _else) requires concepts::HasRBegin<TIterable>;
+
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+		TDereferenceConstResult clast(TElse _else) const requires concepts::HasCRBegin<TIterable>;
+
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+		TDereferenceConstResult last(TElse _else) const requires concepts::HasRBegin<const TIterable>;
+
+		template<std::constructible_from<TDereferenceResult> TElse>
+		TDereferenceResult single(TElse _else, bool _throwIfNoMatch=false, bool _throwIfMultipleMatches=false) requires concepts::HasBegin<TIterable>;
+		
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+		TDereferenceConstResult csingle(TElse _else, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasCBegin<TIterable>;
+		
+		template<std::constructible_from<TDereferenceConstResult> TElse>
+		TDereferenceConstResult single(TElse _else, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasBegin<const TIterable>;
 
 		std::size_t count() requires concepts::HasBegin<TIterable>;
 		std::size_t ccount() const requires concepts::HasCBegin<TIterable>;
@@ -257,32 +272,32 @@ namespace cpputils::collections
 		template<std::predicate<const TDereferenceConstResult&> TPredicate>
 		TDereferenceConstResult single(TPredicate&& _predicate) const requires concepts::HasBegin<const TIterable>;
 
-		template<std::predicate<const TDereferenceResult&> TPredicate>
-		TDereferenceResult first(TDereferenceResult _else, TPredicate&& _predicate) requires concepts::HasBegin<TIterable>;
+		template<std::constructible_from<TDereferenceResult> TElse, std::predicate<const TDereferenceResult&> TPredicate>
+		TDereferenceResult first(TElse _else, TPredicate&& _predicate) requires concepts::HasBegin<TIterable>;
 
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-		TDereferenceConstResult cfirst(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasCBegin<TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+		TDereferenceConstResult cfirst(TElse _else, TPredicate&& _predicate) const requires concepts::HasCBegin<TIterable>;
 
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-		TDereferenceConstResult first(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasBegin<const TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+		TDereferenceConstResult first(TElse _else, TPredicate&& _predicate) const requires concepts::HasBegin<const TIterable>;
 
-		template<std::predicate<const TDereferenceResult&> TPredicate>
-		TDereferenceResult last(TDereferenceResult _else, TPredicate&& _predicate) requires concepts::HasRBegin<TIterable>;
+		template<std::constructible_from<TDereferenceResult> TElse, std::predicate<const TDereferenceResult&> TPredicate>
+		TDereferenceResult last(TElse _else, TPredicate&& _predicate) requires concepts::HasRBegin<TIterable>;
 
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-		TDereferenceConstResult clast(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasCRBegin<TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+		TDereferenceConstResult clast(TElse _else, TPredicate&& _predicate) const requires concepts::HasCRBegin<TIterable>;
 
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-		TDereferenceConstResult last(TDereferenceConstResult _else, TPredicate&& _predicate) const requires concepts::HasRBegin<const TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+		TDereferenceConstResult last(TElse _else, TPredicate&& _predicate) const requires concepts::HasRBegin<const TIterable>;
 
-		template<std::predicate<const TDereferenceResult&> TPredicate>
-		TDereferenceResult single(TDereferenceResult _else, TPredicate&& _predicate, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) requires concepts::HasBegin<TIterable>;
+		template<std::constructible_from<TDereferenceResult> TElse, std::predicate<const TDereferenceResult&> TPredicate>
+		TDereferenceResult single(TElse _else, TPredicate&& _predicate, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) requires concepts::HasBegin<TIterable>;
 
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-		TDereferenceConstResult csingle(TDereferenceConstResult _else, TPredicate&& _predicate, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasCBegin<TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+		TDereferenceConstResult csingle(TElse _else, TPredicate&& _predicate, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasCBegin<TIterable>;
 
-		template<std::predicate<const TDereferenceConstResult&> TPredicate>
-		TDereferenceConstResult single(TDereferenceConstResult _else, TPredicate&& _predicate, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasBegin<const TIterable>;
+		template<std::constructible_from<TDereferenceConstResult> TElse, std::predicate<const TDereferenceConstResult&> TPredicate>
+		TDereferenceConstResult single(TElse _else, TPredicate&& _predicate, bool _throwIfNoMatch = false, bool _throwIfMultipleMatches = false) const requires concepts::HasBegin<const TIterable>;
 
 		template<std::predicate<const TDereferenceResult&> TPredicate>
 		std::size_t count(TPredicate&& _predicate) requires concepts::HasBegin<TIterable>;
