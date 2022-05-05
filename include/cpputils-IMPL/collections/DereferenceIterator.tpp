@@ -9,14 +9,31 @@
 namespace cpputils::collections
 {
 
-	template<typename TIterator, typename TDereferenceResult>
+	namespace types
+	{
+
+		template<typename TFrom, typename TTo>
+		inline constexpr TTo dereferenceAndCast(TFrom _from)
+		{
+			return (TTo)(*_from);
+		}
+
+		template<typename TFrom, typename TTo>
+		inline constexpr DereferenceResult<TTo> castAndDereference(TFrom _from)
+		{
+			return *(TTo)(_from);
+		}
+
+	}
+
+	template<std::input_or_output_iterator TIterator, typename TDereferenceResult>
 	DereferenceIterator<TIterator, TDereferenceResult>::DereferenceIterator(const TIterator& _iterator)
-		: collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<TIterator>, TDereferenceResult>>{ _iterator }
+		: collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<const TIterator>, TDereferenceResult>>{ _iterator }
 	{}
 
-	template<typename TIterator, typename TDereferenceResult>
+	template<std::input_or_output_iterator TIterator, typename TDereferenceResult>
 	DereferenceIterator<TIterator, TDereferenceResult>::DereferenceIterator(TIterator&& _iterator)
-		: collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<TIterator>, TDereferenceResult>>{ std::move(_iterator) }
+		: collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<const TIterator>, TDereferenceResult>>{ std::move(_iterator) }
 	{}
 
 }

@@ -1,37 +1,61 @@
 #ifndef CPPUTILS_COLLECTIONS_ITERATOR_INCLUDED
 #define CPPUTILS_COLLECTIONS_ITERATOR_INCLUDED
 
-#include <cpputils/collections/types.hpp>
+#include <cpputils/mixins/StaticClass.hpp>
 #include <type_traits>
 #include <iterator>
+#include <utility>
 
 namespace cpputils::collections
 {
 
+	namespace types
+	{
+
+		template<typename TFrom, typename TTo>
+		inline constexpr TTo cast(TFrom _from);
+
+		namespace internal
+		{
+
+			template<typename TIterator, typename = void>
+			struct CategoryStruct final : public mixins::StaticClass { using Type = std::random_access_iterator_tag; };
+
+			template<typename TIterator>
+			struct CategoryStruct<TIterator, std::void_t<typename TIterator::iterator_category>> final : public mixins::StaticClass { using Type = typename TIterator::iterator_category; };
+
+		}
+
+		template<typename TIterator>
+		using DereferenceResult = decltype(*std::declval<TIterator&>());
+
+		template<typename TIterator>
+		using Category = typename internal::CategoryStruct<TIterator>::Type;
+
+	}
+
 	template<
-		typename TIterator,
+		std::input_or_output_iterator TIterator,
 		typename TDereferenceResult,
-		TDereferenceResult(*)(types::DereferenceResult<TIterator>)
+		TDereferenceResult(*)(types::DereferenceResult<const TIterator>)
 	>
-		requires std::input_or_output_iterator<TIterator>
-	class Iterator;
+		class Iterator;
 
 	namespace internal
 	{
 
-		template<typename TIterator>
+		template<std::input_or_output_iterator TIterator>
 		class IteratorBase
 		{
 
 		private:
 
 			template<
-				typename TIteratorIterator,
+				std::input_or_output_iterator TIteratorIterator,
 				typename TDereferenceResult,
-				TDereferenceResult(*)(types::DereferenceResult<TIteratorIterator>)
+				TDereferenceResult(*)(types::DereferenceResult<const TIteratorIterator>)
 			>
-				requires std::input_or_output_iterator<TIteratorIterator>
-			friend class collections::Iterator;
+				friend class collections::Iterator;
 
 			TIterator m_iterator;
 
@@ -47,12 +71,11 @@ namespace cpputils::collections
 	}
 
 	template<
-		typename TIterator,
-		typename TDereferenceResult = types::DereferenceResult<TIterator>,
-		TDereferenceResult(*TConverter)(types::DereferenceResult<TIterator>) = types::cast<types::DereferenceResult<TIterator>, TDereferenceResult>
+		std::input_or_output_iterator TIterator,
+		typename TDereferenceResult = types::DereferenceResult<const TIterator>,
+		TDereferenceResult(*TConverter)(types::DereferenceResult<const TIterator>) = types::cast<types::DereferenceResult<const TIterator>, TDereferenceResult>
 	>
-		requires std::input_or_output_iterator<TIterator>
-	class Iterator : public internal::IteratorBase<TIterator>
+		class Iterator : public internal::IteratorBase<TIterator>
 	{
 
 	protected:
@@ -65,8 +88,8 @@ namespace cpputils::collections
 		using value_type = std::remove_reference_t<TDereferenceResult>;
 		using reference = TDereferenceResult;
 		using pointer = value_type*;
-		using difference_type = typename TIterator::difference_type;
-		using iterator_category = typename TIterator::iterator_category;
+		using difference_type = std::iter_difference_t<TIterator>;
+		using iterator_category = types::Category<TIterator>;
 
 		Iterator(const TIterator& _iterator);
 		Iterator(TIterator&& _iterator);

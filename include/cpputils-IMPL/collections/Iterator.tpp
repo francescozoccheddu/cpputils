@@ -4,17 +4,16 @@
 
 #include <cpputils/collections/Iterator.hpp>
 
+#include <iterator>
 #include <utility>
 #include <memory>
 
 #define CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE \
 template<\
-	typename TIterator,\
+	std::input_or_output_iterator TIterator,\
 	typename TDereferenceResult,\
-	TDereferenceResult(*TConverter)(types::DereferenceResult<TIterator>)\
->\
-	requires std::input_or_output_iterator<TIterator>
-
+	TDereferenceResult(*TConverter)(types::DereferenceResult<const TIterator>)\
+>
 
 #define CPPUTILS_COLLECTIONS_ITERATOR \
 Iterator<TIterator, TDereferenceResult, TConverter>
@@ -22,24 +21,29 @@ Iterator<TIterator, TDereferenceResult, TConverter>
 namespace cpputils::collections
 {
 
+	namespace types
+	{
+
+		template<typename TFrom, typename TTo>
+		inline constexpr TTo cast(TFrom _from)
+		{
+			return (TTo)(_from);
+		}
+
+	}
+
 	namespace internal
 	{
 
-		template<typename TIterator>
+		template<std::input_or_output_iterator TIterator>
 		IteratorBase<TIterator>::IteratorBase(const TIterator& _iterator)
 			: m_iterator{ _iterator }
 		{}
 
-		template<typename TIterator>
+		template<std::input_or_output_iterator TIterator>
 		IteratorBase<TIterator>::IteratorBase(TIterator&& _iterator)
 			: m_iterator{ std::move(_iterator) }
 		{}
-
-		template<typename TFrom, typename TTo>
-		inline constexpr TTo naiveCast(TFrom& _from)
-		{
-			return (TTo)(_from);
-		}
 
 	}
 
