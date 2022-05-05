@@ -15,7 +15,7 @@ namespace cpputils::collections::conversions
 		std::size_t TSize,
 		typename TFromIterable,
 		typename TOutputType,
-		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>),
+		TOutputType(*TConverter)(types::DereferenceResult<types::BeginResult<TFromIterable>>),
 		bool TThrowIfFromIsSmaller,
 		bool TThrowIfToIsLarger
 	>
@@ -29,7 +29,7 @@ namespace cpputils::collections::conversions
 	template <
 		typename TFromIterable,
 		typename TOutputType,
-		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>)
+		TOutputType(*TConverter)(types::DereferenceResult<types::BeginResult<TFromIterable>>)
 	>
 		std::vector<TOutputType> toVector(TFromIterable&& _from)
 	{
@@ -42,14 +42,14 @@ namespace cpputils::collections::conversions
 		typename TFromIterable,
 		typename TToIterable,
 		typename TOutputType,
-		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>),
+		TOutputType(*TConverter)(types::DereferenceResult<types::BeginResult<TFromIterable>>),
 		bool TThrowIfToIsSmaller,
 		bool TThrowIfToIsLarger
 	>
 		void copy(TFromIterable&& _from, TToIterable& _to)
 	{
-		const std::size_t fromSize{ std::size(_from) };
-		const std::size_t toSize{ std::size(_to) };
+		const auto fromSize{ std::size(_from) };
+		const auto toSize{ std::size(_to) };
 		if (TThrowIfToIsSmaller && fromSize < toSize)
 		{
 			throw std::logic_error{ "_from size < _to size" };

@@ -1,7 +1,7 @@
 #ifndef CPPUTILS_COLLECTIONS_CONVERSIONS_INCLUDED
 #define CPPUTILS_COLLECTIONS_CONVERSIONS_INCLUDED
 
-#include <cpputils/collections/types.hpp>
+#include <cpputils/collections/Iterator.hpp>
 #include <type_traits>
 #include <cstddef>
 #include <array>
@@ -13,8 +13,8 @@ namespace cpputils::collections::conversions
 	template <
 		std::size_t TSize,
 		typename TFromIterable,
-		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,
-		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>) = types::cast<types::DereferenceResult<types::Iterator<TFromIterable>>, TOutputType>,
+		typename TOutputType = typename std::iter_value_t<types::BeginResult<TFromIterable>>,
+		TOutputType(*TConverter)(types::DereferenceResult<types::BeginResult<TFromIterable>>) = types::cast<types::DereferenceResult<types::BeginResult<TFromIterable>>, TOutputType>,
 		bool TThrowIfFromIsSmaller = true,
 		bool TThrowIfToIsLarger = true
 	>
@@ -22,16 +22,16 @@ namespace cpputils::collections::conversions
 
 	template <
 		typename TFromIterable,
-		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,
-		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>) = types::cast<types::DereferenceResult<types::Iterator<TFromIterable>>, TOutputType>
+		typename TOutputType = typename std::iter_value_t<types::BeginResult<TFromIterable>>,
+		TOutputType(*TConverter)(types::DereferenceResult<types::BeginResult<TFromIterable>>) = types::cast<types::DereferenceResult<types::BeginResult<TFromIterable>>, TOutputType>
 	>
 		std::vector<TOutputType> toVector(TFromIterable&& _iterable);
 
 	template <
 		typename TFromIterable,
 		typename TToIterable,
-		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,
-		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>) = types::cast<types::DereferenceResult<types::Iterator<TFromIterable>>, TOutputType>,
+		typename TOutputType = typename std::iter_value_t<types::BeginResult<TFromIterable>>,
+		TOutputType(*TConverter)(types::DereferenceResult<types::BeginResult<TFromIterable>>) = types::cast<types::DereferenceResult<types::BeginResult<TFromIterable>>, TOutputType>,
 		bool TThrowIfFromIsSmaller = true,
 		bool TThrowIfToIsLarger = true
 	>
