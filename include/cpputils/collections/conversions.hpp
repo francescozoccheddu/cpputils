@@ -10,7 +10,7 @@
 namespace cpputils::collections::conversions
 {
 
-	template<
+	template <
 		std::size_t TSize,
 		typename TFromIterable,
 		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,
@@ -20,14 +20,14 @@ namespace cpputils::collections::conversions
 	>
 		std::array<TOutputType, TSize> toArray(TFromIterable&& _iterable);
 
-	template<
+	template <
 		typename TFromIterable,
 		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,
 		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>) = types::cast<types::DereferenceResult<types::Iterator<TFromIterable>>, TOutputType>
 	>
 		std::vector<TOutputType> toVector(TFromIterable&& _iterable);
 
-	template<
+	template <
 		typename TFromIterable,
 		typename TToIterable,
 		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,

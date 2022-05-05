@@ -6,7 +6,7 @@
 namespace cpputils::mixins
 {
 
-	template<typename TOther>
+	template <typename TOther>
 	class ReferenceEquatableWith : public virtual WithVirtualDestructor
 	{
 

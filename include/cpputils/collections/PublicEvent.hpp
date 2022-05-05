@@ -7,7 +7,7 @@
 namespace cpputils::collections
 {
 
-	template<typename ... TArgs>
+	template <typename ... TArgs>
 	using PublicEvent = Event<internal::AnyEventInvoker, TArgs ...>;
 
 }

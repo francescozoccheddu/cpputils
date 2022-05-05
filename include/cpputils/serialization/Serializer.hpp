@@ -20,10 +20,10 @@ namespace cpputils::serialization
 
 		inline explicit Serializer(std::ostream& _stream);
 
-		template<typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
+		template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
 		Serializer& operator<<(TArithmetic _data);
 
-		template<typename TEnum> requires std::is_enum_v<TEnum>
+		template <typename TEnum> requires std::is_enum_v<TEnum>
 		Serializer& operator<<(TEnum _data);
 
 		inline Serializer& operator<<(const std::string& _data);

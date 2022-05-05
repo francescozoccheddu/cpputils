@@ -15,24 +15,26 @@ namespace cpputils::serialization
 		: m_stream{ _stream }
 	{}
 
-	template<typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
-	inline void Deserializer::operator>>(TArithmetic& _data)
+	template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
+	inline Deserializer& Deserializer::operator>>(TArithmetic& _data)
 	{
 		std::string data;
 		*this >> data;
 		std::istringstream stream{ data };
 		stream >> _data;
+		return *this;
 	}
 
-	template<typename TEnum> requires std::is_enum_v<TEnum> && (!std::is_const_v<TEnum>)
-	void Deserializer::operator>>(TEnum& _data)
+	template <typename TEnum> requires std::is_enum_v<TEnum> && (!std::is_const_v<TEnum>)
+	Deserializer& Deserializer::operator>>(TEnum& _data)
 	{
 		std::underlying_type_t<TEnum> underlying;
 		*this >> underlying;
 		_data = static_cast<TEnum>(underlying);
+		return *this;
 	}
 
-	inline void Deserializer::operator>>(std::string& _data)
+	inline Deserializer& Deserializer::operator>>(std::string& _data)
 	{
 		std::ostringstream data{};
 		bool escaped{ false };
@@ -72,9 +74,10 @@ namespace cpputils::serialization
 			}
 		}
 		_data = data.str();
+		return *this;
 	}
 
-	template<typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_const_t<TType>, std::string>
+	template <typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_const_t<TType>, std::string>
 	inline TType Deserializer::get()
 	{
 		std::remove_const_t<TType> data;

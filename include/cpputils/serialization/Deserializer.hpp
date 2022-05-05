@@ -20,15 +20,15 @@ namespace cpputils::serialization
 
 		inline explicit Deserializer(std::istream& _stream);
 
-		template<typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
+		template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
 		Deserializer& operator>>(TArithmetic& _data);
 
-		template<typename TEnum> requires std::is_enum_v<TEnum> && (!std::is_const_v<TEnum>)
+		template <typename TEnum> requires std::is_enum_v<TEnum> && (!std::is_const_v<TEnum>)
 		Deserializer& operator>>(TEnum& _data);
 
 		inline Deserializer& operator>>(std::string& _data);
 
-		template<typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_const_t<TType>, std::string>
+		template <typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_const_t<TType>, std::string>
 		inline TType get();
 
 	};

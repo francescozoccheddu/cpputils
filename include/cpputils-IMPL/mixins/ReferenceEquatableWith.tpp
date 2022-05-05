@@ -9,13 +9,13 @@
 namespace cpputils::mixins
 {
 
-	template<typename TOther>
+	template <typename TOther>
 	bool ReferenceEquatableWith<TOther>::operator==(const TOther& _b) const
 	{
 		return std::addressof(_b) == this;
 	}
 
-	template<typename TOther>
+	template <typename TOther>
 	bool ReferenceEquatableWith<TOther>::operator!=(const TOther& _b) const
 	{
 		return std::addressof(_b) != this;

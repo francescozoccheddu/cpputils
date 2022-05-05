@@ -11,7 +11,7 @@
 namespace cpputils::collections::conversions
 {
 
-	template<
+	template <
 		std::size_t TSize,
 		typename TFromIterable,
 		typename TOutputType,
@@ -26,7 +26,7 @@ namespace cpputils::collections::conversions
 		return to;
 	}
 
-	template<
+	template <
 		typename TFromIterable,
 		typename TOutputType,
 		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>)
@@ -38,7 +38,7 @@ namespace cpputils::collections::conversions
 		return to;
 	}
 
-	template<
+	template <
 		typename TFromIterable,
 		typename TToIterable,
 		typename TOutputType,

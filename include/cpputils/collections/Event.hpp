@@ -9,7 +9,7 @@
 namespace cpputils::collections
 {
 
-	template<typename TInvoker, typename ...>
+	template <typename TInvoker, typename ...>
 	class Event;
 
 	namespace internal
@@ -17,7 +17,7 @@ namespace cpputils::collections
 		
 		class AnyEventInvoker final : public mixins::StaticClass {};
 
-		template<typename ... TArgs>
+		template <typename ... TArgs>
 		class EventBase : public mixins::ReferenceClass
 		{
 
@@ -27,7 +27,7 @@ namespace cpputils::collections
 
 		private:
 
-			template<typename TInvoker, typename ...>
+			template <typename TInvoker, typename ...>
 			friend class collections::Event;
 
 			std::unordered_set<Handler*> m_handlers{};
@@ -45,7 +45,7 @@ namespace cpputils::collections
 
 	}
 
-	template<typename TInvoker, typename ... TArgs>
+	template <typename TInvoker, typename ... TArgs>
 	class Event final : public internal::EventBase<TArgs ...>
 	{
 

@@ -15,19 +15,19 @@ namespace cpputils::serialization
 		: m_stream{ _stream }
 	{}
 
-	template<typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
-	inline void Serializer::operator<<(TArithmetic _data)
+	template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
+	inline Serializer& Serializer::operator<<(TArithmetic _data)
 	{
-		*this << std::to_string(_data);
+		return *this << std::to_string(_data);
 	}
 
-	template<typename TEnum> requires std::is_enum_v<TEnum>
-	void Serializer::operator<<(TEnum _data)
+	template <typename TEnum> requires std::is_enum_v<TEnum>
+	Serializer& Serializer::operator<<(TEnum _data)
 	{
-		*this << static_cast<std::underlying_type_t<TEnum>>(_data);
+		return *this << static_cast<std::underlying_type_t<TEnum>>(_data);
 	}
 
-	inline void Serializer::operator<<(const std::string& _data)
+	inline Serializer& Serializer::operator<<(const std::string& _data)
 	{
 		for (const char c : _data)
 		{
@@ -48,6 +48,7 @@ namespace cpputils::serialization
 			}
 		}
 		m_stream << '\n';
+		return *this;
 	}
 
 }
