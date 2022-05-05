@@ -105,11 +105,11 @@ namespace cpputils::collections
 		const_reverse_iterator crend() const;
 		const_reverse_iterator rend() const;
 
-		std::size_t size() const;
+		auto size() const;
 		bool empty() const;
 
-		TDereferenceResult operator[](std::size_t _index);
-		TDereferenceConstResult operator[](std::size_t _index) const;
+		TDereferenceResult operator[](iterator::difference_type _index);
+		TDereferenceConstResult operator[](const_iterator::difference_type _index) const;
 
 		TDereferenceResult first(const Predicate& _predicate = truePredicate);
 		TDereferenceConstResult cfirst(const PredicateConst& _predicate = truePredicateConst) const;
@@ -123,17 +123,17 @@ namespace cpputils::collections
 		TDereferenceConstResult csingle(const PredicateConst& _predicate = truePredicateConst) const;
 		TDereferenceConstResult single(const PredicateConst& _predicate = truePredicateConst) const;
 
-		TDereferenceResult first(TDereferenceResult& _else, const Predicate& _predicate = truePredicate);
-		TDereferenceConstResult cfirst(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
-		TDereferenceConstResult first(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceResult first(TDereferenceResult&& _else, const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult cfirst(TDereferenceConstResult&& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult first(TDereferenceConstResult&& _else, const PredicateConst& _predicate = truePredicateConst) const;
 
-		TDereferenceResult last(TDereferenceResult& _else, const Predicate& _predicate = truePredicate);
-		TDereferenceConstResult clast(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
-		TDereferenceConstResult last(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceResult last(TDereferenceResult&& _else, const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult clast(TDereferenceConstResult&& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult last(TDereferenceConstResult&& _else, const PredicateConst& _predicate = truePredicateConst) const;
 
-		TDereferenceResult single(TDereferenceResult& _else, const Predicate& _predicate = truePredicate);
-		TDereferenceConstResult csingle(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
-		TDereferenceConstResult single(TDereferenceConstResult& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceResult single(TDereferenceResult&& _else, const Predicate& _predicate = truePredicate);
+		TDereferenceConstResult csingle(TDereferenceConstResult&& _else, const PredicateConst& _predicate = truePredicateConst) const;
+		TDereferenceConstResult single(TDereferenceConstResult&& _else, const PredicateConst& _predicate = truePredicateConst) const;
 
 		std::size_t count(const Predicate& _predicate);
 		std::size_t count(const PredicateConst& _predicate) const;

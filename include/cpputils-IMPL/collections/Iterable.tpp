@@ -5,7 +5,9 @@
 #include <cpputils/collections/Iterable.hpp>
 
 #include <memory>
+#include <utility>
 #include <stdexcept>
+#include <iterator>
 
 #define CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE \
 template<\
@@ -255,25 +257,25 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		std::size_t CPPUTILS_COLLECTIONS_ITERABLE::size() const
+		auto CPPUTILS_COLLECTIONS_ITERABLE::size() const
 	{
-		return iterable().size();
+		return std::size(iterable());
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
 		bool CPPUTILS_COLLECTIONS_ITERABLE::empty() const
 	{
-		return iterable().empty();
+		return std::empty(iterable());
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](std::size_t _index)
+		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](iterator::difference_type _index)
 	{
 		return begin()[_index];
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](std::size_t _index) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](const_iterator::difference_type _index) const
 	{
 		return cbegin()[_index];
 	}
@@ -371,63 +373,63 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceResult& _else, const Predicate& _predicate)
+		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceResult&& _else, const Predicate& _predicate)
 	{
 		iterator it{ end() };
 		return tryFirst(it, _predicate) ? *it : _else;
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::cfirst(TDereferenceConstResult& _else, const PredicateConst& _predicate) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::cfirst(TDereferenceConstResult&& _else, const PredicateConst& _predicate) const
 	{
 		const_iterator it{ end() };
 		return tryCFirst(it, _predicate) ? *it : _else;
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceConstResult& _else, const PredicateConst& _predicate) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::first(TDereferenceConstResult&& _else, const PredicateConst& _predicate) const
 	{
-		return cfirst(_else, _predicate);
+		return cfirst(std::forward<TDereferenceConstResult>(_else), _predicate);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceResult& _else, const Predicate& _predicate)
+		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceResult&& _else, const Predicate& _predicate)
 	{
 		reverse_iterator it{ end() };
 		return tryLast(it, _predicate) ? *it : _else;
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::clast(TDereferenceConstResult& _else, const PredicateConst& _predicate) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::clast(TDereferenceConstResult&& _else, const PredicateConst& _predicate) const
 	{
 		const_reverse_iterator it{ end() };
 		return tryCLast(it, _predicate) ? *it : _else;
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceConstResult& _else, const PredicateConst& _predicate) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::last(TDereferenceConstResult&& _else, const PredicateConst& _predicate) const
 	{
-		return clast(_else, _predicate);
+		return clast(std::forward<TDereferenceConstResult>(_else), _predicate);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceResult& _else, const Predicate& _predicate)
+		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceResult&& _else, const Predicate& _predicate)
 	{
 		iterator it{ end() };
 		return trySingle(it, _predicate) ? *it : _else;
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::csingle(TDereferenceConstResult& _else, const PredicateConst& _predicate) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::csingle(TDereferenceConstResult&& _else, const PredicateConst& _predicate) const
 	{
 		const_iterator it{ end() };
 		return tryCSingle(it, _predicate) ? *it : _else;
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceConstResult& _else, const PredicateConst& _predicate) const
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::single(TDereferenceConstResult&& _else, const PredicateConst& _predicate) const
 	{
-		return csingle(_else, _predicate);
+		return csingle(std::forward<TDereferenceConstResult>(_else), _predicate);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
