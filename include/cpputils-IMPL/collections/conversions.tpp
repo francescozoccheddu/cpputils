@@ -21,7 +21,7 @@ namespace cpputils::collections::conversions
 	>
 		std::array<TOutputType, TSize> toArray(TFromIterable&& _from)
 	{
-		std::array<TOutputType, TSize> to{};
+		std::array<TOutputType, TSize> to;
 		copy<TFromIterable, std::array<TOutputType, TSize>, TOutputType, TConverter, TThrowIfFromIsSmaller, TThrowIfToIsLarger>(std::forward<TFromIterable>(_from), to);
 		return to;
 	}
