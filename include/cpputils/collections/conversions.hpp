@@ -18,14 +18,14 @@ namespace cpputils::collections::conversions
 		bool TThrowIfFromIsSmaller = true,
 		bool TThrowIfToIsLarger = true
 	>
-		std::array<TOutputType, TSize> toArray(TFromIterable& _iterable);
+		std::array<TOutputType, TSize> toArray(TFromIterable&& _iterable);
 
 	template<
 		typename TFromIterable,
 		typename TOutputType = typename types::Iterator<TFromIterable>::value_type,
 		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>) = types::cast<types::DereferenceResult<types::Iterator<TFromIterable>>, TOutputType>
 	>
-		std::vector<TOutputType> toVector(TFromIterable& _iterable);
+		std::vector<TOutputType> toVector(TFromIterable&& _iterable);
 
 	template<
 		typename TFromIterable,
@@ -35,7 +35,7 @@ namespace cpputils::collections::conversions
 		bool TThrowIfFromIsSmaller = true,
 		bool TThrowIfToIsLarger = true
 	>
-		void copy(TFromIterable& _from, TToIterable& _to);
+		void copy(TFromIterable&& _from, TToIterable& _to);
 
 }
 

@@ -6,6 +6,7 @@
 
 #include <stdexcept>
 #include <iterator>
+#include <utility>
 
 namespace cpputils::collections::conversions
 {
@@ -18,10 +19,10 @@ namespace cpputils::collections::conversions
 		bool TThrowIfFromIsSmaller,
 		bool TThrowIfToIsLarger
 	>
-		std::array<TOutputType, TSize> toArray(TFromIterable& _from)
+		std::array<TOutputType, TSize> toArray(TFromIterable&& _from)
 	{
 		std::array<TOutputType, TSize> to{};
-		copy<TFromIterable, std::array<TOutputType, TSize>, TOutputType, TConverter, TThrowIfFromIsSmaller, TThrowIfToIsLarger>(_from, to);
+		copy<TFromIterable, std::array<TOutputType, TSize>, TOutputType, TConverter, TThrowIfFromIsSmaller, TThrowIfToIsLarger>(std::forward<TFromIterable>(_from), to);
 		return to;
 	}
 
@@ -30,10 +31,10 @@ namespace cpputils::collections::conversions
 		typename TOutputType,
 		TOutputType(*TConverter)(types::DereferenceResult<types::Iterator<TFromIterable>>)
 	>
-		std::vector<TOutputType> toVector(TFromIterable& _from)
+		std::vector<TOutputType> toVector(TFromIterable&& _from)
 	{
 		std::vector<TOutputType> to(std::size(_from));
-		copy<TFromIterable, std::vector<TOutputType>, TOutputType, TConverter>(_from, to);
+		copy<TFromIterable, std::vector<TOutputType>, TOutputType, TConverter>(std::forward<TFromIterable>(_from), to);
 		return to;
 	}
 
@@ -45,7 +46,7 @@ namespace cpputils::collections::conversions
 		bool TThrowIfToIsSmaller,
 		bool TThrowIfToIsLarger
 	>
-		void copy(TFromIterable& _from, TToIterable& _to)
+		void copy(TFromIterable&& _from, TToIterable& _to)
 	{
 		const std::size_t fromSize{ std::size(_from) };
 		const std::size_t toSize{ std::size(_to) };
