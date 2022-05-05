@@ -7,7 +7,7 @@
 namespace cpputils::collections
 {
 
-	template<
+	template <
 		typename TIterable,
 		typename TDereferenceResult,
 		typename TDereferenceConstResult
@@ -18,8 +18,8 @@ namespace cpputils::collections
 		TIterable,
 		TDereferenceResult,
 		TDereferenceConstResult,
-		types::dereferenceAndCast<types::DereferenceResult<types::Iterator<TIterable>>, TDereferenceResult>,
-		types::dereferenceAndCast<types::DereferenceResult<types::ConstIterator<TIterable>>, TDereferenceConstResult>
+		types::dereferenceAndCast<types::DereferenceResult<types::BeginResult<TIterable>>, TDereferenceResult>,
+		types::dereferenceAndCast<types::DereferenceResult<types::BeginResult<const TIterable>>, TDereferenceConstResult>
 		>
 	{ _iterable }
 	{}

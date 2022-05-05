@@ -1,17 +1,17 @@
 #ifndef CPPUTILS_COLLECTIONS_DEREFERENCEITERABLE_INCLUDED
 #define CPPUTILS_COLLECTIONS_DEREFERENCEITERABLE_INCLUDED
 
-#include <cpputils/collections/types.hpp>
+#include <cpputils/collections/DereferenceIterator.hpp>
 #include <cpputils/collections/Iterable.hpp>
 #include <type_traits>
 
 namespace cpputils::collections
 {
 
-	template<
+	template <
 		typename TIterable,
-		typename TDereferenceResult = std::remove_pointer_t<std::remove_reference_t<types::DereferenceResult<types::Iterator<TIterable>>>>&,
-		typename TDereferenceConstResult = std::remove_pointer_t<std::remove_reference_t<types::DereferenceResult<types::ConstIterator<TIterable>>>>&
+		typename TDereferenceResult = std::remove_pointer_t<std::remove_reference_t<types::DereferenceResult<types::BeginResult<TIterable>>>>&,
+		typename TDereferenceConstResult = std::remove_pointer_t<std::remove_reference_t<types::DereferenceResult<types::BeginResult<const TIterable>>>>&
 	>
 		class DereferenceIterable
 		: public collections::Iterable
@@ -19,8 +19,8 @@ namespace cpputils::collections
 		TIterable,
 		TDereferenceResult,
 		TDereferenceConstResult,
-		types::dereferenceAndCast<types::DereferenceResult<types::Iterator<TIterable>>, TDereferenceResult>,
-		types::dereferenceAndCast<types::DereferenceResult<types::ConstIterator<TIterable>>, TDereferenceConstResult>
+		types::dereferenceAndCast<types::DereferenceResult<types::BeginResult<TIterable>>, TDereferenceResult>,
+		types::dereferenceAndCast<types::DereferenceResult<types::BeginResult<const TIterable>>, TDereferenceConstResult>
 		>
 	{
 

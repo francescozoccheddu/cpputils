@@ -11,13 +11,13 @@ namespace cpputils::collections
 	namespace types
 	{
 
-		template<typename TFrom, typename TTo>
+		template <typename TFrom, typename TTo>
 		inline constexpr TTo dereferenceAndCast(TFrom _from);
 
 	}
 
-	template<
-		std::input_or_output_iterator TIterator,
+	template <
+		typename TIterator,
 		typename TDereferenceResult = std::remove_pointer_t<std::remove_reference_t<types::DereferenceResult<const TIterator>>>&
 	>
 		class DereferenceIterator : public collections::Iterator <TIterator, TDereferenceResult, types::dereferenceAndCast<types::DereferenceResult<const TIterator>, TDereferenceResult>>

@@ -12,29 +12,29 @@ namespace cpputils::collections
 	namespace types
 	{
 
-		template<typename TFrom, typename TTo>
+		template <typename TFrom, typename TTo>
 		inline constexpr TTo cast(TFrom _from);
 
 		namespace internal
 		{
 
-			template<typename TIterator, typename = void>
+			template <typename TIterator, typename = void>
 			struct CategoryStruct final : public mixins::StaticClass { using Type = std::random_access_iterator_tag; };
 
-			template<typename TIterator>
+			template <typename TIterator>
 			struct CategoryStruct<TIterator, std::void_t<typename TIterator::iterator_category>> final : public mixins::StaticClass { using Type = typename TIterator::iterator_category; };
 
 		}
 
-		template<typename TIterator>
+		template <typename TIterator>
 		using DereferenceResult = decltype(*std::declval<TIterator&>());
 
-		template<typename TIterator>
+		template <typename TIterator>
 		using Category = typename internal::CategoryStruct<TIterator>::Type;
 
 	}
 
-	template<
+	template <
 		std::input_or_output_iterator TIterator,
 		typename TDereferenceResult,
 		TDereferenceResult(*)(types::DereferenceResult<const TIterator>)
@@ -44,13 +44,13 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		template<std::input_or_output_iterator TIterator>
+		template <std::input_or_output_iterator TIterator>
 		class IteratorBase
 		{
 
 		private:
 
-			template<
+			template <
 				std::input_or_output_iterator TIteratorIterator,
 				typename TDereferenceResult,
 				TDereferenceResult(*)(types::DereferenceResult<const TIteratorIterator>)
@@ -70,10 +70,10 @@ namespace cpputils::collections
 
 	}
 
-	template<
+	template <
 		std::input_or_output_iterator TIterator,
 		typename TDereferenceResult = types::DereferenceResult<const TIterator>,
-		TDereferenceResult(*TConverter)(types::DereferenceResult<const TIterator>) = types::cast<types::DereferenceResult<const TIterator>, TDereferenceResult>
+		TDereferenceResult(*TConvert)(types::DereferenceResult<const TIterator>) = types::cast<types::DereferenceResult<const TIterator>, TDereferenceResult>
 	>
 		class Iterator : public internal::IteratorBase<TIterator>
 	{

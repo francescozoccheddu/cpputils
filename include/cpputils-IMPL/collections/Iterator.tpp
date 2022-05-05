@@ -9,14 +9,14 @@
 #include <memory>
 
 #define CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE \
-template<\
+template <\
 	std::input_or_output_iterator TIterator,\
 	typename TDereferenceResult,\
-	TDereferenceResult(*TConverter)(types::DereferenceResult<const TIterator>)\
+	TDereferenceResult(*TConvert)(types::DereferenceResult<const TIterator>)\
 >
 
 #define CPPUTILS_COLLECTIONS_ITERATOR \
-Iterator<TIterator, TDereferenceResult, TConverter>
+Iterator<TIterator, TDereferenceResult, TConvert>
 
 namespace cpputils::collections
 {
@@ -24,7 +24,7 @@ namespace cpputils::collections
 	namespace types
 	{
 
-		template<typename TFrom, typename TTo>
+		template <typename TFrom, typename TTo>
 		inline constexpr TTo cast(TFrom _from)
 		{
 			return (TTo)(_from);
@@ -35,12 +35,12 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		template<std::input_or_output_iterator TIterator>
+		template <std::input_or_output_iterator TIterator>
 		IteratorBase<TIterator>::IteratorBase(const TIterator& _iterator)
 			: m_iterator{ _iterator }
 		{}
 
-		template<std::input_or_output_iterator TIterator>
+		template <std::input_or_output_iterator TIterator>
 		IteratorBase<TIterator>::IteratorBase(TIterator&& _iterator)
 			: m_iterator{ std::move(_iterator) }
 		{}
@@ -75,7 +75,7 @@ namespace cpputils::collections
 		CPPUTILS_COLLECTIONS_ITERATOR::reference
 		CPPUTILS_COLLECTIONS_ITERATOR::operator*() const
 	{
-		return TConverter(*iterator());
+		return TConvert(*iterator());
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
@@ -89,7 +89,7 @@ namespace cpputils::collections
 		CPPUTILS_COLLECTIONS_ITERATOR::reference
 		CPPUTILS_COLLECTIONS_ITERATOR::operator[](difference_type _offset) const requires std::random_access_iterator<TIterator>
 	{
-		return TConverter(*(iterator() + _offset));
+		return TConvert(*(iterator() + _offset));
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
