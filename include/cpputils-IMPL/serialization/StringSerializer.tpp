@@ -7,24 +7,24 @@
 namespace cpputils::serialization
 {
 
-	template <concepts::Serializer TSerializer>
+	template <cpputils::concepts::DerivedSimpleClass<Serializer> TSerializer>
 	StringSerializer<TSerializer>::StringSerializer()
 		: m_stream{}, m_serializer{ m_stream }
 	{}
 
-	template <concepts::Serializer TSerializer>
+	template <cpputils::concepts::DerivedSimpleClass<Serializer> TSerializer>
 	std::string StringSerializer<TSerializer>::string() const
 	{
 		return m_stream.str();
 	}
 
-	template <concepts::Serializer TSerializer>
+	template <cpputils::concepts::DerivedSimpleClass<Serializer> TSerializer>
 	TSerializer& StringSerializer<TSerializer>::serializer()
 	{
 		return m_serializer;
 	}
 
-	template <concepts::Serializer TSerializer>
+	template <cpputils::concepts::DerivedSimpleClass<Serializer> TSerializer>
 	const TSerializer& StringSerializer<TSerializer>::serializer() const
 	{
 		return m_serializer;

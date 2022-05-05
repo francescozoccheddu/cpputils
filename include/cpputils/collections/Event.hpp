@@ -3,13 +3,15 @@
 
 #include <cpputils/mixins/ReferenceClass.hpp>
 #include <cpputils/mixins/StaticClass.hpp>
+#include <cpputils/concepts.hpp>
 #include <functional>
+#include <concepts>
 #include <unordered_set>
 
 namespace cpputils::collections
 {
 
-	template <typename TInvoker, typename ...>
+	template <cpputils::concepts::SimpleClass TInvoker, typename ...>
 	class Event;
 
 	namespace internal
@@ -27,7 +29,7 @@ namespace cpputils::collections
 
 		private:
 
-			template <typename TInvoker, typename ...>
+			template <cpputils::concepts::SimpleClass TInvoker, typename ...>
 			friend class collections::Event;
 
 			std::unordered_set<Handler*> m_handlers{};
@@ -45,7 +47,7 @@ namespace cpputils::collections
 
 	}
 
-	template <typename TInvoker, typename ... TArgs>
+	template <cpputils::concepts::SimpleClass TInvoker, typename ... TArgs>
 	class Event final : public internal::EventBase<TArgs ...>
 	{
 
@@ -53,13 +55,13 @@ namespace cpputils::collections
 
 		friend TInvoker;
 
-		void operator()(TArgs... _args) requires (!std::is_same_v<TInvoker, internal::AnyEventInvoker>);
+		void operator()(TArgs... _args) requires (!std::same_as<TInvoker, internal::AnyEventInvoker>);
 
 	public:
 
 		Event() = default;
 
-		void operator()(TArgs... _args) requires std::is_same_v<TInvoker, internal::AnyEventInvoker>;
+		void operator()(TArgs... _args) requires std::same_as<TInvoker, internal::AnyEventInvoker>;
 
 	};
 

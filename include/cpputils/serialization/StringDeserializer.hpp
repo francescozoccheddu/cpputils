@@ -2,22 +2,14 @@
 #define CPPUTILS_SERIALIZATION_STRINGDESERIALIZER_INCLUDED
 
 #include <cpputils/serialization/Deserializer.hpp>
-#include <type_traits>
+#include <cpputils/concepts.hpp>
 #include <sstream>
 #include <string>
 
 namespace cpputils::serialization
 {
 
-	namespace concepts
-	{
-
-		template <typename TDeserializer> 
-		concept Deserializer = requires std::is_base_of_v<serialization::Deserializer, TDeserializer>;
-
-	}
-
-	template <concepts::Deserializer TDeserializer
+	template <cpputils::concepts::DerivedSimpleClass<Deserializer> TDeserializer = Deserializer>
 	class StringDeserializer final
 	{
 

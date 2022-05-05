@@ -2,22 +2,14 @@
 #define CPPUTILS_SERIALIZATION_STRINGSERIALIZER_INCLUDED
 
 #include <cpputils/serialization/Serializer.hpp>
-#include <type_traits>
+#include <cpputils/concepts.hpp>
 #include <sstream>
 #include <string>
 
 namespace cpputils::serialization
 {
 
-	namespace concepts
-	{
-
-		template <typename TSerializer>
-		concept Serializer = std::is_base_of_v<serialization::Serializer, TSerializer>;
-
-	}
-
-	template <concepts::Serializer TSerializer = Serializer>
+	template <cpputils::concepts::DerivedSimpleClass<Serializer> TSerializer = Serializer>
 	class StringSerializer final
 	{
 
@@ -32,8 +24,8 @@ namespace cpputils::serialization
 
 		std::string string() const;
 
-		template <concepts::Serializer TSerializerSerializer>
-		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TSerializerSerializer>& _serializer)
+		template <cpputils::concepts::DerivedSimpleClass<Serializer> TOtherSerializer>
+		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TOtherSerializer>& _serializer)
 		{
 			return _stream << _serializer.string();
 		}

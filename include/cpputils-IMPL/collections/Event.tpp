@@ -33,14 +33,14 @@ namespace cpputils::collections
 
 	}
 
-	template <typename TInvoker, typename ... TArgs>
-	void Event<TInvoker, TArgs...>::operator()(TArgs..._args) requires (!std::is_same_v<TInvoker, internal::AnyEventInvoker>)
+	template <cpputils::concepts::SimpleClass TInvoker, typename ... TArgs>
+	void Event<TInvoker, TArgs...>::operator()(TArgs..._args) requires (!std::same_as<TInvoker, internal::AnyEventInvoker>)
 	{
 		internal::EventBase<TArgs...>::operator()(_args ...);
 	}
 
-	template <typename TInvoker, typename ... TArgs>
-	void Event<TInvoker, TArgs...>::operator()(TArgs..._args) requires std::is_same_v<TInvoker, internal::AnyEventInvoker>
+	template <cpputils::concepts::SimpleClass TInvoker, typename ... TArgs>
+	void Event<TInvoker, TArgs...>::operator()(TArgs..._args) requires std::same_as<TInvoker, internal::AnyEventInvoker>
 	{
 		internal::EventBase<TArgs...>::operator()(_args ...);
 	}
