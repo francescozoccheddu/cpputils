@@ -27,7 +27,7 @@ namespace cpputils::collections
 	namespace algorithms
 	{
 
-		template <std::input_or_output_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
+		template <std::forward_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
 		bool first(TIterator&& _begin, const TIterator& _end, TIterator& _result, TPredicate&& _predicate)
 		{
 			TIterator it{ _begin };
@@ -44,7 +44,7 @@ namespace cpputils::collections
 			return false;
 		}
 
-		template <std::input_or_output_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
+		template <std::forward_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
 		std::size_t single(TIterator&& _begin, const TIterator& _end, TIterator& _result, TPredicate&& _predicate)
 		{
 			TIterator it{ _begin };
@@ -70,7 +70,7 @@ namespace cpputils::collections
 			return 0;
 		}
 
-		template <std::input_or_output_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
+		template <std::forward_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
 		std::size_t count(TIterator&& _begin, const TIterator& _end, TPredicate&& _predicate)
 		{
 			TIterator it{ _begin };
@@ -83,7 +83,7 @@ namespace cpputils::collections
 			return count;
 		}
 
-		template <std::input_or_output_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
+		template <std::forward_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
 		bool any(TIterator&& _begin, const TIterator& _end, TPredicate&& _predicate)
 		{
 			TIterator it{ _begin };
@@ -98,7 +98,7 @@ namespace cpputils::collections
 			return false;
 		}
 
-		template <std::input_or_output_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
+		template <std::forward_iterator TIterator, std::predicate<const types::DereferenceResult<TIterator>&> TPredicate >
 		bool all(TIterator&& _begin, const TIterator& _end, TPredicate&& _predicate)
 		{
 			TIterator it{ _begin };

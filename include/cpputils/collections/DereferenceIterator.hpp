@@ -25,6 +25,7 @@ namespace cpputils::collections
 
 	public:
 
+		DereferenceIterator() = default;
 		DereferenceIterator(const TIterator& _iterator);
 		DereferenceIterator(TIterator&& _iterator);
 

@@ -59,6 +59,7 @@ namespace cpputils::collections
 
 			TIterator m_iterator;
 
+			IteratorBase() = default;
 			IteratorBase(const TIterator& _iterator);
 			IteratorBase(TIterator&& _iterator);
 
@@ -91,6 +92,7 @@ namespace cpputils::collections
 		using difference_type = std::iter_difference_t<TIterator>;
 		using iterator_category = types::Category<TIterator>;
 
+		Iterator() = default;
 		Iterator(const TIterator& _iterator);
 		Iterator(TIterator&& _iterator);
 
