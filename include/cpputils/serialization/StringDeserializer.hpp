@@ -9,7 +9,15 @@
 namespace cpputils::serialization
 {
 
-	template<typename TDeserializer = Deserializer> requires std::is_base_of_v<Deserializer, TDeserializer>
+	namespace concepts
+	{
+
+		template<typename TDeserializer> 
+		concept Deserializer = requires std::is_base_of_v<serialization::Deserializer, TDeserializer>;
+
+	}
+
+	template<concepts::Deserializer TDeserializer
 	class StringDeserializer final
 	{
 

@@ -9,7 +9,15 @@
 namespace cpputils::serialization
 {
 
-	template<typename TSerializer = Serializer> requires std::is_base_of_v<Serializer, TSerializer>
+	namespace concepts
+	{
+
+		template<typename TSerializer>
+		concept Serializer = std::is_base_of_v<serialization::Serializer, TSerializer>;
+
+	}
+
+	template<concepts::Serializer TSerializer = Serializer>
 	class StringSerializer final
 	{
 
@@ -24,7 +32,7 @@ namespace cpputils::serialization
 
 		std::string string() const;
 
-		template<typename TSerializerSerializer> requires std::is_base_of_v<Serializer, TSerializer>
+		template<concepts::Serializer TSerializerSerializer>
 		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TSerializerSerializer>& _serializer)
 		{
 			return _stream << _serializer.string();
