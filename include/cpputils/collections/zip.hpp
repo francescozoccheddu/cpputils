@@ -87,7 +87,7 @@ namespace cpputils::collections
 
 		private:
 
-			std::tuple<TIterable, TIterables&...> m_iterables;
+			std::tuple<TIterable&, TIterables&...> m_iterables;
 
 		public:
 
