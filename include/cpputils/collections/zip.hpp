@@ -19,30 +19,6 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		template <typename TIterable, typename = void>
-		struct BeginResultTypeStruct final : public mixins::StaticClass { using Type = void; };
-
-		template <typename TIterable> requires concepts::HasBegin<TIterable>
-		struct BeginResultTypeStruct<TIterable, void> final : public mixins::StaticClass { using Type = types::BeginResult<TIterable>; };
-
-		template <typename TIterable, typename = void>
-		struct CBeginResultTypeStruct final : public mixins::StaticClass { using Type = void; };
-
-		template <typename TIterable> requires concepts::HasCBegin<TIterable>
-		struct CBeginResultTypeStruct<TIterable, void> final : public mixins::StaticClass { using Type = types::CBeginResult<TIterable>; };
-
-		template <typename TIterable, typename = void>
-		struct RBeginResultTypeStruct final : public mixins::StaticClass { using Type = void; };
-
-		template <typename TIterable> requires concepts::HasRBegin<TIterable>
-		struct RBeginResultTypeStruct<TIterable, void> final : public mixins::StaticClass { using Type = types::RBeginResult<TIterable>; };
-
-		template <typename TIterable, typename = void>
-		struct CRBeginResultTypeStruct final : public mixins::StaticClass { using Type = void; };
-
-		template <typename TIterable> requires concepts::HasCRBegin<TIterable>
-		struct CRBeginResultTypeStruct<TIterable, void> final : public mixins::StaticClass { using Type = types::CRBeginResult<TIterable>; };
-
 		template <std::input_or_output_iterator TIterator, std::input_or_output_iterator... TIterators>
 		class ZipIterator final
 		{
@@ -81,6 +57,30 @@ namespace cpputils::collections
 
 		};
 
+		template <typename TIterable, typename TIterables, typename = void>
+		struct BeginZipIteratorTypeStruct final : public mixins::StaticClass { using Type = void; };
+
+		template <typename TIterable, typename... TIterables> requires concepts::HasBegin<TIterable>
+		struct BeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...>, void> final : public mixins::StaticClass { using Type = ZipIterator<types::BeginResult<TIterable>, types::BeginResult<TIterables>...>; };
+
+		template <typename TIterable, typename TIterables, typename = void>
+		struct CBeginZipIteratorTypeStruct final : public mixins::StaticClass { using Type = void; };
+
+		template <typename TIterable, typename... TIterables> requires concepts::HasCBegin<TIterable>
+		struct CBeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...>, void> final : public mixins::StaticClass { using Type = ZipIterator<types::CBeginResult<TIterable>, types::BeginResult<TIterables>...>; };
+
+		template <typename TIterable, typename TIterables, typename = void>
+		struct RBeginZipIteratorTypeStruct final : public mixins::StaticClass { using Type = void; };
+
+		template <typename TIterable, typename... TIterables> requires concepts::HasRBegin<TIterable>
+		struct RBeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...>, void> final : public mixins::StaticClass { using Type = ZipIterator<types::RBeginResult<TIterable>, types::BeginResult<TIterables>...>; };
+
+		template <typename TIterable, typename TIterables, typename = void>
+		struct CRBeginZipIteratorTypeStruct final : public mixins::StaticClass { using Type = void; };
+
+		template <typename TIterable, typename... TIterables> requires concepts::HasCRBegin<TIterable>
+		struct CRBeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...>, void> final : public mixins::StaticClass { using Type = ZipIterator<types::CRBeginResult<TIterable>, types::BeginResult<TIterables>...>; };
+
 		template <typename TIterable, typename... TIterables>
 		class ZipIterable final
 		{
@@ -91,10 +91,10 @@ namespace cpputils::collections
 
 		public:
 
-			using iterator = ZipIterator<typename BeginResultTypeStruct<TIterable>::Type, typename BeginResultTypeStruct<TIterables>::Type...>;
-			using const_iterator = ZipIterator<typename CBeginResultTypeStruct<const TIterable>::Type, typename CBeginResultTypeStruct<const TIterables>::Type...>;
-			using reverse_iterator = ZipIterator<typename RBeginResultTypeStruct<TIterable>::Type, typename RBeginResultTypeStruct<TIterables>::Type...>;
-			using const_reverse_iterator = ZipIterator<typename CRBeginResultTypeStruct<const TIterable>::Type, typename CRBeginResultTypeStruct<const TIterables>::Type...>;
+			using iterator = typename BeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...> >::Type;
+			using const_iterator = typename CBeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...> >::Type;
+			using reverse_iterator = typename RBeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...> >::Type;
+			using const_reverse_iterator = typename CRBeginZipIteratorTypeStruct<TIterable, std::tuple<TIterables...>>::Type;
 
 			ZipIterable(TIterable& _iterable, TIterables&... _iterables);
 
