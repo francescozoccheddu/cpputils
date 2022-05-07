@@ -77,10 +77,10 @@ namespace cpputils::serialization
 		return *this;
 	}
 
-	template <typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_const_t<TType>, std::string>
+	template <typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_cv_t<TType>, std::string>
 	inline TType Deserializer::get()
 	{
-		std::remove_const_t<TType> data;
+		std::remove_cv_t<TType> data;
 		*this >> data;
 		return data;
 	}
