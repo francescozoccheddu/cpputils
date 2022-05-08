@@ -4,84 +4,28 @@
 
 #include <cpputils/serialization/Deserializer.hpp>
 
-#include <type_traits>
-#include <sstream>
-#include <stdexcept>
-
 namespace cpputils::serialization
 {
 
-	inline Deserializer::Deserializer(std::istream& _stream)
-		: m_stream{ _stream }
+	template<concepts::DeserializerWorker TWorker>
+	Deserializer<TWorker>::Deserializer(std::istream& _stream)
+		: m_worker{ _stream }
 	{}
 
-	template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
-	inline Deserializer& Deserializer::operator>>(TArithmetic& _data)
+	template<concepts::DeserializerWorker TWorker>
+	template<typename TData>
+	Deserializer<TWorker>& Deserializer<TWorker>::operator>>(TData& _data)
 	{
-		std::string data;
-		*this >> data;
-		std::istringstream stream{ data };
-		stream >> _data;
+		m_worker >> _data;
 		return *this;
 	}
 
-	template <typename TEnum> requires std::is_enum_v<TEnum> && (!std::is_const_v<TEnum>)
-	Deserializer& Deserializer::operator>>(TEnum& _data)
+	template<concepts::DeserializerWorker TWorker>
+	template<typename TData>
+	TData Deserializer<TWorker>::get()
 	{
-		std::underlying_type_t<TEnum> underlying;
-		*this >> underlying;
-		_data = static_cast<TEnum>(underlying);
-		return *this;
-	}
-
-	inline Deserializer& Deserializer::operator>>(std::string& _data)
-	{
-		std::ostringstream data{};
-		bool escaped{ false };
-		char c;
-		while ((c = m_stream.get()) != '\n')
-		{
-			if (escaped)
-			{
-				escaped = false;
-				switch (c)
-				{
-					case '\\':
-						data << '\\';
-						break;
-					case 'n':
-						data << '\n';
-						break;
-					case '0':
-						data << '\0';
-						break;
-					default:
-						throw std::logic_error{ "unknown escape" };
-						break;
-				}
-			}
-			else
-			{
-				switch (c)
-				{
-					case '\\':
-						escaped = true;
-						break;
-					default:
-						data << c;
-						break;
-				}
-			}
-		}
-		_data = data.str();
-		return *this;
-	}
-
-	template <typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_cv_t<TType>, std::string>
-	inline TType Deserializer::get()
-	{
-		std::remove_cv_t<TType> data;
-		*this >> data;
+		TData data;
+		m_worker >> data;
 		return data;
 	}
 

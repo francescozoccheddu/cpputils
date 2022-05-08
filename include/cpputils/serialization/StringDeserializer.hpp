@@ -1,6 +1,8 @@
 #ifndef CPPUTILS_SERIALIZATION_STRINGDESERIALIZER_INCLUDED
 #define CPPUTILS_SERIALIZATION_STRINGDESERIALIZER_INCLUDED
 
+#include <cpputils/mixins/ReferenceClass.hpp>
+#include <cpputils/serialization/DeserializerWorker.hpp>
 #include <cpputils/serialization/Deserializer.hpp>
 #include <cpputils/concepts.hpp>
 #include <sstream>
@@ -9,21 +11,24 @@
 namespace cpputils::serialization
 {
 
-	template <cpputils::concepts::DerivedSimpleClass<Deserializer> TDeserializer = Deserializer>
-	class StringDeserializer final
+	template <concepts::DeserializerWorker TWorker = DeserializerWorker>
+	class StringDeserializer final : public mixins::ReferenceClass
 	{
 
 	private:
 
 		std::istringstream m_stream;
-		TDeserializer m_deserializer;
+		TWorker m_worker;
 
 	public:
 
 		explicit StringDeserializer(const std::string& _string);
 
-		TDeserializer& deserializer();
-		const TDeserializer& deserializer() const;
+		template<typename TData>
+		StringDeserializer& operator>>(TData& _data);
+
+		template<typename TData>
+		TData get();
 
 	};
 

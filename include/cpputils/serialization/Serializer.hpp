@@ -2,31 +2,37 @@
 #define CPPUTILS_SERIALIZATION_SERIALIZER_INCLUDED
 
 #include <cpputils/mixins/ReferenceClass.hpp>
+#include <cpputils/serialization/SerializerWorker.hpp>
+#include <cpputils/concepts.hpp>
+#include <concepts>
 #include <type_traits>
-#include <string>
 #include <ostream>
 
 namespace cpputils::serialization
 {
 
-	class Serializer : public virtual mixins::ReferenceClass
+	namespace concepts
+	{
+
+		template<typename TWorker>
+		concept SerializerWorker = cpputils::concepts::DerivedSimpleClass<TWorker, serialization::SerializerWorker> && std::constructible_from<TWorker, std::ostream&>;
+
+	}
+
+	template<concepts::SerializerWorker TWorker = SerializerWorker>
+	class Serializer final : public mixins::ReferenceClass
 	{
 
 	private:
 
-		std::ostream& m_stream;
+		TWorker m_worker;
 
 	public:
 
-		inline explicit Serializer(std::ostream& _stream);
+		explicit Serializer(std::ostream& _stream);
 
-		template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
-		Serializer& operator<<(TArithmetic _data);
-
-		template <typename TEnum> requires std::is_enum_v<TEnum>
-		Serializer& operator<<(TEnum _data);
-
-		inline Serializer& operator<<(const std::string& _data);
+		template<typename TData>
+		Serializer& operator<<(const TData& _data);
 
 	};
 

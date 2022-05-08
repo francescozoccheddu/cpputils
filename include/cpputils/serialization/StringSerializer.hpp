@@ -1,6 +1,8 @@
 #ifndef CPPUTILS_SERIALIZATION_STRINGSERIALIZER_INCLUDED
 #define CPPUTILS_SERIALIZATION_STRINGSERIALIZER_INCLUDED
 
+#include <cpputils/mixins/ReferenceClass.hpp>
+#include <cpputils/serialization/SerializerWorker.hpp>
 #include <cpputils/serialization/Serializer.hpp>
 #include <cpputils/concepts.hpp>
 #include <sstream>
@@ -9,14 +11,14 @@
 namespace cpputils::serialization
 {
 
-	template <cpputils::concepts::DerivedSimpleClass<Serializer> TSerializer = Serializer>
-	class StringSerializer final
+	template <concepts::SerializerWorker TWorker = SerializerWorker>
+	class StringSerializer final : public mixins::ReferenceClass
 	{
 
 	private:
 
 		std::ostringstream m_stream;
-		TSerializer m_serializer;
+		TWorker m_worker;
 
 	public:
 
@@ -24,14 +26,15 @@ namespace cpputils::serialization
 
 		std::string string() const;
 
-		template <cpputils::concepts::DerivedSimpleClass<Serializer> TOtherSerializer>
-		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TOtherSerializer>& _serializer)
+		operator std::string() const;
+
+		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TWorker>& _serializer)
 		{
 			return _stream << _serializer.string();
 		}
 
-		TSerializer& serializer();
-		const TSerializer& serializer() const;
+		template<typename TData>
+		StringSerializer& operator<<(const TData& _data);
 
 	};
 

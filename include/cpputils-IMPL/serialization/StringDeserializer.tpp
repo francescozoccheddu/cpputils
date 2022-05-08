@@ -7,21 +7,26 @@
 namespace cpputils::serialization
 {
 
-	template <cpputils::concepts::DerivedSimpleClass<Deserializer> TDeserializer>
-	StringDeserializer<TDeserializer>::StringDeserializer(const std::string& _string)
-		: m_stream{ _string }, m_deserializer{ m_stream }
+	template <concepts::DeserializerWorker TWorker>
+	StringDeserializer<TWorker>::StringDeserializer(const std::string& _string)
+		: m_stream{ _string }, m_worker{ m_stream }
 	{}
 
-	template <cpputils::concepts::DerivedSimpleClass<Deserializer> TDeserializer>
-	TDeserializer& StringDeserializer<TDeserializer>::deserializer()
+	template <concepts::DeserializerWorker TWorker>
+	template<typename TData>
+	StringDeserializer<TWorker>& StringDeserializer<TWorker>::operator>>(TData& _data)
 	{
-		return m_deserializer;
+		m_worker >> _data;
+		return *this;
 	}
 
-	template <cpputils::concepts::DerivedSimpleClass<Deserializer> TDeserializer>
-	const TDeserializer& StringDeserializer<TDeserializer>::deserializer() const
+	template <concepts::DeserializerWorker TWorker>
+	template<typename TData>
+	TData StringDeserializer<TWorker>::get()
 	{
-		return m_deserializer;
+		TData data;
+		m_worker >> data;
+		return data;
 	}
 
 }

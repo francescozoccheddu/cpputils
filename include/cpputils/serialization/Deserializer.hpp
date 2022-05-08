@@ -2,34 +2,40 @@
 #define CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
 
 #include <cpputils/mixins/ReferenceClass.hpp>
+#include <cpputils/serialization/DeserializerWorker.hpp>
+#include <cpputils/concepts.hpp>
+#include <concepts>
 #include <type_traits>
-#include <string>
 #include <istream>
 
 namespace cpputils::serialization
 {
 
-	class Deserializer : public virtual mixins::ReferenceClass
+	namespace concepts
+	{
+
+		template<typename TWorker>
+		concept DeserializerWorker = cpputils::concepts::DerivedSimpleClass<TWorker, serialization::DeserializerWorker> && std::constructible_from<TWorker, std::istream&>;
+
+	}
+
+	template<concepts::DeserializerWorker TWorker = DeserializerWorker>
+	class Deserializer final : public mixins::ReferenceClass
 	{
 
 	private:
 
-		std::istream& m_stream;
+		TWorker m_worker;
 
 	public:
 
-		inline explicit Deserializer(std::istream& _stream);
+		explicit Deserializer(std::istream& _stream);
 
-		template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic> && (!std::is_const_v<TArithmetic>)
-		Deserializer& operator>>(TArithmetic& _data);
+		template<typename TData>
+		Deserializer& operator>>(TData& _data);
 
-		template <typename TEnum> requires std::is_enum_v<TEnum> && (!std::is_const_v<TEnum>)
-		Deserializer& operator>>(TEnum& _data);
-
-		inline Deserializer& operator>>(std::string& _data);
-
-		template <typename TType> requires std::is_arithmetic_v<TType> || std::is_enum_v<TType> || std::is_same_v<std::remove_cv_t<TType>, std::string>
-		inline TType get();
+		template<typename TData>
+		TData get();
 
 	};
 

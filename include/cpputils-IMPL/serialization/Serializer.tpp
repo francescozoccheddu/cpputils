@@ -4,50 +4,19 @@
 
 #include <cpputils/serialization/Serializer.hpp>
 
-#include <type_traits>
-#include <string>
-#include <algorithm>
-
 namespace cpputils::serialization
 {
 
-	inline Serializer::Serializer(std::ostream& _stream)
-		: m_stream{ _stream }
+	template<concepts::SerializerWorker TWorker>
+	Serializer<TWorker>::Serializer(std::ostream& _stream)
+		: m_worker{ _stream }
 	{}
 
-	template <typename TArithmetic> requires std::is_arithmetic_v<TArithmetic>
-	inline Serializer& Serializer::operator<<(TArithmetic _data)
+	template<concepts::SerializerWorker TWorker>
+	template<typename TData>
+	Serializer<TWorker>& Serializer<TWorker>::operator<<(const TData& _data)
 	{
-		return *this << std::to_string(_data);
-	}
-
-	template <typename TEnum> requires std::is_enum_v<TEnum>
-	Serializer& Serializer::operator<<(TEnum _data)
-	{
-		return *this << static_cast<std::underlying_type_t<TEnum>>(_data);
-	}
-
-	inline Serializer& Serializer::operator<<(const std::string& _data)
-	{
-		for (const char c : _data)
-		{
-			switch (c)
-			{
-				case '\\':
-					m_stream << '\\' << '\\';
-					break;
-				case '\n':
-					m_stream << '\\' << 'n';
-					break;
-				case '\0':
-					m_stream << '\\' << '0';
-					break;
-				default:
-					m_stream << c;
-					break;
-			}
-		}
-		m_stream << '\n';
+		m_worker << _data;
 		return *this;
 	}
 
