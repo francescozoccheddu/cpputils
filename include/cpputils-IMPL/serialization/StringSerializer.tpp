@@ -9,7 +9,7 @@ namespace cpputils::serialization
 
 	template <concepts::SerializerWorker TWorker>
 	StringSerializer<TWorker>::StringSerializer()
-		: m_stream{}, m_worker{ m_stream }
+		: m_stream{}, m_serializer{ m_stream }
 	{}
 
 	template <concepts::SerializerWorker TWorker>
@@ -25,11 +25,16 @@ namespace cpputils::serialization
 	}
 
 	template <concepts::SerializerWorker TWorker>
-	template<typename TData>
-	StringSerializer<TWorker>& StringSerializer<TWorker>::operator<<(const TData& _data)
+	Serializer<TWorker>& StringSerializer<TWorker>::serializer()
 	{
-		m_worker << _data;
-		return *this;
+		return m_serializer;
 	}
+
+	template <concepts::SerializerWorker TWorker>
+	const Serializer<TWorker>& StringSerializer<TWorker>::serializer() const
+	{
+		return m_serializer;
+	}
+
 
 }

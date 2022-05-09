@@ -18,7 +18,7 @@ namespace cpputils::serialization
 	private:
 
 		std::ostringstream m_stream;
-		TWorker m_worker;
+		Serializer<TWorker> m_serializer;
 
 	public:
 
@@ -33,8 +33,8 @@ namespace cpputils::serialization
 			return _stream << _serializer.string();
 		}
 
-		template<typename TData>
-		StringSerializer& operator<<(const TData& _data);
+		Serializer<TWorker>& serializer();
+		const Serializer<TWorker>& serializer() const;
 
 	};
 

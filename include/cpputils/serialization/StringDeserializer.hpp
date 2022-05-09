@@ -18,17 +18,14 @@ namespace cpputils::serialization
 	private:
 
 		std::istringstream m_stream;
-		TWorker m_worker;
+		Deserializer<TWorker> m_deserializer;
 
 	public:
 
 		explicit StringDeserializer(const std::string& _string);
 
-		template<typename TData>
-		StringDeserializer& operator>>(TData& _data);
-
-		template<typename TData>
-		TData get();
+		Deserializer<TWorker>& deserializer();
+		const Deserializer<TWorker>& deserializer() const;
 
 	};
 

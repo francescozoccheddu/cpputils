@@ -9,24 +9,19 @@ namespace cpputils::serialization
 
 	template <concepts::DeserializerWorker TWorker>
 	StringDeserializer<TWorker>::StringDeserializer(const std::string& _string)
-		: m_stream{ _string }, m_worker{ m_stream }
+		: m_stream{ _string }, m_deserializer{ m_stream }
 	{}
 
 	template <concepts::DeserializerWorker TWorker>
-	template<typename TData>
-	StringDeserializer<TWorker>& StringDeserializer<TWorker>::operator>>(TData& _data)
+	Deserializer<TWorker>& StringDeserializer<TWorker>::deserializer()
 	{
-		m_worker >> _data;
-		return *this;
+		return m_deserializer;
 	}
 
 	template <concepts::DeserializerWorker TWorker>
-	template<typename TData>
-	TData StringDeserializer<TWorker>::get()
+	const Deserializer<TWorker>& StringDeserializer<TWorker>::deserializer() const
 	{
-		TData data;
-		m_worker >> data;
-		return data;
+		return m_deserializer;
 	}
 
 }
