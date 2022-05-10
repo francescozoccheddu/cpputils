@@ -13,35 +13,40 @@ namespace cpputils::collections
 {
 
 	template <concepts::NamerData TData>
+	const double Namer<TData>::c_alphabetCharsSizeLog{ std::log(alphabetChars.size()) };
+
+	template <concepts::NamerData TData>
 	std::string Namer<TData>::name(std::size_t _index) const
 	{
-		std::stringstream stream{};
-		stream << std::hex << std::uppercase << _index;
-		return format(stream.str(), '0');
-	}
-
-	template <concepts::NamerData TData>
-	std::size_t Namer<TData>::maxIndexLength() const
-	{
-		return std::max(static_cast<std::size_t>(std::ceil(std::log2(std::max(m_nextIndex - 1, std::size_t{ 1 })))) / 4, std::size_t{ 1 });
-	}
-
-	template <concepts::NamerData TData>
-	std::string Namer<TData>::format(const std::string& _index, char _padChar) const
-	{
-		const std::string padding{ (m_pad && maxIndexLength() > _index.size()) ? std::string(maxIndexLength() - _index.size(), _padChar) : ""};
-		return m_prefix + padding + _index;
+		std::string name{};
+		const std::size_t maxLength{ this->maxLength() };
+		name.reserve(maxLength);
+		name += m_prefix;
+		do
+		{
+			name += alphabetChars[_index % alphabetChars.size()];
+			_index /= alphabetChars.size();
+		}
+		while (_index > 0);
+		if (m_pad)
+		{
+			while (name.size() < maxLength)
+			{
+				name += padChar;
+			}
+		}
+		return name;
 	}
 
 	template <concepts::NamerData TData>
 	Namer<TData>::Namer(const std::string& _prefix, bool _pad)
-		: m_map{}, m_nextIndex{}, m_pad{ _pad }, m_prefix{ _prefix }
+		: m_map{}, m_nextIndex{}, m_pad{ _pad }, m_prefix{ _prefix }, m_maxIndexLength{ 1 }
 	{}
 
 	template <concepts::NamerData TData>
 	std::size_t Namer<TData>::maxLength() const
 	{
-		return m_prefix.size() + maxIndexLength();
+		return m_prefix.size() + m_maxIndexLength;
 	}
 
 	template <concepts::NamerData TData>
@@ -77,6 +82,7 @@ namespace cpputils::collections
 			if (it == m_map.end())
 			{
 				index = m_nextIndex++;
+				m_maxIndexLength = std::max(static_cast<std::size_t>(std::ceil(std::log(std::max(index, std::size_t{ 1 })) / c_alphabetCharsSizeLog)), std::size_t{ 1 });
 				m_map.insert(it, { _data, index });
 			}
 			else
@@ -90,7 +96,15 @@ namespace cpputils::collections
 	template <concepts::NamerData TData>
 	std::string Namer<TData>::unknown() const
 	{
-		return format({ unknownChar }, unknownChar);
+		std::string name{};
+		const std::size_t length{ m_prefix.size() + (m_pad ? m_maxIndexLength : 1) };
+		name.reserve(length);
+		name += m_prefix;
+		while (name.size() < length)
+		{
+			name += unknownChar;
+		}
+		return name;
 	}
 
 	template <concepts::NamerData TData>
@@ -129,6 +143,7 @@ namespace cpputils::collections
 	{
 		removeAll();
 		m_nextIndex = 0;
+		m_maxIndexLength = 1;
 	}
 
 }

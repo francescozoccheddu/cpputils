@@ -1,7 +1,7 @@
 #ifndef CPPUTILS_COLLECTIONS_NAMER_INCLUDED
 #define CPPUTILS_COLLECTIONS_NAMER_INCLUDED
 
-#include <cpputils/mixins/ReferenceClass.hpp>
+#include <cpputils/mixins/ReferenceEquatable.hpp>
 #include <unordered_map>
 #include <string>
 #include <array>
@@ -19,24 +19,27 @@ namespace cpputils::collections
 	}
 
 	template <concepts::NamerData TData>
-	class Namer final : public mixins::ReferenceClass
+	class Namer final : public mixins::ReferenceEquatable
 	{
 
 	private:
 
+		static const double c_alphabetCharsSizeLog;
+
 		std::unordered_map<TData, std::size_t> m_map;
-		std::size_t m_nextIndex;
+		std::size_t m_nextIndex, m_maxIndexLength;
 		std::string m_prefix;
 		bool m_pad;
 
 		std::string name(std::size_t _index) const;
 
-		std::size_t maxIndexLength() const;
-
-		std::string format(const std::string& _index, char _padChar) const;
-
 	public:
 
+		static constexpr auto alphabetChars{ std::array{
+			'1','2','3','4','5','6','7','8','9',
+			'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+		} };
+		static constexpr char padChar{ '0' };
 		static constexpr char unknownChar{ '?' };
 
 		Namer(const std::string& _prefix = "", bool _pad = true);
