@@ -138,13 +138,13 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](iterator::difference_type _index) requires concepts::HasBegin<TIterable>&& std::random_access_iterator<types::BeginResult<TIterable>>
+		TDereferenceResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](typename iterator::difference_type _index) requires concepts::HasBegin<TIterable>&& std::random_access_iterator<types::BeginResult<TIterable>>
 	{
 		return *(begin() + _index);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERABLE_TEMPLATE
-		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](const_iterator::difference_type _index) const requires concepts::HasBegin<const TIterable>&& std::random_access_iterator<types::BeginResult<const TIterable>>
+		TDereferenceConstResult CPPUTILS_COLLECTIONS_ITERABLE::operator[](typename const_iterator::difference_type _index) const requires concepts::HasBegin<const TIterable>&& std::random_access_iterator<types::BeginResult<const TIterable>>
 	{
 		return *(begin() + _index);
 	}
