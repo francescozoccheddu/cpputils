@@ -13,22 +13,23 @@ namespace cpputils::collections
 		template <typename ... TArgs>
 		void EventBase<TArgs...>::operator()(TArgs ... _args)
 		{
-			for (const Handler* handler : m_handlers)
+			for (Handler& handler : m_handlers)
 			{
-				(*handler)(_args ...);
+				handler(_args ...);
 			}
 		}
 
 		template <typename ... TArgs>
-		bool EventBase<TArgs...>::operator+=(Handler& _handler)
+		EventBase<TArgs...>::HandlerToken EventBase<TArgs...>::operator+=(const Handler& _handler)
 		{
-			return m_handlers.insert(&_handler).second;
+			m_handlers.push_front(_handler);
+			return m_handlers.before_begin();
 		}
 
 		template <typename ... TArgs>
-		bool EventBase<TArgs...>::operator-=(const Handler& _handler)
+		void EventBase<TArgs...>::operator-=(const HandlerToken& _handlerToken)
 		{
-			return m_handlers.erase(&_handler).second;
+			m_handlers.erase_after(_handlerToken);
 		}
 
 	}

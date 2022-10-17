@@ -6,7 +6,7 @@
 #include <cpputils/concepts.hpp>
 #include <functional>
 #include <concepts>
-#include <unordered_set>
+#include <forward_list>
 
 namespace cpputils::collections
 {
@@ -26,13 +26,14 @@ namespace cpputils::collections
 		public:
 
 			using Handler = std::function<void(TArgs...)>;
+			using HandlerToken = std::forward_list<Handler>::const_iterator;
 
 		private:
 
 			template <cpputils::concepts::SimpleClass TInvoker, typename ...>
 			friend class collections::Event;
 
-			std::unordered_set<Handler*> m_handlers{};
+			std::forward_list<Handler> m_handlers{};
 
 			EventBase() = default;
 
@@ -40,8 +41,8 @@ namespace cpputils::collections
 
 		public:
 
-			bool operator+=(Handler& _handler);
-			bool operator-=(const Handler& _handler);
+			HandlerToken operator+=(const Handler& _handler);
+			void operator-=(const HandlerToken& _handlerToken);
 
 		};
 
