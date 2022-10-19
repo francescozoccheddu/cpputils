@@ -7,6 +7,7 @@
 #include <cpputils/concepts.hpp>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 namespace cpputils::serialization
 {
@@ -23,6 +24,10 @@ namespace cpputils::serialization
 	public:
 
 		explicit StringDeserializer(const std::string& _string);
+
+		explicit StringDeserializer(std::string_view _string);
+
+		explicit StringDeserializer(const char* _string);
 
 		Deserializer<TWorker>& deserializer();
 		const Deserializer<TWorker>& deserializer() const;

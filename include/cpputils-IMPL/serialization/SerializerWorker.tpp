@@ -5,7 +5,6 @@
 #include <cpputils/serialization/SerializerWorker.hpp>
 
 #include <type_traits>
-#include <string>
 #include <algorithm>
 
 namespace cpputils::serialization
@@ -29,6 +28,11 @@ namespace cpputils::serialization
 
 	inline SerializerWorker& SerializerWorker::operator<<(const std::string& _data)
 	{
+		return *this << std::string_view{ _data };
+	}
+
+	inline SerializerWorker& SerializerWorker::operator<<(std::string_view _data)
+	{
 		for (const char c : _data)
 		{
 			switch (c)
@@ -49,6 +53,11 @@ namespace cpputils::serialization
 		}
 		m_stream << '\n';
 		return *this;
+	}
+
+	inline SerializerWorker& SerializerWorker::operator<<(const char* _data)
+	{
+		return *this << std::string_view{ _data };
 	}
 
 }

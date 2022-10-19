@@ -13,6 +13,16 @@ namespace cpputils::serialization
 	{}
 
 	template <concepts::DeserializerWorker TWorker>
+	StringDeserializer<TWorker>::StringDeserializer(std::string_view _string)
+		: StringDeserializer{ std::string{_string} }
+	{}
+
+	template <concepts::DeserializerWorker TWorker>
+	StringDeserializer<TWorker>::StringDeserializer(const char* _string)
+		: StringDeserializer{ std::string{_string} }
+	{}
+
+	template <concepts::DeserializerWorker TWorker>
 	Deserializer<TWorker>& StringDeserializer<TWorker>::deserializer()
 	{
 		return m_deserializer;

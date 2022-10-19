@@ -4,6 +4,7 @@
 #include <cpputils/mixins/ReferenceClass.hpp>
 #include <type_traits>
 #include <string>
+#include <string_view>
 #include <ostream>
 
 namespace cpputils::serialization
@@ -27,6 +28,10 @@ namespace cpputils::serialization
 		SerializerWorker& operator<<(TEnum _data);
 
 		inline SerializerWorker& operator<<(const std::string& _data);
+
+		inline SerializerWorker& operator<<(std::string_view _data);
+
+		inline SerializerWorker& operator<<(const char* _data);
 
 	};
 
