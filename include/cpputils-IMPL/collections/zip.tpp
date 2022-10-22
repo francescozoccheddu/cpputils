@@ -28,21 +28,21 @@ namespace cpputils::collections
 		{}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR_TEMPLATE
-			CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::value_type
+			typename CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::value_type
 			CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::operator*() const
 		{
 			return std::apply([](auto & ... _iterators) {
 				return value_type{ *_iterators... };
-				}, m_iterators);
+			}, m_iterators);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR_TEMPLATE
-			CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::value_type
+			typename CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::value_type
 			CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::operator[](difference_type _index) const requires std::random_access_iterator<TIterator>
 		{
 			return std::apply([&_index](auto & ... _iterators) {
 				return value_type{ *(_iterators + _index)... };
-				}, m_iterators);
+			}, m_iterators);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR_TEMPLATE
@@ -51,7 +51,7 @@ namespace cpputils::collections
 		{
 			std::apply([](auto & ... _iterators) {
 				((++_iterators), ...);
-				}, m_iterators);
+			}, m_iterators);
 			return *this;
 		}
 
@@ -62,7 +62,7 @@ namespace cpputils::collections
 			ZipIterator clone{ *this };
 			std::apply([](auto & ... _iterators) {
 				((_iterators++), ...);
-				}, clone.m_iterators);
+			}, clone.m_iterators);
 			return clone;
 		}
 
@@ -72,7 +72,7 @@ namespace cpputils::collections
 		{
 			std::apply([&_offset](auto & ... _iterators) {
 				((_iterators += _offset), ...);
-				}, m_iterators);
+			}, m_iterators);
 			return *this;
 		}
 
@@ -82,7 +82,7 @@ namespace cpputils::collections
 		{
 			std::apply([](auto & ... _iterators) {
 				((--_iterators), ...);
-				}, m_iterators);
+			}, m_iterators);
 			return *this;
 		}
 
@@ -93,7 +93,7 @@ namespace cpputils::collections
 			ZipIterator clone{ *this };
 			std::apply([](auto & ... _iterators) {
 				((_iterators--), ...);
-				}, clone.m_iterators);
+			}, clone.m_iterators);
 			return clone;
 		}
 
@@ -103,7 +103,7 @@ namespace cpputils::collections
 		{
 			std::apply([&_offset](auto & ... _iterators) {
 				((_iterators -= _offset), ...);
-				}, m_iterators);
+			}, m_iterators);
 			return *this;
 		}
 
@@ -113,7 +113,7 @@ namespace cpputils::collections
 		{
 			std::apply([&_offset](auto & ... _iterators) {
 				((_iterators + _offset), ...);
-				}, m_iterators);
+			}, m_iterators);
 			return *this;
 		}
 
@@ -123,12 +123,12 @@ namespace cpputils::collections
 		{
 			std::apply([&_offset](auto & ... _iterators) {
 				((_iterators - _offset), ...);
-				}, m_iterators);
+			}, m_iterators);
 			return *this;
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR_TEMPLATE
-			CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::difference_type
+			typename CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::difference_type
 			CPPUTILS_COLLECTIONS_ZIP_ZIPITERATOR::operator-(const ZipIterator& _other) const requires std::random_access_iterator<TIterator>
 		{
 			return m_iterators[0] - _other.m_iterators[0];
@@ -144,7 +144,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::begin(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -152,7 +152,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::begin(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -160,7 +160,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::cbegin(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -168,7 +168,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::end(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -176,7 +176,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::end(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -184,7 +184,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::cend(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -192,7 +192,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::rbegin(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -200,7 +200,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::rbegin(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -208,7 +208,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::crbegin(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -216,7 +216,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::rend(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -224,7 +224,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::rend(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 		CPPUTILS_COLLECTIONS_ZIP_ZIPITERABLE_TEMPLATE
@@ -232,7 +232,7 @@ namespace cpputils::collections
 		{
 			return std::apply([](auto & ... _iterables) {
 				return ZipIterator{ std::crend(_iterables)... };
-				}, m_iterables);
+			}, m_iterables);
 		}
 
 	}
