@@ -7,7 +7,6 @@
 #include <cpputils/concepts.hpp>
 #include <sstream>
 #include <string>
-#include <string_view>
 
 namespace cpputils::serialization
 {
@@ -32,10 +31,6 @@ namespace cpputils::serialization
 		std::string_view stringView() const;
 
 		operator std::string() const;
-
-		operator std::string_view() const;
-		
-		operator const char*() const;
 
 		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TWorker>& _serializer)
 		{

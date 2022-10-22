@@ -19,31 +19,7 @@ namespace cpputils::serialization
 	}
 
 	template <concepts::SerializerWorker TWorker>
-	StringSerializer<TWorker>::operator const char* () const
-	{
-		return m_stream.str().c_str();
-	}
-
-	template <concepts::SerializerWorker TWorker>
-	StringSerializer<TWorker>::operator std::string_view() const
-	{
-		return m_stream.str();
-	}
-
-	template <concepts::SerializerWorker TWorker>
 	std::string StringSerializer<TWorker>::string() const
-	{
-		return m_stream.str();
-	}
-
-	template <concepts::SerializerWorker TWorker>
-	const char* StringSerializer<TWorker>::cstr() const
-	{
-		return m_stream.str().c_str();
-	}
-
-	template <concepts::SerializerWorker TWorker>
-	std::string_view StringSerializer<TWorker>::stringView() const
 	{
 		return m_stream.str();
 	}

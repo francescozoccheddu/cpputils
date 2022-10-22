@@ -20,7 +20,7 @@ namespace cpputils::collections
 		}
 
 		template <typename ... TArgs>
-		EventBase<TArgs...>::HandlerToken EventBase<TArgs...>::operator+=(const Handler& _handler)
+		typename EventBase<TArgs...>::HandlerToken EventBase<TArgs...>::operator+=(const Handler& _handler)
 		{
 			m_handlers.push_front(_handler);
 			return m_handlers.before_begin();

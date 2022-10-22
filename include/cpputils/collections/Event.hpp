@@ -16,7 +16,7 @@ namespace cpputils::collections
 
 	namespace internal
 	{
-		
+
 		class AnyEventInvoker final : public mixins::StaticClass {};
 
 		template <typename ... TArgs>
@@ -26,7 +26,7 @@ namespace cpputils::collections
 		public:
 
 			using Handler = std::function<void(TArgs...)>;
-			using HandlerToken = std::forward_list<Handler>::const_iterator;
+			using HandlerToken = typename std::forward_list<Handler>::const_iterator;
 
 		private:
 

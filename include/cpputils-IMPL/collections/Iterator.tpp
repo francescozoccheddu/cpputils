@@ -72,21 +72,21 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
-		CPPUTILS_COLLECTIONS_ITERATOR::reference
+		typename CPPUTILS_COLLECTIONS_ITERATOR::reference
 		CPPUTILS_COLLECTIONS_ITERATOR::operator*() const
 	{
 		return TConvert(*iterator());
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
-		CPPUTILS_COLLECTIONS_ITERATOR::pointer
+		typename CPPUTILS_COLLECTIONS_ITERATOR::pointer
 		CPPUTILS_COLLECTIONS_ITERATOR::operator->() const requires std::is_reference_v<TDereferenceResult>
 	{
 		return std::addressof(**this);
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
-		CPPUTILS_COLLECTIONS_ITERATOR::reference
+		typename CPPUTILS_COLLECTIONS_ITERATOR::reference
 		CPPUTILS_COLLECTIONS_ITERATOR::operator[](difference_type _offset) const requires std::random_access_iterator<TIterator>
 	{
 		return TConvert(*(iterator() + _offset));
@@ -157,7 +157,7 @@ namespace cpputils::collections
 	}
 
 	CPPUTILS_COLLECTIONS_ITERATOR_TEMPLATE
-		CPPUTILS_COLLECTIONS_ITERATOR::difference_type
+		typename CPPUTILS_COLLECTIONS_ITERATOR::difference_type
 		CPPUTILS_COLLECTIONS_ITERATOR::operator-(const Iterator& _other) const requires std::random_access_iterator<TIterator>
 	{
 		return iterator() - _other.iterator();

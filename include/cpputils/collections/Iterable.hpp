@@ -93,7 +93,7 @@ namespace cpputils::collections
 		TDereferenceResult(*)(types::DereferenceResult<types::BeginResult<TIterable>>),
 		TDereferenceConstResult(*)(types::DereferenceResult<types::BeginResult<const TIterable>>)
 	>
-		class Iterable;
+	class Iterable;
 
 	namespace internal
 	{
@@ -110,7 +110,7 @@ namespace cpputils::collections
 				TDereferenceResult(*)(types::DereferenceResult<types::BeginResult<TIterableIterable>>),
 				TDereferenceConstResult(*)(types::DereferenceResult<types::BeginResult<const TIterableIterable>>)
 			>
-				friend class collections::Iterable;
+			friend class collections::Iterable;
 
 			TIterable* m_iterable;
 
@@ -131,7 +131,7 @@ namespace cpputils::collections
 		TDereferenceResult(*TConvert)(types::DereferenceResult<types::BeginResult<TIterable>>) = types::cast<types::DereferenceResult<types::BeginResult<TIterable>>, TDereferenceResult>,
 		TDereferenceConstResult(*TConvertConst)(types::DereferenceResult<types::BeginResult<const TIterable>>) = types::cast<types::DereferenceResult<types::BeginResult<const TIterable>>, TDereferenceConstResult>
 	>
-		class Iterable : public internal::IterableBase<TIterable>
+	class Iterable : public internal::IterableBase<TIterable>
 	{
 
 	public:
@@ -169,8 +169,8 @@ namespace cpputils::collections
 		auto size() const requires concepts::HasSize<const TIterable>;
 		auto empty() const requires concepts::HasEmpty<const TIterable>;
 
-		TDereferenceResult operator[](iterator::difference_type _index) requires concepts::HasBegin<TIterable>&& std::random_access_iterator<types::BeginResult<TIterable>>;
-		TDereferenceConstResult operator[](const_iterator::difference_type _index) const requires concepts::HasBegin<const TIterable>&& std::random_access_iterator<types::BeginResult<const TIterable>>;
+		TDereferenceResult operator[](typename iterator::difference_type _index) requires concepts::HasBegin<TIterable>&& std::random_access_iterator<types::BeginResult<TIterable>>;
+		TDereferenceConstResult operator[](typename const_iterator::difference_type _index) const requires concepts::HasBegin<const TIterable>&& std::random_access_iterator<types::BeginResult<const TIterable>>;
 
 		// base
 
