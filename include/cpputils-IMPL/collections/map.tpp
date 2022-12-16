@@ -12,7 +12,7 @@ namespace cpputils::collections
 	{
 
 		template<typename TInputIterator, typename TOutputIterator, typename TMapper>
-		void map(const TInputIterator& _inBegin, const TInputIterator& _inEnd, const TOutputIterator& _outBegin, const TOutputIterator& _outEnd, const TMapper& _mapper)
+		TInputIterator map(const TInputIterator& _inBegin, const TInputIterator& _inEnd, const TOutputIterator& _outBegin, const TOutputIterator& _outEnd, const TMapper& _mapper)
 		{
 			auto inIt{ _inBegin }, outIt{ _outBegin };
 			while (inIt != _inEnd && outIt != _outEnd)
@@ -20,6 +20,18 @@ namespace cpputils::collections
 				*inIt = _mapper(*outIt);
 				++inIt;
 				++outIt;
+			}
+			return inIt;
+		}
+
+		template<typename TInputIterator, typename TOutputIterator, typename TMapper>
+		void map(const TInputIterator& _inBegin, const TInputIterator& _inEnd, const TOutputIterator& _outBegin, const TOutputIterator& _outEnd, const TMapper& _mapper, const MappedFromIterator<TInputIterator, TMapper>& _defaultValue)
+		{
+			auto inIt{ map(_inBegin, _inEnd, _outBegin, _outEnd, _mapper) };
+			while (inIt != _inEnd)
+			{
+				*inIt = _defaultValue;
+				++inIt;
 			}
 		}
 
@@ -42,18 +54,18 @@ namespace cpputils::collections
 	}
 
 	template<std::size_t TSize, typename TIterable, typename TMapper>
-	std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> fmap(TIterable& _iterable, const TMapper& _mapper)
+	std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> fmap(TIterable& _iterable, const TMapper& _mapper, const internal::MappedFromIterable<TIterable, TMapper>& _defaultValue)
 	{
-		std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> out{};
-		internal::map(out.begin(), out.end(), std::begin(_iterable), std::end(_iterable), _mapper);
+		std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> out;
+		internal::map(out.begin(), out.end(), std::begin(_iterable), std::end(_iterable), _mapper, _defaultValue);
 		return out;
 	}
 
 	template<std::size_t TSize, typename TIterable, typename TMapper>
-	std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> fmap(const TIterable& _iterable, const TMapper& _mapper)
+	std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> fmap(const TIterable& _iterable, const TMapper& _mapper, const internal::MappedFromIterable<TIterable, TMapper>& _defaultValue)
 	{
-		std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> out{};
-		internal::map(out.begin(), out.end(), std::begin(_iterable), std::end(_iterable), _mapper);
+		std::array<internal::MappedFromIterable<TIterable, TMapper>, TSize> out;
+		internal::map(out.begin(), out.end(), std::begin(_iterable), std::end(_iterable), _mapper, _defaultValue);
 		return out;
 	}
 
