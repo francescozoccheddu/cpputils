@@ -2,276 +2,143 @@
 
 #include <cpputils/range/Range.hpp>
 
+#define CPPUTILS_RANGE_RANGED_BODY \
+    public:\
+        using ALIAS(URange) = Range<ITERATOR>;\
+        using ALIAS(Iterator) = typename ALIAS(URange)::Iterator;\
+        using ALIAS(Value) = typename ALIAS(URange)::Value;\
+        using ALIAS(Reference) = typename ALIAS(URange)::Reference;\
+        using ALIAS(Offset) = typename ALIAS(URange)::Offset;\
+        using ALIAS(Data) = typename ALIAS(URange)::Data;\
+        using ALIAS(Collected) = typename ALIAS(URange)::Collected;\
+        using ALIAS(Filtered) = typename ALIAS(URange)::Filtered;\
+        using ALIAS(Distinct) = typename ALIAS(URange)::Distinct;\
+        using ALIAS(Duplicated) = typename ALIAS(URange)::Duplicated;\
+        template<typename TMapper>\
+        using ALIAS(Mapped) = typename ALIAS(URange)::template Mapped<TMapper>;\
+        template<typename TOutReference>\
+        using ALIAS(Casted) = typename ALIAS(URange)::template Casted<TOutReference>;\
+        using ALIAS(Const) = typename ALIAS(URange)::Const;\
+        using ALIAS(Addressed) = typename ALIAS(URange)::Addressed;\
+        using ALIAS(Dereferenced) = typename ALIAS(URange)::Dereferenced;\
+        using ALIAS(Reversed) = typename ALIAS(URange)::Reversed;\
+        template<typename TIndex>\
+        using ALIAS(Index) = typename ALIAS(URange)::template Index<TIndex>;\
+    protected:\
+        virtual ALIAS(URange) range() CONST = 0;\
+    public:\
+        ALIAS(Iterator) begin() CONST { return range().begin();} \
+        ALIAS(Iterator) end() CONST { return range().end();} \
+        ALIAS(Reference) operator[](const ALIAS(Offset)& _offset) CONST { return range()[_offset];} \
+        ALIAS(Reference) first(ALIAS(Reference) _else) CONST { return range().first(_else);} \
+        ALIAS(Reference) last(ALIAS(Reference) _else) CONST { return range().last(_else);} \
+        ALIAS(Reference) single(ALIAS(Reference) _else) CONST { return range().single(_else);} \
+        ALIAS(Reference) first() CONST { return range().first();} \
+        ALIAS(Reference) last() CONST { return range().last();} \
+        ALIAS(Reference) single() CONST { return range().single();} \
+        ALIAS(Offset) size() CONST { return range().size();} \
+        bool empty() CONST { return range().empty();} \
+        template<typename TIndex = ALIAS(Offset)>\
+        ALIAS(Index)<TIndex> index() CONST { return range().template index<TIndex>();} \
+        ALIAS(URange) take(ALIAS(Offset) _size) CONST { return range().take(_size);} \
+        ALIAS(URange) skip(ALIAS(Offset) _size) CONST { return range().skip(_size);} \
+        ALIAS(Filtered) filter() CONST { return range().filter();} \
+        ALIAS(Reversed) reverse() CONST { return range().reverse();} \
+        template<typename TMapper>\
+        ALIAS(Mapped)<TMapper> map(const TMapper& _mapper = {}) CONST { return range().template map<TMapper>(_mapper);} \
+        template<typename TOutReference>\
+        ALIAS(Casted)<TOutReference> cast() CONST { return range().template cast<TOutReference>();} \
+        ALIAS(Addressed) address() CONST { return range().address();} \
+        ALIAS(Dereferenced) dereference() CONST { return range().dereference();} \
+        ALIAS(Const) immutable() CONST { return range().immutable();} \
+        ALIAS(Collected) collect() CONST { return range().collect();} \
+        ALIAS(Collected) clone() CONST { return range().clone();} \
+        ALIAS(Collected) sort() CONST { return range().sort();} \
+        ALIAS(Distinct) distinct() CONST { return range().distinct();} \
+        ALIAS(Duplicated) duplicated() CONST { return range().duplicated();} \
+        template<typename TAccumulator, typename TReduce>\
+        TAccumulator reduce(const TReduce& _reduce, const TAccumulator& _start) CONST { return range().template reduce<TAccumulator, TReduce>(_reduce, _start);} \
+        template<typename TCompare>\
+        ALIAS(Reference) best(const TCompare& _compare, ALIAS(Reference) _else) CONST { return range().template best<TCompare>(_compare, _else);} \
+        template<typename TCompare>\
+        ALIAS(Reference) best(const TCompare& _compare) CONST { return range().template best<TCompare>(_compare);} \
+        template<typename TCompare>\
+        ALIAS(Iterator) bestIt(const TCompare& _compare) CONST { return range().template bestIt<TCompare>(_compare);} \
+        ALIAS(Reference) min(ALIAS(Reference) _else) CONST { return range().min(_else);} \
+        ALIAS(Reference) max(ALIAS(Reference) _else) CONST { return range().max(_else);} \
+        ALIAS(Reference) min() CONST { return range().min();} \
+        ALIAS(Reference) max() CONST { return range().max();} \
+        template<typename TSum = ALIAS(Value)>\
+        TSum sum() CONST { return range().template sum<TSum>();} \
+        template<typename TSum = ALIAS(Value)>\
+        TSum avg(TSum _else) CONST { return range().template avg<TSum>(_else);} \
+        template<typename TSum = ALIAS(Value)>\
+        TSum avg() CONST { return range().template avg<TSum>();} \
+        std::vector<ALIAS(Value)> toVector() CONST { return range().toVector();} \
+        template<std::size_t TSize>\
+        std::array<ALIAS(Value), TSize> toArray(const ALIAS(Value)& _defaultValue = {}) CONST { return range().template toArray<TSize>(_defaultValue);} \
+        std::list<ALIAS(Value)> toList() CONST { return range().toList();} \
+        std::unordered_set<ALIAS(Value)> toUnorderedSet() CONST { return range().toUnorderedSet();} \
+        template<typename TOutIterator>\
+        void assign(const TOutIterator& _begin) CONST { return range().template assign<TOutIterator>(_begin);} \
+        template<typename TOutIterator>\
+        TOutIterator assign(const TOutIterator& _begin, const TOutIterator& _end) CONST { return range().template assign<TOutIterator>(_begin, _end);} \
+        template<typename TOutIterator>\
+        void assign(const TOutIterator& _begin, const TOutIterator& _end, const ALIAS(Value)& _defaultValue) CONST { return range().template assign<TOutIterator>(_begin, _end, _defaultValue);\
+    }
+
 namespace cpputils::range
 {
 
-    template<typename TIterator>
+    template<typename TConstIterator, typename TNonConstIterator>
     class Ranged
     {
 
-    public:
-
-        using URange = Range<TIterator>;
-        using Iterator = typename URange::Iterator;
-        using Value = typename URange::Value;
-        using Reference = typename URange::Reference;
-        using Offset = typename URange::Offset;
-        using Data = typename URange::Data;
-        using Collected = typename URange::Collected;
-        using Filtered = typename URange::Filtered;
-        using Distinct = typename URange::Distinct;
-        using Duplicated = typename URange::Duplicated;
-        template<typename TMapper>
-        using Mapped = typename URange::template Mapped<TMapper>;
-        template<typename TOutReference>
-        using Casted = typename URange::template Casted<TOutReference>;
-        using Const = typename URange::Const;
-        using Addressed = typename URange::Addressed;
-        using Dereferenced = typename URange::Dereferenced;
-        using Reversed = typename URange::Reversed;
-        template<typename TIndex>
-        using Index = typename URange::template Index<TIndex>;
-
-    protected:
-
-        virtual URange range() const = 0;
-
-    public:
-
-        Iterator begin() const
-        {
-            return range().begin();
-        }
-
-        Iterator end() const
-        {
-            return range().end();
-        }
-
-        Reference operator[](const Offset& _offset) const
-        {
-            return range()[_offset];
-        }
-
-        Reference first(Reference _else) const
-        {
-            return range().first(_else);
-        }
-
-        Reference last(Reference _else) const
-        {
-            return range().last(_else);
-        }
-
-        Reference single(Reference _else) const
-        {
-            return range().single(_else);
-        }
-
-        Reference first() const
-        {
-            return range().first();
-        }
-
-        Reference last() const
-        {
-            return range().last();
-        }
-
-        Reference single() const
-        {
-            return range().single();
-        }
-
-        Offset size() const
-        {
-            return range().size();
-        }
-
-        bool empty() const
-        {
-            return range().empty();
-        }
-
-        template<typename TIndex = Offset>
-        Index<TIndex> index() const
-        {
-            return range().template index<TIndex>();
-        }
-
-        URange take(Offset _size)
-        {
-            return range().take(_size);
-        }
-
-        URange skip(Offset _size)
-        {
-            return range().skip(_size);
-        }
-
-        Filtered filter()
-        {
-            return range().filter();
-        }
-
-        Reversed reverse()
-        {
-            return range().reverse();
-        }
-
-        template<typename TMapper>
-        Mapped<TMapper> map(const TMapper& _mapper = {})
-        {
-            return range().template map<TMapper>(_mapper);
-        }
-
-        template<typename TOutReference>
-        Casted<TOutReference> cast()
-        {
-            return range().template cast<TOutReference>();
-        }
-
-        Addressed address()
-        {
-            return range().address();
-        }
-
-        Dereferenced dereference()
-        {
-            return range().dereference();
-        }
-
-        Const immutable()
-        {
-            return range().immutable();
-        }
-
-        Collected collect()
-        {
-            return range().collect();
-        }
-
-        Collected clone() const
-        {
-            return range().clone();
-        }
-
-        Collected sort()
-        {
-            return range().sort();
-        }
-
-        Distinct distinct()
-        {
-            return range().distinct();
-        }
-
-        Duplicated duplicated()
-        {
-            return range().duplicated();
-        }
-
-        template<typename TAccumulator, typename TReduce>
-        TAccumulator reduce(const TReduce& _reduce, const TAccumulator& _start) const
-        {
-            return range().template reduce<TAccumulator, TReduce>(_reduce, _start);
-        }
-
-        template<typename TCompare>
-        Reference best(const TCompare& _compare, Reference _else) const
-        {
-            return range().template best<TCompare>(_compare, _else);
-        }
-
-        template<typename TCompare>
-        Reference best(const TCompare& _compare) const
-        {
-            return range().template best<TCompare>(_compare);
-        }
-
-        template<typename TCompare>
-        Iterator bestIt(const TCompare& _compare) const
-        {
-            return range().template bestIt<TCompare>(_compare);
-        }
-
-        Reference min(Reference _else) const
-        {
-            return range().min(_else);
-        }
-
-        Reference max(Reference _else) const
-        {
-            return range().max(_else);
-        }
-
-        Reference min() const
-        {
-            return range().min();
-        }
-
-        Reference max() const
-        {
-            return range().max();
-        }
-
-        template<typename TSum = Value>
-        TSum sum() const
-        {
-            return range().template sum<TSum>();
-        }
-
-        template<typename TSum = Value>
-        TSum avg(TSum _else) const
-        {
-            return range().template avg<TSum>(_else);
-        }
-
-        template<typename TSum = Value>
-        TSum avg() const
-        {
-            return range().template avg<TSum>();
-        }
-
-        std::vector<Value> toVector() const
-        {
-            return range().toVector();
-        }
-
-        template<std::size_t TSize>
-        std::array<Value, TSize> toArray(const Value& _defaultValue = {}) const
-        {
-            return range().template toArray<TSize>(_defaultValue);
-        }
-
-        std::list<Value> toList() const
-        {
-            return range().toList();
-        }
-
-        std::unordered_set<Value> toUnorderedSet() const
-        {
-            return range().toUnorderedSet();
-        }
-
-        template<typename TOutIterator>
-        void assign(const TOutIterator& _begin) const
-        {
-            return range().template assign<TOutIterator>(_begin);
-        }
-
-        template<typename TOutIterator>
-        TOutIterator assign(const TOutIterator& _begin, const TOutIterator& _end) const
-        {
-            return range().template assign<TOutIterator>(_begin, _end);
-        }
-
-        template<typename TOutIterator>
-        void assign(const TOutIterator& _begin, const TOutIterator& _end, const Value& _defaultValue) const
-        {
-            return range().template assign<TOutIterator>(_begin, _end, _defaultValue);
-        }
+#define ITERATOR TConstIterator
+#define CONST const
+#define ALIAS(type) Const##type
+        CPPUTILS_RANGE_RANGED_BODY
+#undef ITERATOR
+#undef CONST
+#undef ALIAS
+#define ITERATOR TNonConstIterator
+#define CONST 
+#define ALIAS(type) NonConst##type
+            CPPUTILS_RANGE_RANGED_BODY
+#undef ITERATOR
+#undef CONST
+#undef ALIAS
 
     };
+
+    template<typename TIterator>
+    class ConstRanged
+    {
+
+#define ITERATOR TIterator
+#define CONST const
+#define ALIAS(type) type
+        CPPUTILS_RANGE_RANGED_BODY
+#undef ITERATOR
+#undef CONST
+#undef ALIAS
+
+    };
+
+    template<typename TIterator>
+    class NonConstRanged
+    {
+
+#define ITERATOR TIterator
+#define CONST
+#define ALIAS(type) type
+        CPPUTILS_RANGE_RANGED_BODY
+#undef ITERATOR
+#undef CONST
+#undef ALIAS
+
+    };
+
+#undef CPPUTILS_RANGE_RANGED_BODY
 
 }
