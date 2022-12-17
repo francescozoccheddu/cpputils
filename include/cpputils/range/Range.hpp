@@ -29,9 +29,31 @@ namespace cpputils::range
         struct Caster final
         {
 
-            inline TOutReference operator()(TInReference& _value) const noexcept
+            inline TOutReference operator()(TInReference _value) const noexcept
             {
                 return static_cast<TOutReference>(_value);
+            };
+
+        };
+
+        template<typename TInReference>
+        struct Addresser final
+        {
+
+            inline std::remove_reference_t<TInReference>* operator()(TInReference _value) const noexcept
+            {
+                return std::addressof(_value);
+            };
+
+        };
+
+        template<typename TInReference>
+        struct Dereferencer final
+        {
+
+            inline std::remove_pointer_t<std::remove_reference_t<TInReference>> operator()(TInReference _value) const noexcept
+            {
+                return *_value;
             };
 
         };
@@ -58,6 +80,8 @@ namespace cpputils::range
         template<typename TOutReference>
         using Casted = Mapped<internal::Caster<Reference, TOutReference>>;
         using Const = Casted<internal::consts::RefOrPtr<Reference>>;
+        using Addressed = Mapped<internal::Addresser<Reference>>;
+        using Dereferenced = Mapped<internal::Dereferencer<Reference>>;
 
     private:
 
@@ -167,6 +191,16 @@ namespace cpputils::range
         Casted<TOutReference> cast()
         {
             return map(internal::Caster<Reference, TOutReference>{});
+        }
+
+        Addressed address()
+        {
+            return map(internal::Addresser<Reference>{});
+        }
+
+        Dereferenced dereference()
+        {
+            return map(internal::Dereferencer<Reference>{});
         }
 
         Const immutable()
