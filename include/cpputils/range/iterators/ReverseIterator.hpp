@@ -24,7 +24,7 @@ namespace cpputils::range::iterators
         using typename Base::difference_type;
         using typename Base::iterator_category;
 
-        ReverseIterator(const TIterator& _it, const std::shared_ptr<range::internal::Data<TIterator>>& _data)
+        ReverseIterator(const std::shared_ptr<range::internal::Data<TIterator>>& _data, const TIterator& _it)
             : Base{ _data }, m_it{ _it }
         {}
 

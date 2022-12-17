@@ -202,20 +202,20 @@ namespace cpputils::range
         Filtered filter()
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Filtered{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
+            return Filtered{ { data, data->begin() }, { data, data->end() }, data->extractBuffer() };
         }
 
         Reversed reverse()
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Reversed{ { std::prev(data->end()), data }, { std::prev(data->begin()), data }, data->extractBuffer() };
+            return Reversed{ { data, std::prev(data->end()) }, { data, std::prev(data->begin()) }, data->extractBuffer() };
         }
 
         template<typename TMapper>
         Mapped<TMapper> map(const TMapper& _mapper = {})
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Mapped<TMapper>{ { data->begin(), data, _mapper }, { data->end(), data, _mapper }, data->extractBuffer() };
+            return Mapped<TMapper>{ { data, data->begin(), _mapper }, { data, data->end(), _mapper }, data->extractBuffer() };
         }
 
         template<typename TOutReference>
@@ -267,14 +267,14 @@ namespace cpputils::range
         {
             Collected sorted{ sort() };
             std::shared_ptr<typename Collected::Data> data{ std::move(sorted.m_data) };
-            return Distinct{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
+            return Distinct{ { data, data->begin() }, { data, data->end() }, data->extractBuffer() };
         }
 
         Duplicated duplicated()
         {
             Collected sorted{ sort() };
             std::shared_ptr<typename Collected::Data> data{ std::move(sorted.m_data) };
-            return Duplicated{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
+            return Duplicated{ { data, data->begin() }, { data, data->end() }, data->extractBuffer() };
         }
 
         template<typename TAccumulator, typename TReduce>
