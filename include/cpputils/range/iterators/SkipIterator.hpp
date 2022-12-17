@@ -35,7 +35,7 @@ namespace cpputils::range::iterators
 
     protected:
 
-        SkipIterator(const TIterator& _it, const std::shared_ptr<range::internal::Data<TIterator>>& _data)
+        SkipIterator(const std::shared_ptr<range::internal::Data<TIterator>>& _data, const TIterator& _it)
             : Base{ _data }, m_it{ _it }
         {
             advance();

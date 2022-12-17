@@ -132,7 +132,7 @@ namespace cpputils::range
 
         Reference single(Reference _else) const
         {
-            return count() != 1 ? _else : single();
+            return size() != 1 ? _else : single();
         }
 
         Reference first() const
@@ -156,20 +156,20 @@ namespace cpputils::range
             }
             else
             {
-                return (*this)[count() - 1];
+                return (*this)[size() - 1];
             }
         }
 
         Reference single() const
         {
-            if (count() != 1)
+            if (size() != 1)
             {
                 throw std::logic_error{ "not a singleton" };
             }
             return first();
         }
 
-        Offset count() const
+        Offset size() const
         {
             return std::distance(begin(), end());
         }
@@ -182,14 +182,14 @@ namespace cpputils::range
         template<typename TIndex = Offset>
         Index<TIndex> index() const
         {
-            return Index<TIndex>{ { TIndex{} }, { TIndex{ count() } } };
+            return Index<TIndex>{ { TIndex{} }, { TIndex{ size() } } };
         }
 
-        Range take(Offset _count)
+        Range take(Offset _size)
         {
-            const Offset maxCount{ count() };
+            const Offset maxsize{ size() };
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Range{ data->begin(), data->begin() + std::min(_count, maxCount), data->extractBuffer() };
+            return Range{ data->begin(), data->begin() + std::min(_size, maxsize), data->extractBuffer() };
         }
 
         Filtered filter()
@@ -354,7 +354,7 @@ namespace cpputils::range
             {
                 throw std::logic_error{ "empty" };
             }
-            return sum<TSum>() / static_cast<TSum>(count());
+            return sum<TSum>() / static_cast<TSum>(size());
         }
 
         std::vector<Value> toVector() const

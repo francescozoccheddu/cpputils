@@ -35,7 +35,7 @@ namespace cpputils::range::iterators
         using typename Base::difference_type;
         using typename Base::iterator_category;
 
-        MapIterator(const TIterator& _it, const std::shared_ptr<range::internal::Data<TIterator>>& _data, const TMapper& _mapper)
+        MapIterator(const std::shared_ptr<range::internal::Data<TIterator>>& _data, const TIterator& _it, const TMapper& _mapper)
             : Base{ _data }, m_it{ _it }, m_mapper{ _mapper }
         {}
 
