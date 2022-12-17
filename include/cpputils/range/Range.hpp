@@ -42,7 +42,7 @@ namespace cpputils::range
         struct Addresser final
         {
 
-            inline std::remove_reference_t<TInReference>* operator()(TInReference _value) const noexcept
+            inline auto operator()(TInReference _value) const noexcept
             {
                 return std::addressof(_value);
             };
@@ -53,7 +53,7 @@ namespace cpputils::range
         struct Dereferencer final
         {
 
-            inline std::remove_pointer_t<std::remove_reference_t<TInReference>> operator()(TInReference _value) const noexcept
+            inline auto& operator()(TInReference _value) const noexcept
             {
                 return *_value;
             };
