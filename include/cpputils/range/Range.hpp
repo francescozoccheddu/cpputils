@@ -5,6 +5,7 @@
 #include <cpputils/range/iterators/DistinctIterator.hpp>
 #include <cpputils/range/iterators/DuplicatedIterator.hpp>
 #include <cpputils/range/iterators/FilterIterator.hpp>
+#include <cpputils/range/iterators/MapIterator.hpp>
 #include <cpputils/mixins/NonCopyable.hpp>
 #include <type_traits>
 #include <iterator>
@@ -32,18 +33,16 @@ namespace cpputils::range
         using Offset = std::iter_difference_t<const Iterator>;
         using Data = internal::Data<Iterator>;
         using Collected = Range<const Value*>;
-        using FilterIt = iterators::FilterIterator<Iterator>;
-        using Filtered = Range<FilterIt>;
-        using DistinctIt = iterators::DistinctIterator<typename Collected::Iterator>;
-        using Distinct = Range<DistinctIt>;
-        using DuplicatedIt = iterators::DuplicatedIterator<typename Collected::Iterator>;
-        using Duplicated = Range<DuplicatedIt>;
+        using Filtered = Range<iterators::FilterIterator<Iterator>>;
+        using Distinct = Range<iterators::DistinctIterator<typename Collected::Iterator>>;
+        using Duplicated = Range<iterators::DuplicatedIterator<typename Collected::Iterator>>;
+        template<typename TMapper>
+        using Mapped = Range<iterators::MapIterator<TIterator, TMapper>>;
 
     private:
 
         template<typename TOtherIterator>
         friend class Range;
-
 
         std::shared_ptr<Data> m_data;
 
@@ -134,7 +133,14 @@ namespace cpputils::range
         Filtered filter()
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Filtered{ FilterIt{ data->begin(), data }, FilterIt{ data->end(), data }, data->extractBuffer() };
+            return Filtered{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
+        }
+
+        template<typename TMapper>
+        Mapped<TMapper> map(const TMapper& _mapper = {})
+        {
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            return Mapped<TMapper>{ { data->begin(), data, _mapper }, { data->end(), data, _mapper }, data->extractBuffer() };
         }
 
         Collected collect()
@@ -152,11 +158,10 @@ namespace cpputils::range
             return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
 
-        template<typename TCompare>
         Collected sort()
         {
             Collected collected{ collect() };
-            std::shared_ptr<Data> data{ std::move(m_data) };
+            std::shared_ptr<typename Collected::Data> data{ std::move(collected.m_data) };
             internal::Buffer buffer{ data->extractBuffer() };
             std::sort(buffer.begin<Value>(), buffer.end<Value>());
             return Collected{ buffer.begin<const Value>(), buffer.end<const Value>(), std::move(buffer) };
@@ -165,15 +170,15 @@ namespace cpputils::range
         Distinct distinct()
         {
             Collected sorted{ sort() };
-            std::shared_ptr<Data> data{ std::move(sorted.m_data) };
-            return Distinct{ DistinctIt{ data->begin(), data }, DistinctIt{ data->end(), data }, data->extractBuffer() };
+            std::shared_ptr<typename Collected::Data> data{ std::move(sorted.m_data) };
+            return Distinct{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
         }
 
         Duplicated duplicated()
         {
             Collected sorted{ sort() };
-            std::shared_ptr<Data> data{ std::move(sorted.m_data) };
-            return Duplicated{ DuplicatedIt{ data->begin(), data }, DuplicatedIt{ data->end(), data }, data->extractBuffer() };
+            std::shared_ptr<typename Collected::Data> data{ std::move(sorted.m_data) };
+            return Duplicated{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
         }
 
         template<typename TAccumulator, typename TReduce>

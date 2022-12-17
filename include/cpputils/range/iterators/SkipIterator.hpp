@@ -1,13 +1,13 @@
 #pragma once
 
-#include <cpputils/range/internal/Iterator.hpp>
+#include <cpputils/range/iterators/internal/Iterator.hpp>
 #include <iterator>
 #include <memory>
 
 namespace cpputils::range::iterators
 {
 
-    template<typename TIterator, bool(*TShouldSkip)(const TIterator& _it, const TIterator& _begin, const TIterator& _end)>
+    template<typename TIterator, bool(*TShouldSkip)(const TIterator& _it, const internal::Iterator<TIterator>& _this)>
     class SkipIterator: public internal::Iterator<TIterator>
     {
 
@@ -19,7 +19,7 @@ namespace cpputils::range::iterators
 
         void advance() const
         {
-            while (m_it != this->end() && TShouldSkip(m_it, this->begin(), this->end()))
+            while (m_it != this->end() && TShouldSkip(m_it, *this))
             {
                 std::advance(m_it, 1);
             }
@@ -27,10 +27,18 @@ namespace cpputils::range::iterators
 
         void advanceReverse() const
         {
-            while (m_it != this->begin() && TShouldSkip(m_it, this->begin(), this->end()))
+            while (m_it != this->begin() && TShouldSkip(m_it, *this))
             {
                 std::advance(m_it, -1);
             }
+        }
+
+    protected:
+
+        SkipIterator(const TIterator& _it, const std::shared_ptr<range::internal::Data<TIterator>>& _data)
+            : Base{ _data }, m_it{ _it }
+        {
+            advance();
         }
 
     public:
@@ -40,12 +48,6 @@ namespace cpputils::range::iterators
         using typename Base::pointer;
         using typename Base::difference_type;
         using typename Base::iterator_category;
-
-        SkipIterator(const TIterator& _it, const std::shared_ptr<internal::Data<TIterator>>& _data)
-            : Base{ _data }, m_it{ _it }
-        {
-            advance();
-        }
 
         reference operator*() const
         {

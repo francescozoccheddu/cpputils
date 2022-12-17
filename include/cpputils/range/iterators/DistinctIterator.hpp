@@ -9,10 +9,10 @@ namespace cpputils::range::iterators
     {
 
         template<typename TIterator>
-        constexpr bool distinctShouldSkip(const TIterator& _it, const TIterator& _begin, const TIterator& _end)
+        constexpr bool distinctShouldSkip(const TIterator& _it, const IteratorBase<TIterator>& _this)
         {
             const TIterator next{ std::next(_it) };
-            return next != _end && *next == *_it;
+            return next != _this.end() && *next == *_it;
         }
 
     }

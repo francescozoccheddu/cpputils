@@ -9,7 +9,7 @@ namespace cpputils::range::iterators
     {
 
         template<typename TIterator>
-        constexpr bool filterShouldSkip(const TIterator& _it, const TIterator& _begin, const TIterator& _end)
+        constexpr bool filterShouldSkip(const TIterator& _it, const IteratorBase<TIterator>& _this)
         {
             return !*_it;
         }
