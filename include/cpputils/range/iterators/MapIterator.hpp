@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cpputils/range/iterators/internal/Iterator.hpp>
+#include <cpputils/range/internal/consts.hpp>
 #include <iterator>
 #include <memory>
 
@@ -11,7 +12,7 @@ namespace cpputils::range::iterators
     {
 
         template<typename TIterator, typename TMapper>
-        using MapperResult = std::invoke_result_t<TMapper, const std::iter_reference_t<const TIterator>>;
+        using MapperResult = range::internal::consts::RefOrPtr<std::invoke_result_t<TMapper, const std::iter_reference_t<const TIterator>>>;
 
     }
 

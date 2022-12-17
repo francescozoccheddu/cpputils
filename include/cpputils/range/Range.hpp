@@ -2,6 +2,7 @@
 
 #include <cpputils/range/internal/Buffer.hpp>
 #include <cpputils/range/internal/Data.hpp>
+#include <cpputils/range/internal/consts.hpp>
 #include <cpputils/range/iterators/DistinctIterator.hpp>
 #include <cpputils/range/iterators/DuplicatedIterator.hpp>
 #include <cpputils/range/iterators/FilterIterator.hpp>
@@ -21,6 +22,22 @@
 namespace cpputils::range
 {
 
+    namespace internal
+    {
+
+        template<typename TInReference, typename TOutReference>
+        struct Caster final
+        {
+
+            inline TOutReference operator()(TInReference& _value) const noexcept
+            {
+                return static_cast<TOutReference>(_value);
+            };
+
+        };
+
+    }
+
     template<typename TIterator>
     class Range final: private mixins::NonCopyable
     {
@@ -38,6 +55,9 @@ namespace cpputils::range
         using Duplicated = Range<iterators::DuplicatedIterator<typename Collected::Iterator>>;
         template<typename TMapper>
         using Mapped = Range<iterators::MapIterator<TIterator, TMapper>>;
+        template<typename TOutReference>
+        using Casted = Mapped<internal::Caster<Reference, TOutReference>>;
+        using Const = Casted<internal::consts::RefOrPtr<Reference>>;
 
     private:
 
@@ -141,6 +161,17 @@ namespace cpputils::range
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
             return Mapped<TMapper>{ { data->begin(), data, _mapper }, { data->end(), data, _mapper }, data->extractBuffer() };
+        }
+
+        template<typename TOutReference>
+        Casted<TOutReference> cast()
+        {
+            return map(internal::Caster<Reference, TOutReference>{});
+        }
+
+        Const immutable()
+        {
+            return cast<internal::consts::RefOrPtr<Reference>>();
         }
 
         Collected collect()
