@@ -176,6 +176,13 @@ namespace cpputils::range
             return begin() == end();
         }
 
+        Range take(Offset _count)
+        {
+            const Offset maxCount{ count() };
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            return Range{ data->begin(), data->begin() + std::min(_count, maxCount), data->extractBuffer() };
+        }
+
         Filtered filter()
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
