@@ -5,13 +5,13 @@
 #include <cpputils/range/iterators/DistinctIterator.hpp>
 #include <cpputils/range/iterators/DuplicatedIterator.hpp>
 #include <cpputils/range/iterators/FilterIterator.hpp>
+#include <cpputils/mixins/NonCopyable.hpp>
 #include <type_traits>
 #include <iterator>
 #include <vector>
 #include <list>
 #include <array>
 #include <unordered_set>
-#include <set>
 #include <memory>
 #include <algorithm>
 #include <limits>
@@ -20,24 +20,24 @@
 namespace cpputils::range
 {
 
-    template<typename TIterator, typename TValue = std::iter_value_t<TIterator>>
-    class Range final
+    template<typename TIterator>
+    class Range final: private mixins::NonCopyable
     {
 
     private:
 
-        template<typename TOtherIterator, typename TOtherValue>
+        template<typename TOtherIterator>
         friend class Range;
 
         using Iterator = TIterator;
-        using Value = TValue;
-        using Data = internal::Data<TIterator, TValue>;
-        using Collected = Range<TValue*, TValue>;
-        using FilterIt = iterators::FilterIterator<TIterator, TValue>;
+        using Value = std::remove_reference_t<std::iter_reference_t<const TIterator>>;
+        using Data = internal::Data<TIterator>;
+        using Collected = Range<Value*>;
+        using FilterIt = iterators::FilterIterator<TIterator>;
         using Filtered = Range<FilterIt>;
-        using DistinctIt = iterators::DistinctIterator<typename Collected::Iterator, typename Collected::Value>;
+        using DistinctIt = iterators::DistinctIterator<typename Collected::Iterator>;
         using Distinct = Range<DistinctIt>;
-        using DuplicatedIt = iterators::DuplicatedIterator<typename Collected::Iterator, typename Collected::Value>;
+        using DuplicatedIt = iterators::DuplicatedIterator<typename Collected::Iterator>;
         using Duplicated = Range<DuplicatedIt>;
 
         std::shared_ptr<Data> m_data;
@@ -62,19 +62,19 @@ namespace cpputils::range
             return m_data->end();
         }
 
-        auto operator[](const std::iter_difference_t<TIterator>& _offset) const
+        std::iter_reference_t<const TIterator> operator[](const std::iter_difference_t<const TIterator>& _offset) const
         {
             return *std::next(begin(), _offset);
         }
 
-        const TValue& first() const
+        std::iter_reference_t<const TIterator> first() const
         {
             return *begin();
         }
 
-        const TValue& last() const
+        std::iter_reference_t<const TIterator> last() const
         {
-            if constexpr (std::bidirectional_iterator<TIterator>)
+            if constexpr (std::bidirectional_iterator<const TIterator>)
             {
                 return *(std::prev(end()));
             }
@@ -84,9 +84,9 @@ namespace cpputils::range
             }
         }
 
-        std::iterator_traits<TIterator>::difference_type count() const
+        std::iter_difference_t<const TIterator> count() const
         {
-            return static_cast<std::size_t>(std::distance(begin(), end()));
+            return std::distance(begin(), end());
         }
 
         Filtered filter()
@@ -98,22 +98,22 @@ namespace cpputils::range
         {
             internal::Buffer buffer{ m_data->extractBuffer() };
             buffer.collect(begin(), end());
-            return Collected{ buffer.begin<TValue>(), buffer.end<TValue>(), std::move(buffer) };
+            return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
 
         Collected cloneAndCollect() const
         {
             internal::Buffer buffer{};
             buffer.collect(begin(), end());
-            return Collected{ buffer.begin<TValue>(), buffer.end<TValue>(), std::move(buffer) };
+            return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
 
         Collected sort()
         {
             internal::Buffer buffer{ m_data->extractBuffer() };
             buffer.collect(begin(), end());
-            std::sort(buffer.begin<TValue>(), buffer.end<TValue>());
-            return Collected{ buffer.begin<TValue>(), buffer.end<TValue>(), std::move(buffer) };
+            std::sort(buffer.begin<Value>(), buffer.end<Value>());
+            return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
 
         Distinct distinct()
@@ -128,22 +128,43 @@ namespace cpputils::range
             return Duplicated{ DuplicatedIt{ sorted.begin(), sorted.m_data }, DuplicatedIt{ sorted.end(), sorted.m_data }, sorted.m_data->extractBuffer() };
         }
 
-        std::vector<TValue> toVector() const;
+        std::vector<Value> toVector() const
+        {
+            return std::vector<Value>(begin(), end());
+        }
 
         template<std::size_t TSize>
-        std::array<TValue, TSize> toArray() const;
+        std::array<Value, TSize> toArray(const Value& _defaultValue = {}) const
+        {
+            std::array<Value, TSize> out;
+            std::size_t i{};
+            TIterator it{ begin() };
+            while (i < TSize && it != end())
+            {
+                out[i++] = *(it++);
+            }
+            while (i < TSize)
+            {
+                out[i++] = _defaultValue;
+            }
+            return out;
+        }
 
-        std::list<TValue> toList() const;
+        std::list<Value> toList() const
+        {
+            return std::list<Value>(begin(), end());
+        }
 
-        std::unordered_set<TValue> toUnorderedSet() const;
-
-        std::set<TValue> toSet() const;
+        std::unordered_set<Value> toUnorderedSet() const
+        {
+            return std::unordered_set<Value>(begin(), end());
+        }
 
         template<typename TOutIterator>
         void assign(const TOutIterator& _begin) const
         {
             TOutIterator it{ _begin };
-            for (TValue& value : *this)
+            for (const Value& value : *this)
             {
                 *(it++) = value;
             }
@@ -162,7 +183,7 @@ namespace cpputils::range
         }
 
         template<typename TOutIterator>
-        void assign(const TOutIterator& _begin, const TOutIterator& _end, const TValue& _defaultValue) const
+        void assign(const TOutIterator& _begin, const TOutIterator& _end, const Value& _defaultValue) const
         {
             TOutIterator outIt{ assign(_begin, _end) };
             while (outIt != _end)

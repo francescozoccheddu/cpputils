@@ -22,38 +22,38 @@ namespace cpputils::range
 
     }
 
-    template<typename TIterable, typename TValue = std::iter_value_t<internal::BeginResult<TIterable&>>>
-    Range<internal::BeginResult<TIterable&>, TValue> of(TIterable& _iterable)
+    template<typename TIterable>
+    Range<internal::BeginResult<TIterable&>> of(TIterable& _iterable)
     {
         return Range{ std::begin(_iterable), std::end(_iterable) };
     }
 
-    template<typename TIterable, typename TValue = std::iter_value_t<internal::BeginResult<const TIterable&>>>
-    Range<internal::BeginResult<const TIterable&>, TValue> of(const TIterable& _iterable)
+    template<typename TIterable>
+    Range<internal::BeginResult<const TIterable&>> of(const TIterable& _iterable)
     {
         return Range{ std::begin(_iterable), std::end(_iterable) };
     }
 
-    template<typename TIterable, typename TValue = std::iter_value_t<internal::CBeginResult<const TIterable&>>>
-    Range<internal::CBeginResult<const TIterable&>, TValue> ofc(const TIterable& _iterable)
+    template<typename TIterable>
+    Range<internal::CBeginResult<const TIterable&>> ofc(const TIterable& _iterable)
     {
         return Range{ std::cbegin(_iterable), std::cend(_iterable) };
     }
 
-    template<typename TIterable, typename TValue = std::iter_value_t<internal::RBeginResult<TIterable&>>>
-    Range<internal::RBeginResult<TIterable&>, TValue> ofr(TIterable& _iterable)
+    template<typename TIterable>
+    Range<internal::RBeginResult<TIterable&>> ofr(TIterable& _iterable)
     {
         return Range{ std::rbegin(_iterable), std::rend(_iterable) };
     }
 
-    template<typename TIterable, typename TValue = std::iter_value_t<internal::RBeginResult<const TIterable&>>>
-    Range<internal::RBeginResult<const TIterable&>, TValue> ofr(const TIterable& _iterable)
+    template<typename TIterable>
+    Range<internal::RBeginResult<const TIterable&>> ofr(const TIterable& _iterable)
     {
         return Range{ std::rbegin(_iterable), std::rend(_iterable) };
     }
 
-    template<typename TIterable, typename TValue = std::iter_value_t<internal::CRBeginResult<const TIterable&>>>
-    Range<internal::CRBeginResult<const TIterable&>, TValue> ofcr(const TIterable& _iterable)
+    template<typename TIterable>
+    Range<internal::CRBeginResult<const TIterable&>> ofcr(const TIterable& _iterable)
     {
         return Range{ std::crbegin(_iterable), std::crend(_iterable) };
     }

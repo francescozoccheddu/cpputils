@@ -21,7 +21,7 @@ namespace cpputils::range::internal
 
     public:
 
-        template<typename TIterator, typename TValue = std::iter_value_t<TIterator>>
+        template<typename TIterator, typename TValue>
         void collect(const TIterator& _begin, const TIterator& _end)
         {
             const std::size_t size{ static_cast<std::size_t>(std::distance(_begin, _end)) };

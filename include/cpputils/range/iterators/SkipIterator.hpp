@@ -7,13 +7,13 @@
 namespace cpputils::range::iterators
 {
 
-    template<typename TIterator, typename TValue, bool(*TShouldSkip)(const TIterator& _it, const TIterator& _begin, const TIterator& _end)>
-    class SkipIterator: public internal::Iterator<TIterator, TValue>
+    template<typename TIterator, bool(*TShouldSkip)(const TIterator& _it, const TIterator& _begin, const TIterator& _end)>
+    class SkipIterator: public internal::Iterator<TIterator>
     {
 
     private:
 
-        using Base = internal::Iterator<TIterator, TValue>;
+        using Base = internal::Iterator<TIterator>;
 
         mutable TIterator m_it;
 
@@ -41,7 +41,7 @@ namespace cpputils::range::iterators
         using typename Base::difference_type;
         using typename Base::iterator_category;
 
-        SkipIterator(const TIterator& _it, const std::shared_ptr<internal::Data<TIterator, TValue>>& _data)
+        SkipIterator(const TIterator& _it, const std::shared_ptr<internal::Data<TIterator>>& _data)
             : Base{ _data }, m_it{ _it }
         {
             advance();

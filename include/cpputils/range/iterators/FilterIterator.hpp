@@ -16,13 +16,13 @@ namespace cpputils::range::iterators
 
     }
 
-    template<typename TIterator, typename TValue>
-    class FilterIterator final: public SkipIterator<TIterator, TValue, internal::filterShouldSkip<TIterator>>
+    template<typename TIterator>
+    class FilterIterator final: public SkipIterator<TIterator, internal::filterShouldSkip<TIterator>>
     {
 
     private:
 
-        using Base = SkipIterator<TIterator, TValue, internal::filterShouldSkip<TIterator>>;
+        using Base = SkipIterator<TIterator, internal::filterShouldSkip<TIterator>>;
 
     public:
 

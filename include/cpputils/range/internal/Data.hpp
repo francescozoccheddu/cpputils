@@ -7,7 +7,7 @@
 namespace cpputils::range::internal
 {
 
-    template<typename TIterator, typename TValue = std::iter_value_t<TIterator>>
+    template<typename TIterator>
     class Data final
     {
 
