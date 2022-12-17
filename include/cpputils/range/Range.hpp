@@ -67,13 +67,36 @@ namespace cpputils::range
             return *std::next(begin(), _offset);
         }
 
+        std::iter_reference_t<const TIterator> first(std::iter_reference_t<const TIterator> _else) const
+        {
+            return empty() ? _else : first();
+        }
+
+        std::iter_reference_t<const TIterator> last(std::iter_reference_t<const TIterator> _else) const
+        {
+            return empty() ? _else : last();
+        }
+
+        std::iter_reference_t<const TIterator> single(std::iter_reference_t<const TIterator> _else) const
+        {
+            return count() != 1 ? _else : single();
+        }
+
         std::iter_reference_t<const TIterator> first() const
         {
+            if (empty())
+            {
+                throw std::logic_error{ "empty" };
+            }
             return *begin();
         }
 
         std::iter_reference_t<const TIterator> last() const
         {
+            if (empty())
+            {
+                throw std::logic_error{ "empty" };
+            }
             if constexpr (std::bidirectional_iterator<const TIterator>)
             {
                 return *(std::prev(end()));
@@ -84,9 +107,23 @@ namespace cpputils::range
             }
         }
 
+        std::iter_reference_t<const TIterator> single() const
+        {
+            if (count() != 1)
+            {
+                throw std::logic_error{ "not a singleton" };
+            }
+            return first();
+        }
+
         std::iter_difference_t<const TIterator> count() const
         {
             return std::distance(begin(), end());
+        }
+
+        bool empty() const
+        {
+            return begin() == end();
         }
 
         Filtered filter()
@@ -110,6 +147,7 @@ namespace cpputils::range
             return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
 
+        template<typename TCompare>
         Collected sort()
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
@@ -131,6 +169,93 @@ namespace cpputils::range
             Collected sorted{ sort() };
             std::shared_ptr<Data> data{ std::move(sorted.m_data) };
             return Duplicated{ DuplicatedIt{ data->begin(), data }, DuplicatedIt{ data->end(), data }, data->extractBuffer() };
+        }
+
+        template<typename TAccumulator, typename TReduce>
+        TAccumulator reduce(const TReduce& _reduce, const TAccumulator& _start) const
+        {
+            TAccumulator accumulator{ _start };
+            for (auto& value : *this)
+            {
+                accumulator = _reduce(value, accumulator);
+            }
+            return accumulator;
+        }
+
+        template<typename TCompare>
+        std::iter_reference_t<const TIterator> best(const TCompare& _compare, std::iter_reference_t<const TIterator> _else) const
+        {
+            return empty() ? _else : best(_compare);
+        }
+
+        template<typename TCompare>
+        TIterator best(const TCompare& _compare) const
+        {
+            if (empty())
+            {
+                throw std::logic_error{ "empty" };
+            }
+            return *bestIt(_compare);
+        }
+
+        template<typename TCompare>
+        TIterator bestIt(const TCompare& _compare) const
+        {
+            TIterator best{ begin() };
+            TIterator it{ begin() };
+            while (it != end())
+            {
+                if (_compare(*it, *best))
+                {
+                    best = it;
+                }
+                it++;
+            }
+            return best;
+        }
+
+        std::iter_reference_t<const TIterator> min(std::iter_reference_t<const TIterator> _else) const
+        {
+            return empty() ? _else : min();
+        }
+
+        std::iter_reference_t<const TIterator> max(std::iter_reference_t<const TIterator> _else) const
+        {
+            return empty() ? _else : max();
+        }
+
+        std::iter_reference_t<const TIterator> min() const
+        {
+            return best(std::less<std::iter_value_t<const TIterator>>{});
+        }
+
+        std::iter_reference_t<const TIterator> max() const
+        {
+            return best(std::greater<std::iter_value_t<const TIterator>>{});
+        }
+
+        template<typename TSum = std::iter_value_t<const TIterator>>
+        TSum sum() const
+        {
+            return reduce([](std::iter_reference_t<const TIterator> _value, TSum _accumulator) {
+                return static_cast<TSum>(_value) + _accumulator;
+            }, TSum{});
+        }
+
+        template<typename TSum = std::iter_value_t<const TIterator>>
+        TSum avg(TSum _else) const
+        {
+            return empty() ? _else : avg();
+        }
+
+        template<typename TSum = std::iter_value_t<const TIterator>>
+        TSum avg() const
+        {
+            if (empty())
+            {
+                throw std::logic_error{ "empty" };
+            }
+            return sum<TSum>() / static_cast<TSum>(count());
         }
 
         std::vector<Value> toVector() const
@@ -169,7 +294,7 @@ namespace cpputils::range
         void assign(const TOutIterator& _begin) const
         {
             TOutIterator it{ _begin };
-            for (const Value& value : *this)
+            for (auto& value : *this)
             {
                 *(it++) = value;
             }
