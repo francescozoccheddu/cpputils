@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_MIXINS_STATICCLASS_INCLUDED
-#define CPPUTILS_MIXINS_STATICCLASS_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/NonCopyable.hpp>
 #include <cpputils/mixins/NonMovable.hpp>
@@ -7,7 +6,7 @@
 namespace cpputils::mixins
 {
 
-	class StaticClass : public virtual NonCopyable, public virtual NonMovable
+	class StaticClass: public virtual NonCopyable, public virtual NonMovable
 	{
 
 	private:
@@ -17,5 +16,3 @@ namespace cpputils::mixins
 	};
 
 }
-
-#endif

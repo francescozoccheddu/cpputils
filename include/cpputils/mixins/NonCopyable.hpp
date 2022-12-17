@@ -1,12 +1,11 @@
-#ifndef CPPUTILS_MIXINS_NONCOPYABLE_INCLUDED
-#define CPPUTILS_MIXINS_NONCOPYABLE_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/WithVirtualDestructor.hpp>
 
 namespace cpputils::mixins
 {
 
-	class NonCopyable : public virtual WithVirtualDestructor
+	class NonCopyable: public virtual WithVirtualDestructor
 	{
 
 	protected:
@@ -18,5 +17,3 @@ namespace cpputils::mixins
 	};
 
 }
-
-#endif

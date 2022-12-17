@@ -1,12 +1,11 @@
-#ifndef CPPUTILS_MIXINS_NONMOVABLE_INCLUDED
-#define CPPUTILS_MIXINS_NONMOVABLE_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/WithVirtualDestructor.hpp>
 
 namespace cpputils::mixins
 {
 
-	class NonMovable : public virtual WithVirtualDestructor
+	class NonMovable: public virtual WithVirtualDestructor
 	{
 
 	protected:
@@ -18,5 +17,3 @@ namespace cpputils::mixins
 	};
 
 }
-
-#endif

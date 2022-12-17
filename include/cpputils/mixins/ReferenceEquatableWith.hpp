@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_MIXINS_REFERENCEEQUATABLEWITH_INCLUDED
-#define CPPUTILS_MIXINS_REFERENCEEQUATABLEWITH_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/WithVirtualDestructor.hpp>
 
@@ -7,20 +6,21 @@ namespace cpputils::mixins
 {
 
 	template <typename TOther>
-	class ReferenceEquatableWith : public virtual WithVirtualDestructor
+	class ReferenceEquatableWith: public virtual WithVirtualDestructor
 	{
 
 	public:
 
-		bool operator==(const TOther& _b) const;
-		bool operator!=(const TOther& _b) const;
+		inline bool operator==(const TOther& _b) const noexcept
+		{
+			return std::addressof(_b) == this;
+		}
+
+		inline bool operator!=(const TOther& _b) const noexcept
+		{
+			return std::addressof(_b) != this;
+		}
 
 	};
 
 }
-
-#define CPPUTILS_MIXINS_REFERENCEEQUATABLEWITH_IMPLEMENTATION
-#include <cpputils-IMPL/mixins/ReferenceEquatableWith.tpp>
-#undef CPPUTILS_MIXINS_REFERENCEEQUATABLEWITH_IMPLEMENTATION
-
-#endif

@@ -1,13 +1,10 @@
-#ifndef CPPUTILS_MIXINS_REFERENCEEQUATABLE_INCLUDED
-#define CPPUTILS_MIXINS_REFERENCEEQUATABLE_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/ReferenceEquatableWith.hpp>
 
 namespace cpputils::mixins
 {
 
-	class ReferenceEquatable : public virtual ReferenceEquatableWith<ReferenceEquatable> {};
+	class ReferenceEquatable: public virtual ReferenceEquatableWith<ReferenceEquatable> {};
 
 }
-
-#endif

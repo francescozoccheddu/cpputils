@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
-#define CPPUTILS_SERIALIZATION_DESERIALIZER_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/ReferenceClass.hpp>
 #include <cpputils/serialization/DeserializerWorker.hpp>
@@ -20,7 +19,7 @@ namespace cpputils::serialization
 	}
 
 	template<concepts::DeserializerWorker TWorker = DeserializerWorker>
-	class Deserializer final : public mixins::ReferenceClass
+	class Deserializer final: public mixins::ReferenceClass
 	{
 
 	private:
@@ -29,20 +28,25 @@ namespace cpputils::serialization
 
 	public:
 
-		explicit Deserializer(std::istream& _stream);
+		Deserializer(std::istream& _stream)
+			: m_worker{ _stream }
+		{}
 
 		template<typename TData>
-		Deserializer& operator>>(TData& _data);
+		Deserializer<TWorker>& operator>>(TData& _data)
+		{
+			m_worker >> _data;
+			return *this;
+		}
 
 		template<typename TData>
-		TData get();
+		TData get()
+		{
+			TData data;
+			m_worker >> data;
+			return data;
+		}
 
 	};
 
 }
-
-#define CPPUTILS_SERIALIZATION_DESERIALIZER_IMPLEMENTATION
-#include <cpputils-IMPL/serialization/Deserializer.tpp>
-#undef CPPUTILS_SERIALIZATION_DESERIALIZER_IMPLEMENTATION
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_MIXINS_REFERENCECLASS_INCLUDED
-#define CPPUTILS_MIXINS_REFERENCECLASS_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/ReferenceEquatable.hpp>
 #include <cpputils/mixins/NonCopyable.hpp>
@@ -8,8 +7,6 @@
 namespace cpputils::mixins
 {
 
-	class ReferenceClass : public virtual ReferenceEquatable, protected virtual NonCopyable, protected virtual NonMovable {};
+	class ReferenceClass: public virtual ReferenceEquatable, protected virtual NonCopyable, protected virtual NonMovable {};
 
 }
-
-#endif

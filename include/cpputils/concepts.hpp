@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_CONCEPTS_INCLUDED
-#define CPPUTILS_CONCEPTS_INCLUDED
+#pragma once
 
 #include <type_traits>
 #include <concepts>
@@ -16,4 +15,3 @@ namespace cpputils::concepts
 }
 
 
-#endif

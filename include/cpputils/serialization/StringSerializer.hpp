@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_SERIALIZATION_STRINGSERIALIZER_INCLUDED
-#define CPPUTILS_SERIALIZATION_STRINGSERIALIZER_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/ReferenceClass.hpp>
 #include <cpputils/serialization/SerializerWorker.hpp>
@@ -12,7 +11,7 @@ namespace cpputils::serialization
 {
 
 	template <concepts::SerializerWorker TWorker = SerializerWorker>
-	class StringSerializer final : public mixins::ReferenceClass
+	class StringSerializer final: public mixins::ReferenceClass
 	{
 
 	private:
@@ -22,30 +21,42 @@ namespace cpputils::serialization
 
 	public:
 
-		explicit StringSerializer();
+		explicit StringSerializer()
+			: m_stream{}, m_serializer{ m_stream }
+		{}
 
-		std::string string() const;
+		operator std::string() const
+		{
+			return m_stream.str();
+		}
 
-		const char* cstr() const;
-
-		std::string_view stringView() const;
-
-		operator std::string() const;
+		std::string string() const
+		{
+			return m_stream.str();
+		}
 
 		friend std::ostream& operator<<(std::ostream& _stream, const StringSerializer<TWorker>& _serializer)
 		{
 			return _stream << _serializer.string();
 		}
 
-		Serializer<TWorker>& serializer();
-		const Serializer<TWorker>& serializer() const;
+		Serializer<TWorker>& serializer()
+		{
+			return m_serializer;
+		}
+
+		const Serializer<TWorker>& serializer() const
+		{
+			return m_serializer;
+		}
+
+		template<typename TData>
+		StringSerializer& operator<<(const TData& _data)
+		{
+			m_serializer << _data;
+			return *this;
+		}
 
 	};
 
 }
-
-#define CPPUTILS_SERIALIZATION_STRINGSERIALIZER_IMPLEMENTATION
-#include <cpputils-IMPL/serialization/StringSerializer.tpp>
-#undef CPPUTILS_SERIALIZATION_STRINGSERIALIZER_IMPLEMENTATION
-
-#endif

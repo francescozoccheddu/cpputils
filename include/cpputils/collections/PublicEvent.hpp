@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_COLLECTIONS_PUBLICEVENT_INCLUDED
-#define CPPUTILS_COLLECTIONS_PUBLICEVENT_INCLUDED
+#pragma once
 
 #include <cpputils/collections/Event.hpp>
 
@@ -12,4 +11,3 @@ namespace cpputils::collections
 
 }
 
-#endif

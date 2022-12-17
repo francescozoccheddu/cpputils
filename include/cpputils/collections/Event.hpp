@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_COLLECTIONS_EVENT_INCLUDED
-#define CPPUTILS_COLLECTIONS_EVENT_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/ReferenceClass.hpp>
 #include <cpputils/mixins/StaticClass.hpp>
@@ -17,10 +16,10 @@ namespace cpputils::collections
 	namespace internal
 	{
 
-		class AnyEventInvoker final : public mixins::StaticClass {};
+		class AnyEventInvoker final: public mixins::StaticClass {};
 
 		template <typename ... TArgs>
-		class EventBase : public mixins::ReferenceClass
+		class EventBase: public mixins::ReferenceClass
 		{
 
 		public:
@@ -37,39 +36,53 @@ namespace cpputils::collections
 
 			EventBase() = default;
 
-			void operator()(TArgs ... _args);
+			void operator()(TArgs ... _args)
+			{
+				for (Handler& handler : m_handlers)
+				{
+					handler(_args ...);
+				}
+			}
 
 		public:
 
-			HandlerToken operator+=(const Handler& _handler);
-			void operator-=(const HandlerToken& _handlerToken);
+			HandlerToken operator+=(const Handler& _handler)
+			{
+				m_handlers.push_front(_handler);
+				return m_handlers.before_begin();
+			}
+
+			void operator-=(const HandlerToken& _handlerToken)
+			{
+				m_handlers.erase_after(_handlerToken);
+			}
 
 		};
 
 	}
 
 	template <cpputils::concepts::SimpleClass TInvoker, typename ... TArgs>
-	class Event final : public internal::EventBase<TArgs ...>
+	class Event final: public internal::EventBase<TArgs ...>
 	{
 
 	private:
 
 		friend TInvoker;
 
-		void operator()(TArgs... _args) requires (!std::same_as<TInvoker, internal::AnyEventInvoker>);
+		void operator()(TArgs..._args) requires (!std::same_as<TInvoker, internal::AnyEventInvoker>)
+		{
+			internal::EventBase<TArgs ...>::operator()(_args ...);
+		}
 
 	public:
 
 		Event() = default;
 
-		void operator()(TArgs... _args) requires std::same_as<TInvoker, internal::AnyEventInvoker>;
+		void operator()(TArgs..._args) requires std::same_as<TInvoker, internal::AnyEventInvoker>
+		{
+			internal::EventBase<TArgs ...>::operator()(_args ...);
+		}
 
 	};
 
 }
-
-#define CPPUTILS_COLLECTIONS_EVENT_IMPLEMENTATION
-#include <cpputils-IMPL/collections/Event.tpp>
-#undef CPPUTILS_COLLECTIONS_EVENT_IMPLEMENTATION
-
-#endif

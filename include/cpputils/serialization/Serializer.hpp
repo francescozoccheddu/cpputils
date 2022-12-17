@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_SERIALIZATION_SERIALIZER_INCLUDED
-#define CPPUTILS_SERIALIZATION_SERIALIZER_INCLUDED
+#pragma once
 
 #include <cpputils/mixins/ReferenceClass.hpp>
 #include <cpputils/serialization/SerializerWorker.hpp>
@@ -20,7 +19,7 @@ namespace cpputils::serialization
 	}
 
 	template<concepts::SerializerWorker TWorker = SerializerWorker>
-	class Serializer final : public mixins::ReferenceClass
+	class Serializer final: public mixins::ReferenceClass
 	{
 
 	private:
@@ -29,17 +28,17 @@ namespace cpputils::serialization
 
 	public:
 
-		explicit Serializer(std::ostream& _stream);
+		Serializer(std::ostream& _stream)
+			: m_worker{ _stream }
+		{}
 
 		template<typename TData>
-		Serializer& operator<<(const TData& _data);
+		Serializer<TWorker>& operator<<(const TData& _data)
+		{
+			m_worker << _data;
+			return *this;
+		}
 
 	};
 
 }
-
-#define CPPUTILS_SERIALIZATION_SERIALIZER_IMPLEMENTATION
-#include <cpputils-IMPL/serialization/Serializer.tpp>
-#undef CPPUTILS_SERIALIZATION_SERIALIZER_IMPLEMENTATION
-
-#endif

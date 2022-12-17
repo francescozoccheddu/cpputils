@@ -1,5 +1,4 @@
-#ifndef CPPUTILS_MIXINS_WITHVIRTUALDESTRUCTOR_INCLUDED
-#define CPPUTILS_MIXINS_WITHVIRTUALDESTRUCTOR_INCLUDED
+#pragma once
 
 namespace cpputils::mixins
 {
@@ -15,5 +14,3 @@ namespace cpputils::mixins
 	};
 
 }
-
-#endif
