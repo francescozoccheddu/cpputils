@@ -24,65 +24,70 @@ namespace cpputils::range
     class Range final: private mixins::NonCopyable
     {
 
-    private:
-
-        template<typename TOtherIterator>
-        friend class Range;
+    public:
 
         using Iterator = TIterator;
-        using Value = std::remove_reference_t<std::iter_reference_t<const TIterator>>;
-        using Data = internal::Data<TIterator>;
-        using Collected = Range<Value*>;
-        using FilterIt = iterators::FilterIterator<TIterator>;
+        using Value = std::iter_value_t<const Iterator>;
+        using Reference = std::iter_reference_t<const Iterator>;
+        using Offset = std::iter_difference_t<const Iterator>;
+        using Data = internal::Data<Iterator>;
+        using Collected = Range<const Value*>;
+        using FilterIt = iterators::FilterIterator<Iterator>;
         using Filtered = Range<FilterIt>;
         using DistinctIt = iterators::DistinctIterator<typename Collected::Iterator>;
         using Distinct = Range<DistinctIt>;
         using DuplicatedIt = iterators::DuplicatedIterator<typename Collected::Iterator>;
         using Duplicated = Range<DuplicatedIt>;
 
+    private:
+
+        template<typename TOtherIterator>
+        friend class Range;
+
+
         std::shared_ptr<Data> m_data;
 
-        Range(const TIterator& _begin, const TIterator& _end, internal::Buffer&& _buffer)
+        Range(const Iterator& _begin, const Iterator& _end, internal::Buffer&& _buffer)
             : m_data{ std::make_shared<Data>(_begin, _end, std::move(_buffer)) }
         {}
 
     public:
 
-        Range(const TIterator& _begin, const TIterator& _end)
+        Range(const Iterator& _begin, const Iterator& _end)
             : m_data{ std::make_shared<Data>(_begin, _end) }
         {}
 
-        TIterator begin() const
+        Iterator begin() const
         {
             return m_data->begin();
         }
 
-        TIterator end() const
+        Iterator end() const
         {
             return m_data->end();
         }
 
-        std::iter_reference_t<const TIterator> operator[](const std::iter_difference_t<const TIterator>& _offset) const
+        Reference operator[](const Offset& _offset) const
         {
             return *std::next(begin(), _offset);
         }
 
-        std::iter_reference_t<const TIterator> first(std::iter_reference_t<const TIterator> _else) const
+        Reference first(Reference _else) const
         {
             return empty() ? _else : first();
         }
 
-        std::iter_reference_t<const TIterator> last(std::iter_reference_t<const TIterator> _else) const
+        Reference last(Reference _else) const
         {
             return empty() ? _else : last();
         }
 
-        std::iter_reference_t<const TIterator> single(std::iter_reference_t<const TIterator> _else) const
+        Reference single(Reference _else) const
         {
             return count() != 1 ? _else : single();
         }
 
-        std::iter_reference_t<const TIterator> first() const
+        Reference first() const
         {
             if (empty())
             {
@@ -91,13 +96,13 @@ namespace cpputils::range
             return *begin();
         }
 
-        std::iter_reference_t<const TIterator> last() const
+        Reference last() const
         {
             if (empty())
             {
                 throw std::logic_error{ "empty" };
             }
-            if constexpr (std::bidirectional_iterator<const TIterator>)
+            if constexpr (std::bidirectional_iterator<const Iterator>)
             {
                 return *(std::prev(end()));
             }
@@ -107,7 +112,7 @@ namespace cpputils::range
             }
         }
 
-        std::iter_reference_t<const TIterator> single() const
+        Reference single() const
         {
             if (count() != 1)
             {
@@ -116,7 +121,7 @@ namespace cpputils::range
             return first();
         }
 
-        std::iter_difference_t<const TIterator> count() const
+        Offset count() const
         {
             return std::distance(begin(), end());
         }
@@ -150,11 +155,11 @@ namespace cpputils::range
         template<typename TCompare>
         Collected sort()
         {
+            Collected collected{ collect() };
             std::shared_ptr<Data> data{ std::move(m_data) };
             internal::Buffer buffer{ data->extractBuffer() };
-            buffer.collect(data->begin(), data->end());
             std::sort(buffer.begin<Value>(), buffer.end<Value>());
-            return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
+            return Collected{ buffer.begin<const Value>(), buffer.end<const Value>(), std::move(buffer) };
         }
 
         Distinct distinct()
@@ -183,13 +188,13 @@ namespace cpputils::range
         }
 
         template<typename TCompare>
-        std::iter_reference_t<const TIterator> best(const TCompare& _compare, std::iter_reference_t<const TIterator> _else) const
+        Reference best(const TCompare& _compare, Reference _else) const
         {
             return empty() ? _else : best(_compare);
         }
 
         template<typename TCompare>
-        TIterator best(const TCompare& _compare) const
+        Reference best(const TCompare& _compare) const
         {
             if (empty())
             {
@@ -199,10 +204,10 @@ namespace cpputils::range
         }
 
         template<typename TCompare>
-        TIterator bestIt(const TCompare& _compare) const
+        Iterator bestIt(const TCompare& _compare) const
         {
-            TIterator best{ begin() };
-            TIterator it{ begin() };
+            Iterator best{ begin() };
+            Iterator it{ begin() };
             while (it != end())
             {
                 if (_compare(*it, *best))
@@ -214,41 +219,41 @@ namespace cpputils::range
             return best;
         }
 
-        std::iter_reference_t<const TIterator> min(std::iter_reference_t<const TIterator> _else) const
+        Reference min(Reference _else) const
         {
             return empty() ? _else : min();
         }
 
-        std::iter_reference_t<const TIterator> max(std::iter_reference_t<const TIterator> _else) const
+        Reference max(Reference _else) const
         {
             return empty() ? _else : max();
         }
 
-        std::iter_reference_t<const TIterator> min() const
+        Reference min() const
         {
-            return best(std::less<std::iter_value_t<const TIterator>>{});
+            return best(std::less<Value>{});
         }
 
-        std::iter_reference_t<const TIterator> max() const
+        Reference max() const
         {
-            return best(std::greater<std::iter_value_t<const TIterator>>{});
+            return best(std::greater<Value>{});
         }
 
-        template<typename TSum = std::iter_value_t<const TIterator>>
+        template<typename TSum = Value>
         TSum sum() const
         {
-            return reduce([](std::iter_reference_t<const TIterator> _value, TSum _accumulator) {
+            return reduce([](Reference _value, TSum _accumulator) {
                 return static_cast<TSum>(_value) + _accumulator;
             }, TSum{});
         }
 
-        template<typename TSum = std::iter_value_t<const TIterator>>
+        template<typename TSum = Value>
         TSum avg(TSum _else) const
         {
             return empty() ? _else : avg();
         }
 
-        template<typename TSum = std::iter_value_t<const TIterator>>
+        template<typename TSum = Value>
         TSum avg() const
         {
             if (empty())
@@ -268,7 +273,7 @@ namespace cpputils::range
         {
             std::array<Value, TSize> out;
             std::size_t i{};
-            TIterator it{ begin() };
+            Iterator it{ begin() };
             while (i < TSize && it != end())
             {
                 out[i++] = *(it++);
@@ -304,7 +309,7 @@ namespace cpputils::range
         TOutIterator assign(const TOutIterator& _begin, const TOutIterator& _end) const
         {
             TOutIterator outIt{ _begin };
-            TIterator inIt{ begin() };
+            Iterator inIt{ begin() };
             while (inIt != end() && outIt != _end)
             {
                 *(outIt++) = *(inIt++);
