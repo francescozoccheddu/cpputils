@@ -91,17 +91,19 @@ namespace cpputils::range
 
         Filtered filter()
         {
-            return Filtered{ FilterIt{ begin(), m_data }, FilterIt{ end(), m_data }, m_data->extractBuffer() };
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            return Filtered{ FilterIt{ data->begin(), data }, FilterIt{ data->end(), data }, data->extractBuffer() };
         }
 
         Collected collect()
         {
-            internal::Buffer buffer{ m_data->extractBuffer() };
-            buffer.collect(begin(), end());
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            internal::Buffer buffer{ data->extractBuffer() };
+            buffer.collect(data->begin(), data->end());
             return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
 
-        Collected cloneAndCollect() const
+        Collected clone() const
         {
             internal::Buffer buffer{};
             buffer.collect(begin(), end());
@@ -110,8 +112,9 @@ namespace cpputils::range
 
         Collected sort()
         {
-            internal::Buffer buffer{ m_data->extractBuffer() };
-            buffer.collect(begin(), end());
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            internal::Buffer buffer{ data->extractBuffer() };
+            buffer.collect(data->begin(), data->end());
             std::sort(buffer.begin<Value>(), buffer.end<Value>());
             return Collected{ buffer.begin<Value>(), buffer.end<Value>(), std::move(buffer) };
         }
@@ -119,13 +122,15 @@ namespace cpputils::range
         Distinct distinct()
         {
             Collected sorted{ sort() };
-            return Distinct{ DistinctIt{ sorted.begin(), sorted.m_data }, DistinctIt{ sorted.end(), sorted.m_data }, sorted.m_data->extractBuffer() };
+            std::shared_ptr<Data> data{ std::move(sorted.m_data) };
+            return Distinct{ DistinctIt{ data->begin(), data }, DistinctIt{ data->end(), data }, data->extractBuffer() };
         }
 
         Duplicated duplicated()
         {
             Collected sorted{ sort() };
-            return Duplicated{ DuplicatedIt{ sorted.begin(), sorted.m_data }, DuplicatedIt{ sorted.end(), sorted.m_data }, sorted.m_data->extractBuffer() };
+            std::shared_ptr<Data> data{ std::move(sorted.m_data) };
+            return Duplicated{ DuplicatedIt{ data->begin(), data }, DuplicatedIt{ data->end(), data }, data->extractBuffer() };
         }
 
         std::vector<Value> toVector() const
