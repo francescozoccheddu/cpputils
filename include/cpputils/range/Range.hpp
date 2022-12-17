@@ -187,9 +187,16 @@ namespace cpputils::range
 
         Range take(Offset _size)
         {
-            const Offset maxsize{ size() };
+            const Offset maxSize{ size() };
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Range{ data->begin(), data->begin() + std::min(_size, maxsize), data->extractBuffer() };
+            return Range{ data->begin(), std::next(data->begin(),std::min(_size, maxSize)), data->extractBuffer() };
+        }
+
+        Range skip(Offset _size)
+        {
+            const Offset maxSize{ size() };
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            return Range{ std::next(data->begin(), std::min(_size, maxSize)), data->end(), data->extractBuffer() };
         }
 
         Filtered filter()
