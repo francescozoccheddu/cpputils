@@ -8,6 +8,7 @@
 #include <cpputils/range/iterators/FilterIterator.hpp>
 #include <cpputils/range/iterators/MapIterator.hpp>
 #include <cpputils/range/iterators/ReverseIterator.hpp>
+#include <cpputils/range/iterators/IndexIterator.hpp>
 #include <cpputils/mixins/NonCopyable.hpp>
 #include <type_traits>
 #include <iterator>
@@ -84,6 +85,8 @@ namespace cpputils::range
         using Addressed = Mapped<internal::Addresser<Reference>>;
         using Dereferenced = Mapped<internal::Dereferencer<Reference>>;
         using Reversed = Range<iterators::ReverseIterator<Iterator>>;
+        template<typename TIndex>
+        using Index = Range<iterators::IndexIterator<TIndex>>;
 
     private:
 
@@ -174,6 +177,12 @@ namespace cpputils::range
         bool empty() const
         {
             return begin() == end();
+        }
+
+        template<typename TIndex = Offset>
+        Index<TIndex> index() const
+        {
+            return Index<TIndex>{ { TIndex{} }, { TIndex{ count() } } };
         }
 
         Range take(Offset _count)
