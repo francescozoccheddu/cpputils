@@ -65,10 +65,10 @@ namespace cpputils::range::iterators
             return *this;
         }
 
-        MapIterator operator++(int) const
+        MapIterator operator++(int)
         {
             MapIterator clone{ *this };
-            ++clone;
+            ++(*this);
             return clone;
         }
 
@@ -91,10 +91,10 @@ namespace cpputils::range::iterators
             return *this;
         }
 
-        MapIterator operator--(int) const
+        MapIterator operator--(int)
         {
             MapIterator clone{ *this };
-            --clone;
+            --(*this);
             return clone;
         }
 

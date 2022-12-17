@@ -7,6 +7,7 @@
 #include <cpputils/range/iterators/DuplicatedIterator.hpp>
 #include <cpputils/range/iterators/FilterIterator.hpp>
 #include <cpputils/range/iterators/MapIterator.hpp>
+#include <cpputils/range/iterators/ReverseIterator.hpp>
 #include <cpputils/mixins/NonCopyable.hpp>
 #include <type_traits>
 #include <iterator>
@@ -82,6 +83,7 @@ namespace cpputils::range
         using Const = Casted<internal::consts::RefOrPtr<Reference>>;
         using Addressed = Mapped<internal::Addresser<Reference>>;
         using Dereferenced = Mapped<internal::Dereferencer<Reference>>;
+        using Reversed = Range<iterators::ReverseIterator<Iterator>>;
 
     private:
 
@@ -178,6 +180,12 @@ namespace cpputils::range
         {
             std::shared_ptr<Data> data{ std::move(m_data) };
             return Filtered{ { data->begin(), data }, { data->end(), data }, data->extractBuffer() };
+        }
+
+        Reversed reverse()
+        {
+            std::shared_ptr<Data> data{ std::move(m_data) };
+            return Reversed{ { std::prev(data->end()), data }, { std::prev(data->begin()), data }, data->extractBuffer() };
         }
 
         template<typename TMapper>

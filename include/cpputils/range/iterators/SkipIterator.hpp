@@ -78,10 +78,10 @@ namespace cpputils::range::iterators
             return *this;
         }
 
-        SkipIterator operator++(int) const
+        SkipIterator operator++(int)
         {
             SkipIterator clone{ *this };
-            ++clone;
+            ++(*this);
             return clone;
         }
 
@@ -115,10 +115,10 @@ namespace cpputils::range::iterators
             return *this;
         }
 
-        SkipIterator operator--(int) const
+        SkipIterator operator--(int)
         {
             SkipIterator clone{ *this };
-            --clone;
+            --(*this);
             return clone;
         }
 
