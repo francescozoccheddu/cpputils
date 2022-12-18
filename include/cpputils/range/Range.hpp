@@ -455,6 +455,23 @@ namespace cpputils::range
             return makeNew(iterators::LinkedIndexIterator<Iterator, std::size_t>{m_begin}, iterators::LinkedIndexIterator<Iterator, std::size_t>{ m_end });
         }
 
+        template<typename TIterable, typename ... TIterables>
+        auto zip(TIterable& _iterable, TIterables& ..._iterables) const
+        {
+            return makeNew(iterators::ZipIterator{ m_begin, _iterable.begin(), _iterables.begin()... }, iterators::ZipIterator{ m_end, _iterable.end(), _iterables.end()... });
+        }
+
+        template<typename TIterable, typename ... TIterables>
+        auto zip(const TIterable& _iterable, const TIterables& ..._iterables) const
+        {
+            return makeNew(iterators::ZipIterator{ m_begin, _iterable.begin(), _iterables.begin()... }, iterators::ZipIterator{ m_end, _iterable.end(), _iterables.end()... });
+        }
+
+        auto enumerate() const
+        {
+            return zip(index());
+        }
+
         template<typename TAccumulator, typename TReduce>
         TAccumulator reduce(const TReduce& _reduce, const TAccumulator& _start) const
         {
