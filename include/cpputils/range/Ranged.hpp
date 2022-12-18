@@ -77,7 +77,9 @@
         std::vector<ALIAS(Value)> toVector() CONST { return range().toVector();} \
         template<std::size_t TSize>\
         std::array<ALIAS(Value), TSize> toArray(const ALIAS(Value)& _defaultValue = {}) CONST { return range().template toArray<TSize>(_defaultValue);} \
-        std::list<ALIAS(Value)> toList() CONST { return range().toList();} \
+        template<std::size_t TCapacity> \
+        collections::FixedVector<ALIAS(Value), TCapacity> toFixedVector() const { return range().template toFixedVector<TCapacity>(); } \
+        std::list<ALIAS(Value)> toList() CONST { return range().toList(); } \
         std::unordered_set<ALIAS(Value)> toUnorderedSet() CONST { return range().toUnorderedSet();} \
         template<typename TOutIterator>\
         void assign(const TOutIterator& _begin) CONST { return range().template assign<TOutIterator>(_begin);} \

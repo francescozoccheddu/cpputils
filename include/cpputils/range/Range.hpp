@@ -10,6 +10,7 @@
 #include <cpputils/range/iterators/ReverseIterator.hpp>
 #include <cpputils/range/iterators/IndexIterator.hpp>
 #include <cpputils/mixins/NonCopyable.hpp>
+#include <cpputils/collections/FixedVector.hpp>
 #include <type_traits>
 #include <iterator>
 #include <vector>
@@ -382,6 +383,18 @@ namespace cpputils::range
             while (i < TSize)
             {
                 out[i++] = _defaultValue;
+            }
+            return out;
+        }
+
+        template<std::size_t TCapacity>
+        collections::FixedVector<Value, TCapacity> toFixedVector() const
+        {
+            collections::FixedVector<Value, TCapacity> out;
+            Iterator it{ begin() };
+            while (out.size() < TCapacity && it != end())
+            {
+                out.addLast(*(it++));
             }
             return out;
         }
