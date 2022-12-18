@@ -2,6 +2,7 @@
 
 #include <array>
 #include <iterator>
+#include <initializer_list>
 #include <utility>
 
 namespace cpputils::collections
@@ -14,7 +15,7 @@ namespace cpputils::collections
     private:
 
         std::array<TValue, TCapacity> m_data;
-        std::size_t m_size{};
+        std::size_t m_size;
 
     public:
 
@@ -28,19 +29,28 @@ namespace cpputils::collections
         using reverse_iterator = std::reverse_iterator<iterator>;
         using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
+        FixedVector(): m_size{}
+        {}
+
+        FixedVector(std::size_t _size, const TValue& _defaultValue = {}): m_size{}
+        {
+            resize(_size, _defaultValue);
+        }
+
+        FixedVector(std::initializer_list<TValue> _values)
+        {
+            assign(_values.begin(), _values.end());
+        }
+
+        template<typename TIterator>
+        FixedVector(const TIterator& _begin, const TIterator& _end)
+        {
+            assign(_begin, _end);
+        }
+
         static constexpr std::size_t capacity()
         {
             return TCapacity;
-        }
-
-        const std::array<TValue, TCapacity>& data() const
-        {
-            return m_data;
-        }
-
-        std::array<TValue, TCapacity>& data()
-        {
-            return m_data;
         }
 
         std::size_t size() const
@@ -53,11 +63,11 @@ namespace cpputils::collections
             return m_size == 0;
         }
 
-        void resize(std::size_t _size, const TValue& _value = {})
+        void resize(std::size_t _size, const TValue& _defaultValue = {})
         {
             while (_size > m_size)
             {
-                m_data[m_size++] = _value;
+                m_data[m_size++] = _defaultValue;
             }
         }
 
@@ -105,6 +115,17 @@ namespace cpputils::collections
         void clear()
         {
             m_size = 0;
+        }
+
+        template<typename TIterator>
+        void assign(const TIterator& _begin, const TIterator& _end)
+        {
+            clear();
+            TIterator it{ _begin };
+            while (it != _end)
+            {
+                addLast(*(it++));
+            }
         }
 
         inline iterator begin() noexcept
