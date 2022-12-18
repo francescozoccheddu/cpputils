@@ -237,7 +237,7 @@ namespace cpputils::range
 
         Reference operator[](std::size_t _offset) const
         {
-            return *std::next(m_begin, _offset);
+            return *std::next(m_begin, static_cast<std::iter_difference_t<Iterator>>(_offset));
         }
 
         Reference single() const
@@ -375,7 +375,7 @@ namespace cpputils::range
         {
             if (std::random_access_iterator<Iterator> && hasSize())
             {
-                return std::next(m_begin, std::min(size(), _size));
+                return std::next(m_begin, static_cast<std::iter_difference_t<Iterator>>(std::min(size(), _size)));
             }
             else
             {
@@ -405,6 +405,18 @@ namespace cpputils::range
         {
             const Iterator newBegin{ maxNextIt(_size) };
             return makeNewWithSize(newBegin, m_end, _size);
+        }
+
+        template<std::size_t TSize>
+        auto take() const requires (hasCompTimeSize && (TCompTimeSize >= TSize))
+        {
+            return makeNew<Iterator, TSize>(m_begin, m_begin + static_cast<std::iter_difference_t<Iterator>>(TSize));
+        }
+
+        template<std::size_t TSize>
+        auto skip() const requires (hasCompTimeSize && (TCompTimeSize >= TSize))
+        {
+            return makeNew<Iterator, (TCompTimeSize - TSize)>(m_begin + static_cast<std::iter_difference_t<Iterator>>(TSize), m_end);
         }
 
         template<typename TPredicate>
