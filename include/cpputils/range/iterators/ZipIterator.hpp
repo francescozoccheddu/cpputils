@@ -108,7 +108,7 @@ namespace cpputils::range::iterators
             return clone;
         }
 
-        auto operator==(const ZipIterator& _other) const = default;
+        bool operator==(const ZipIterator& _other) const = default;
 
         auto operator<=>(const ZipIterator& _other) const = default;
 
