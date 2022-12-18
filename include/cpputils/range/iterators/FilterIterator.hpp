@@ -14,7 +14,7 @@ namespace cpputils::range::iterators
 
     private:
 
-        using Base = internal::Iterator<TIterator>;
+        using Base = internal::Iterator<TIterator, std::iter_reference_t<const TIterator>, std::forward_iterator_tag>;
 
         mutable TIterator m_it;
 
@@ -79,6 +79,11 @@ namespace cpputils::range::iterators
         bool operator==(const FilterIterator& _other) const
         {
             return m_it == _other.m_it;
+        }
+
+        auto operator<=>(const FilterIterator& _other) const
+        {
+            return m_it <=> _other.m_it;
         }
 
     };

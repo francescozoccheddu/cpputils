@@ -80,6 +80,8 @@ namespace cpputils::range::iterators
             return { m_it - _offset };
         }
 
+        inline bool operator==(const IndexIterator& _other) const noexcept = default;
+
         inline auto operator<=>(const IndexIterator& _other) const noexcept = default;
 
         inline difference_type operator-(const IndexIterator& _other) const noexcept

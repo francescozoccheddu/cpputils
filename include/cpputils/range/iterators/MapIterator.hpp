@@ -111,6 +111,11 @@ namespace cpputils::range::iterators
             return clone;
         }
 
+        bool operator==(const MapIterator& _other) const
+        {
+            return m_it == _other.m_it;
+        }
+
         auto operator<=>(const MapIterator& _other) const
         {
             return m_it <=> _other.m_it;
