@@ -13,13 +13,13 @@ namespace cpputils::iterators
     private:
 
         TIterator m_it;
-        TIndex m_i;
+        std::ptrdiff_t m_i;
 
     public:
 
         using value_type = TIndex;
         using reference = TIndex;
-        using pointer = const TIndex*;
+        using pointer = const std::ptrdiff_t*;
         using difference_type = std::iter_difference_t<TIterator>;
         using iterator_category = typename std::template iterator_traits<TIterator>::iterator_category;
 
@@ -27,12 +27,12 @@ namespace cpputils::iterators
         {}
 
         LinkedIndexIterator(const TIterator& _it, const TIndex& _index = {})
-            : m_it{ _it }, m_i{ _index }
+            : m_it{ _it }, m_i{ static_cast<std::ptrdiff_t>(_index) }
         {}
 
         reference operator*() const noexcept
         {
-            return m_i;
+            return static_cast<TIndex>(m_i);
         }
 
         pointer operator->() const noexcept
@@ -42,7 +42,7 @@ namespace cpputils::iterators
 
         reference operator[](difference_type _offset) const noexcept
         {
-            return m_i + static_cast<TIndex>(_offset);
+            return static_cast<TIndex>(m_i + _offset);
         }
 
         LinkedIndexIterator& operator++()
@@ -60,18 +60,18 @@ namespace cpputils::iterators
         LinkedIndexIterator& operator+=(difference_type _offset)
         {
             m_it += _offset;
-            m_i += static_cast<TIndex>(_offset);
+            m_i += _offset;
             return *this;
         }
 
         LinkedIndexIterator operator+(difference_type _offset) const
         {
-            return { m_it + _offset, m_i + static_cast<TIndex>(_offset) };
+            return { m_it + _offset, m_i + _offset };
         }
 
         friend LinkedIndexIterator operator+(difference_type _offset, const LinkedIndexIterator& _iterator)
         {
-            return { _iterator.m_it + _offset, _iterator.m_i + static_cast<TIndex>(_offset) };
+            return { _iterator.m_it + _offset, _iterator.m_i + _offset };
         }
 
         LinkedIndexIterator& operator--()
@@ -89,18 +89,18 @@ namespace cpputils::iterators
         LinkedIndexIterator& operator-=(difference_type _offset)
         {
             m_it -= _offset;
-            m_i -= static_cast<TIndex>(_offset);
+            m_i -= _offset;
             return *this;
         }
 
         LinkedIndexIterator operator-(difference_type _offset) const
         {
-            return { m_it - _offset, m_i - static_cast<TIndex>(_offset) };
+            return { m_it - _offset, m_i - _offset };
         }
 
         friend LinkedIndexIterator operator-(difference_type _offset, const LinkedIndexIterator& _iterator)
         {
-            return { _iterator.m_it - _offset, _iterator.m_i - static_cast<TIndex>(_offset) };
+            return { _iterator.m_it - _offset, _iterator.m_i - _offset };
         }
 
         bool operator==(const LinkedIndexIterator& _other) const

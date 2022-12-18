@@ -49,7 +49,6 @@ namespace cpputils::range
 
     }
 
-
     template<std::forward_iterator TIterator, std::size_t TCompTimeSize = internal::noCompTimeSize> requires cpputils::concepts::SimpleClass<TIterator>
     class Range final
     {
@@ -151,7 +150,7 @@ namespace cpputils::range
             {
                 if (!m_size)
                 {
-                    m_size = static_cast<std::size_t>(std::distance(m_begin, m_end));
+                    m_size = static_cast<std::size_t>(std::distance(m_end, m_begin));
                 }
                 return *m_size;
             }
@@ -420,30 +419,40 @@ namespace cpputils::range
         }
 
         template<typename TMapper>
-        auto map(const TMapper& _mapper = {})
+        auto map(const TMapper& _mapper = {}) const
         {
             return makeNew(iterators::MapIterator{ m_begin, _mapper }, iterators::MapIterator{ m_end, _mapper });
         }
 
         template<typename TOutReference>
-        auto cast()
+        auto cast() const
         {
             return map([](auto&& _x) { return static_cast<TOutReference>(_x); });
         }
 
-        auto address()
+        auto address() const
         {
             return map([](auto&& _x) { return std::addressof(_x); });
         }
 
-        auto dereference()
+        auto dereference() const
         {
             return map([](auto&& _x) { return *_x; });
         }
 
-        auto immutable()
+        auto immutable() const
         {
             return cast<internal::ConstRefOrPtr<Reference>>();
+        }
+
+        auto index() const
+        {
+            return makeNew(iterators::StandaloneIndexIterator<std::size_t>{}, iterators::StandaloneIndexIterator<std::size_t>{ size() });
+        }
+
+        auto indexLazy() const requires (!hasCompTimeSize)
+        {
+            return makeNew(iterators::LinkedIndexIterator<Iterator, std::size_t>{m_begin}, iterators::LinkedIndexIterator<Iterator, std::size_t>{ m_end });
         }
 
         template<typename TAccumulator, typename TReduce>
