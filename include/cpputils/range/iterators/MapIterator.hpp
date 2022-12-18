@@ -12,7 +12,7 @@ namespace cpputils::range::iterators
     {
 
         template<typename TIterator, typename TMapper>
-        using MapperResult = std::invoke_result_t<const TMapper, std::iter_reference_t<const TIterator>>;
+        using MapperResult = std::invoke_result_t<TMapper, std::iter_reference_t<TIterator>>;
 
     }
 

@@ -9,12 +9,12 @@ namespace cpputils::range::iterators
 {
 
     template<typename TIterator, typename TPredicate>
-    class FilterIterator final: public internal::Iterator<TIterator, std::iter_reference_t<const TIterator>, std::forward_iterator_tag>
+    class FilterIterator final: public internal::Iterator<TIterator, std::iter_reference_t<TIterator>, std::forward_iterator_tag>
     {
 
     private:
 
-        using Base = internal::Iterator<TIterator, std::iter_reference_t<const TIterator>, std::forward_iterator_tag>;
+        using Base = internal::Iterator<TIterator, std::iter_reference_t<TIterator>, std::forward_iterator_tag>;
 
         mutable TIterator m_it;
 

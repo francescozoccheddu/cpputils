@@ -117,9 +117,9 @@ namespace cpputils::range
     public:
 
         using Iterator = TIterator;
-        using Value = std::iter_value_t<const Iterator>;
-        using Reference = std::iter_reference_t<const Iterator>;
-        using Offset = std::iter_difference_t<const Iterator>;
+        using Value = std::iter_value_t<Iterator>;
+        using Reference = std::iter_reference_t<Iterator>;
+        using Offset = std::iter_difference_t<Iterator>;
         using Data = internal::Data<Iterator>;
         using Collected = Range<const Value*>;
         template<typename TPredicate>
@@ -198,7 +198,7 @@ namespace cpputils::range
 
         Reference last() const
         {
-            if constexpr (iterators::internal::isBidirectionalIterator<const Iterator>)
+            if constexpr (iterators::internal::isBidirectionalIterator<Iterator>)
             {
                 return *(std::prev(end()));
             }
@@ -241,20 +241,17 @@ namespace cpputils::range
 
         Iterator maxNextIt(Offset _size)
         {
-            if constexpr (iterators::internal::isRandomAccessIterator<const Iterator>)
+            if constexpr (iterators::internal::isRandomAccessIterator<Iterator>)
             {
                 return std::next(begin(), std::min(size(), _size));
             }
-            else
+            Iterator it{ begin() };
+            while (it != end() && _size != 0)
             {
-                Iterator it{ begin() };
-                while (it != end() && _size != 0)
-                {
-                    ++it;
-                    --_size;
-                }
-                return it;
+                ++it;
+                --_size;
             }
+            return it;
         }
 
         Range take(Offset _size)

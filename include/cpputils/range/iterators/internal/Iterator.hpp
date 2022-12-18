@@ -8,7 +8,7 @@
 namespace cpputils::range::iterators::internal
 {
 
-    template<typename TIterator, typename TReference = std::iter_reference_t<const TIterator>, typename TCategory = Category<const TIterator>>
+    template<typename TIterator, typename TReference = std::iter_reference_t<TIterator>, typename TCategory = Category<TIterator>>
     class Iterator
     {
 
@@ -25,7 +25,7 @@ namespace cpputils::range::iterators::internal
         using value_type = std::remove_cvref_t<TReference>;
         using reference = TReference;
         using pointer = std::remove_reference_t<TReference>*;
-        using difference_type = std::iter_difference_t<const TIterator>;
+        using difference_type = std::iter_difference_t<TIterator>;
         using iterator_category = TCategory;
 
         inline const TIterator& begin() const noexcept
