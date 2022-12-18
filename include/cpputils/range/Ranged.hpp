@@ -12,9 +12,9 @@
         using ALIAS(Data) = typename ALIAS(URange)::Data;\
         using ALIAS(Collected) = typename ALIAS(URange)::Collected;\
         template<typename TPredicate>\
-        using ALIAS(ItFiltered) = typename ALIAS(URange)::ItFiltered<TPredicate>;\
+        using ALIAS(ItFiltered) = typename ALIAS(URange)::template ItFiltered<TPredicate>;\
         template<typename TPredicate>\
-        using ALIAS(ValueFiltered) = typename ALIAS(URange)::ValueFiltered<TPredicate>;\
+        using ALIAS(ValueFiltered) = typename ALIAS(URange)::template ValueFiltered<TPredicate>;\
         using ALIAS(Distinct) = typename ALIAS(URange)::Distinct;\
         using ALIAS(Duplicated) = typename ALIAS(URange)::Duplicated;\
         template<typename TMapper>\
@@ -85,7 +85,7 @@
         template<std::size_t TSize>\
         std::array<ALIAS(Value), TSize> toArray(const ALIAS(Value)& _defaultValue = {}) CONST { return range().template toArray<TSize>(_defaultValue);} \
         template<std::size_t TCapacity> \
-        collections::FixedVector<ALIAS(Value), TCapacity> toFixedVector() const { return range().template toFixedVector<TCapacity>(); } \
+        collections::FixedVector<ALIAS(Value), TCapacity> toFixedVector() CONST { return range().template toFixedVector<TCapacity>(); } \
         std::list<ALIAS(Value)> toList() CONST { return range().toList(); } \
         std::unordered_set<ALIAS(Value)> toUnorderedSet() CONST { return range().toUnorderedSet();} \
         template<typename TOutIterator>\
