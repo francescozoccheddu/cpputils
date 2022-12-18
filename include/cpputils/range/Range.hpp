@@ -236,7 +236,7 @@ namespace cpputils::range
         template<typename TIndex = Offset>
         Index<TIndex> index() const
         {
-            return Index<TIndex>{ { TIndex{} }, { TIndex{ size() } } };
+            return Index<TIndex>{ { TIndex{} }, { static_cast<TIndex>(size()) } };
         }
 
         Iterator maxNextIt(Offset _size)
