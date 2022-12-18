@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cpputils/range/iterators/internal/Iterator.hpp>
+#include <cpputils/range/iterators/internal/category.hpp>
 #include <iterator>
 
 namespace cpputils::range::iterators
@@ -20,7 +20,7 @@ namespace cpputils::range::iterators
         using reference = value_type&;
         using pointer = value_type*;
         using difference_type = std::iter_difference_t<TIterator>;
-        using iterator_category = internal::RandomAccessCategory<TIterator>;
+        using iterator_category = internal::Category<TIterator>;
 
         ZipIterator(const TIterator& _it, const TIterators &... _its)
             : m_it{ _it, _its ... }
@@ -108,10 +108,7 @@ namespace cpputils::range::iterators
             return clone;
         }
 
-        bool operator==(const ZipIterator& _other) const
-        {
-            return std::get<0>(m_it) == std::get<0>(_other.m_it);
-        }
+        auto operator<=>(const ZipIterator& _other) const = default;
 
         difference_type operator-(const ZipIterator& _other) const
         {

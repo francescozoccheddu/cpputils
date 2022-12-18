@@ -111,9 +111,9 @@ namespace cpputils::range::iterators
             return clone;
         }
 
-        bool operator==(const MapIterator& _other) const
+        auto operator<=>(const MapIterator& _other) const
         {
-            return m_it == _other.m_it;
+            return m_it <=> _other.m_it;
         }
 
         difference_type operator-(const MapIterator& _other) const

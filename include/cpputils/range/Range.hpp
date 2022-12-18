@@ -7,6 +7,7 @@
 #include <cpputils/range/iterators/MapIterator.hpp>
 #include <cpputils/range/iterators/ReverseIterator.hpp>
 #include <cpputils/range/iterators/IndexIterator.hpp>
+#include <cpputils/range/iterators/internal/category.hpp>
 #include <cpputils/mixins/NonCopyable.hpp>
 #include <cpputils/collections/FixedVector.hpp>
 #include <type_traits>
@@ -197,7 +198,7 @@ namespace cpputils::range
 
         Reference last() const
         {
-            if constexpr (std::bidirectional_iterator<const Iterator>)
+            if constexpr (iterators::internal::isBidirectionalIterator<const Iterator>)
             {
                 return *(std::prev(end()));
             }
@@ -240,7 +241,7 @@ namespace cpputils::range
 
         Iterator maxNextIt(Offset _size)
         {
-            if constexpr (std::random_access_iterator<Iterator>)
+            if constexpr (iterators::internal::isRandomAccessIterator<const Iterator>)
             {
                 return std::next(begin(), std::min(size(), _size));
             }
@@ -258,14 +259,16 @@ namespace cpputils::range
 
         Range take(Offset _size)
         {
+            const TIterator newEnd{ maxNextIt(_size) };
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Range{ data->begin(), maxNextIt(_size), data->extractBuffer() };
+            return Range{ data->begin(), newEnd, data->extractBuffer() };
         }
 
         Range skip(Offset _size)
         {
+            const TIterator newBegin{ maxNextIt(_size) };
             std::shared_ptr<Data> data{ std::move(m_data) };
-            return Range{ maxNextIt(_size), data->end(), data->extractBuffer() };
+            return Range{ newBegin, data->end(), data->extractBuffer() };
         }
 
         template<typename TPredicate>

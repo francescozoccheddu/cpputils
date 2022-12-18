@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cpputils/range/iterators/internal/category.hpp>
 #include <memory>
 #include <iterator>
 #include <type_traits>
@@ -7,13 +8,7 @@
 namespace cpputils::range::iterators::internal
 {
 
-    template<typename TIterator>
-    using BidirectionalCategory = std::conditional_t<std::bidirectional_iterator<TIterator>, std::bidirectional_iterator_tag, std::forward_iterator_tag>;
-
-    template<typename TIterator>
-    using RandomAccessCategory = std::conditional_t<std::random_access_iterator<TIterator>, std::random_access_iterator_tag, BidirectionalCategory<TIterator>>;
-
-    template<typename TIterator, typename TReference = std::iter_reference_t<const TIterator>, typename TCategory = RandomAccessCategory<const TIterator>>
+    template<typename TIterator, typename TReference = std::iter_reference_t<const TIterator>, typename TCategory = Category<const TIterator>>
     class Iterator
     {
 

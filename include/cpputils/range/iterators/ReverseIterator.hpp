@@ -95,9 +95,9 @@ namespace cpputils::range::iterators
             return clone;
         }
 
-        bool operator==(const ReverseIterator& _other) const
+        auto operator<=>(const ReverseIterator& _other) const
         {
-            return m_it == _other.m_it;
+            return _other.m_it <=> m_it;
         }
 
         difference_type operator-(const ReverseIterator& _other) const
