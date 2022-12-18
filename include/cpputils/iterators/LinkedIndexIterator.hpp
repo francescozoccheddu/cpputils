@@ -21,7 +21,7 @@ namespace cpputils::iterators
         using reference = TIndex;
         using pointer = const TIndex*;
         using difference_type = std::iter_difference_t<TIterator>;
-        using iterator_category = std::iterator_traits<TIterator>::iterator_category;
+        using iterator_category = typename std::template iterator_traits<TIterator>::iterator_category;
 
         LinkedIndexIterator()
         {}

@@ -19,7 +19,7 @@ namespace cpputils::iterators
         using reference = std::iter_reference_t<TIterator>;
         using pointer = std::remove_reference_t<reference>*;
         using difference_type = std::iter_difference_t<TIterator>;
-        using iterator_category = std::iterator_traits<TIterator>::iterator_category;
+        using iterator_category = typename std::template iterator_traits<TIterator>::iterator_category;
 
         ReverseIterator()
         {}
