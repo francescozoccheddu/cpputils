@@ -15,21 +15,48 @@
 #include <unordered_set>
 #include <algorithm>
 #include <cpputils/collections/FixedVector.hpp>
+#include <cpputils/iterators/FilterIterator.hpp>
+#include <cpputils/iterators/MapIterator.hpp>
+#include <cpputils/iterators/ZipIterator.hpp>
+#include <cpputils/iterators/LinkedIndexIterator.hpp>
+#include <cpputils/iterators/StandaloneIndexIterator.hpp>
+#include <cpputils/iterators/ReverseIterator.hpp>
 
 namespace cpputils::range
 {
 
-    constexpr std::size_t noCompTimeSize = std::numeric_limits<std::size_t>::max();
+    namespace internal
+    {
 
-    struct EmptyStruct final {};
+        template<typename TType>
+        using ConstPtr = std::conditional_t<std::is_pointer_v<TType>, std::add_pointer_t<std::add_const_t<std::remove_pointer_t<TType>>>, TType>;
 
-    template<std::forward_iterator TIterator, std::size_t TCompTimeSize = noCompTimeSize> requires cpputils::concepts::SimpleClass<TIterator>
+        template<typename TType>
+        using ConstLRef = std::conditional_t<std::is_lvalue_reference_v<TType>, std::add_lvalue_reference_t<std::add_const_t<std::remove_reference_t<TType>>>, TType>;
+
+        template<typename TType>
+        using ConstRRef = std::conditional_t<std::is_rvalue_reference_v<TType>, std::add_rvalue_reference_t<std::add_const_t<std::remove_reference_t<TType>>>, TType>;
+
+        template<typename TType>
+        using ConstRef = std::conditional_t<std::is_lvalue_reference_v<TType>, ConstLRef<TType>, ConstRRef<TType>>;
+
+        template<typename TType>
+        using ConstRefOrPtr = std::conditional_t<std::is_pointer_v<TType>, ConstPtr<TType>, ConstRef<TType>>;
+
+        constexpr std::size_t noCompTimeSize = std::numeric_limits<std::size_t>::max();
+
+        struct EmptyStruct final {};
+
+    }
+
+
+    template<std::forward_iterator TIterator, std::size_t TCompTimeSize = internal::noCompTimeSize> requires cpputils::concepts::SimpleClass<TIterator>
     class Range final
     {
 
     public:
 
-        static constexpr bool hasCompTimeSize = TCompTimeSize != noCompTimeSize;
+        static constexpr bool hasCompTimeSize = TCompTimeSize != internal::noCompTimeSize;
         static constexpr std::optional<std::size_t> compTimeSize = hasCompTimeSize ? std::optional<std::size_t>{TCompTimeSize} : std::optional<std::size_t>{ std::nullopt };
 
         using Iterator = TIterator;
@@ -40,13 +67,57 @@ namespace cpputils::range
 
 
         Iterator m_begin, m_end;
-        mutable std::conditional_t<hasCompTimeSize, EmptyStruct, std::optional<std::size_t>> m_size;
+        mutable std::conditional_t<hasCompTimeSize, internal::EmptyStruct, std::optional<std::size_t>> m_size;
 
         inline void hintSize(std::size_t _size) const noexcept
         {
             if constexpr (!hasCompTimeSize)
             {
                 m_size = _size;
+            }
+        }
+
+        bool hasSize() const noexcept
+        {
+            if constexpr (hasCompTimeSize)
+            {
+                return true;
+            }
+            else
+            {
+                return m_size.has_value();
+            }
+        }
+
+        template<std::forward_iterator TNewIterator = Iterator>
+        Range<TNewIterator, internal::noCompTimeSize> makeNewWithSize(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _size = std::nullopt) const
+        {
+            return makeNew<TNewIterator, internal::noCompTimeSize>(_begin, _end, _size);
+        }
+
+        template<std::forward_iterator TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
+        Range<TNewIterator, TNewCompTimeSize> makeNew(const TNewIterator& _begin, const TNewIterator& _end) const
+        {
+            if constexpr (TNewCompTimeSize != internal::noCompTimeSize)
+            {
+                return makeNew<TNewIterator, TNewCompTimeSize>(_begin, _end, std::nullopt);
+            }
+            else
+            {
+                return makeNew<TNewIterator, TNewCompTimeSize>(_begin, _end, m_size);
+            }
+        }
+
+        template<std::forward_iterator TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
+        Range<TNewIterator, TNewCompTimeSize> makeNew(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _sizeHint) const
+        {
+            if constexpr (TNewCompTimeSize != internal::noCompTimeSize)
+            {
+                return Range<TNewIterator, TNewCompTimeSize>(_begin, _end);
+            }
+            else
+            {
+                return Range<TNewIterator, TNewCompTimeSize>(_begin, _end, _sizeHint);
             }
         }
 
@@ -80,7 +151,7 @@ namespace cpputils::range
             {
                 if (!m_size)
                 {
-                    m_size = std::distance(m_begin, m_end);
+                    m_size = static_cast<std::size_t>(std::distance(m_begin, m_end));
                 }
                 return *m_size;
             }
@@ -182,11 +253,7 @@ namespace cpputils::range
         std::vector<Value> toVector() const
         {
             std::vector<Value> out;
-            if constexpr (hasCompTimeSize)
-            {
-                out.reserve(size());
-            }
-            else if (m_size)
+            if (hasSize())
             {
                 out.reserve(size());
             }
@@ -259,11 +326,7 @@ namespace cpputils::range
         std::unordered_set<Value> toUnorderedSet() const
         {
             std::unordered_set<Value> out;
-            if constexpr (hasCompTimeSize)
-            {
-                out.reserve(size());
-            }
-            else if (m_size)
+            if (hasSize())
             {
                 out.reserve(size());
             }
@@ -277,7 +340,7 @@ namespace cpputils::range
         {
             TOutIterator it{ _begin };
             std::size_t i{};
-            for (auto& value : *this)
+            for (auto&& value : *this)
             {
                 *(it++) = value;
                 i++;
@@ -307,6 +370,188 @@ namespace cpputils::range
             {
                 *(outIt++) = _defaultValue;
             }
+        }
+
+        Iterator maxNextIt(std::size_t& _size) const
+        {
+            if (std::random_access_iterator<Iterator> && hasSize())
+            {
+                return std::next(m_begin, std::min(size(), _size));
+            }
+            else
+            {
+                Iterator it{ begin() };
+                std::size_t i{};
+                while (it != end() && i < _size)
+                {
+                    ++it;
+                    ++i;
+                }
+                if (i != _size)
+                {
+                    hintSize(i);
+                    _size = i;
+                }
+                return it;
+            }
+        }
+
+        auto take(std::size_t _size) const
+        {
+            const Iterator newEnd{ maxNextIt(_size) };
+            return makeNewWithSize(m_begin, newEnd, _size);
+        }
+
+        auto skip(std::size_t _size) const
+        {
+            const Iterator newBegin{ maxNextIt(_size) };
+            return makeNewWithSize(newBegin, m_end, _size);
+        }
+
+        template<typename TPredicate>
+        auto filter(const TPredicate& _predicate = {}) const
+        {
+            return makeNewWithSize(iterators::FilterIterator{ m_begin, m_end, _predicate }, iterators::FilterIterator{ m_end, _predicate });
+        }
+
+        auto reverse() const
+        {
+            return makeNew(iterators::ReverseIterator{ std::prev(m_end) }, iterators::ReverseIterator{ std::prev(m_begin) });
+        }
+
+        template<typename TMapper>
+        auto map(const TMapper& _mapper = {})
+        {
+            return makeNew(iterators::MapIterator{ m_begin, _mapper }, iterators::MapIterator{ m_end, _mapper });
+        }
+
+        template<typename TOutReference>
+        auto cast()
+        {
+            return map([](auto&& _x) { return static_cast<TOutReference>(_x); });
+        }
+
+        auto address()
+        {
+            return map([](auto&& _x) { return std::addressof(_x); });
+        }
+
+        auto dereference()
+        {
+            return map([](auto&& _x) { return *_x; });
+        }
+
+        auto immutable()
+        {
+            return cast<internal::ConstRefOrPtr<Reference>>();
+        }
+
+        template<typename TAccumulator, typename TReduce>
+        TAccumulator reduce(const TReduce& _reduce, const TAccumulator& _start) const
+        {
+            TAccumulator accumulator{ _start };
+            std::size_t i{};
+            for (auto&& value : *this)
+            {
+                accumulator = _reduce(value, accumulator);
+                ++i;
+            }
+            hintSize(i);
+            return accumulator;
+        }
+
+        template<typename TCompare>
+        Reference best(const TCompare& _compare, Reference _else) const
+        {
+            return empty() ? _else : best(_compare);
+        }
+
+        template<typename TCompare>
+        Reference best(const TCompare& _compare) const
+        {
+            return *bestIt(_compare);
+        }
+
+        template<typename TCompare>
+        Iterator bestIt(const TCompare& _compare) const
+        {
+            Iterator best{ m_begin };
+            Iterator it{ m_begin };
+            std::size_t i{};
+            while (it != m_end)
+            {
+                if (_compare(*it, *best))
+                {
+                    best = it;
+                }
+                it++;
+                i++;
+            }
+            hintSize(i);
+            return best;
+        }
+
+        Reference min(Reference _else) const
+        {
+            return empty() ? _else : min();
+        }
+
+        Reference max(Reference _else) const
+        {
+            return empty() ? _else : max();
+        }
+
+        Reference min() const
+        {
+            return best(std::less<Value>{});
+        }
+
+        Reference max() const
+        {
+            return best(std::greater<Value>{});
+        }
+
+        template<typename TSum = Value>
+        TSum sum() const
+        {
+            return reduce([](Reference _value, TSum _accumulator) {
+                return static_cast<TSum>(_value) + _accumulator;
+            }, TSum{});
+        }
+
+        template<typename TSum = Value>
+        TSum avg(TSum _else) const
+        {
+            return empty() ? _else : avg();
+        }
+
+        template<typename TSum = Value>
+        TSum avg() const
+        {
+            TSum sum{};
+            std::size_t i{};
+            for (const Value& x : *this)
+            {
+                sum += x;
+                i++;
+            }
+            hintSize(i);
+            return sum / static_cast<TSum>(i);
+        }
+
+        Reference first(Reference _else) const
+        {
+            return empty() ? _else : first();
+        }
+
+        Reference last(Reference _else) const
+        {
+            return empty() ? _else : last();
+        }
+
+        Reference single(Reference _else) const
+        {
+            return isSingle() ? first() : _else;
         }
 
     };
