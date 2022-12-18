@@ -120,7 +120,7 @@ namespace cpputils::iterators
 
         difference_type operator-(const MapIterator& _other) const
         {
-            return _other.m_it - m_it;
+            return m_it - _other.m_it;
         }
 
     };

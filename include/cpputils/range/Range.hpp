@@ -150,7 +150,7 @@ namespace cpputils::range
             {
                 if (!m_size)
                 {
-                    m_size = static_cast<std::size_t>(std::distance(m_end, m_begin));
+                    m_size = static_cast<std::size_t>(std::distance(m_begin, m_end));
                 }
                 return *m_size;
             }
@@ -447,7 +447,7 @@ namespace cpputils::range
 
         auto index() const
         {
-            return makeNew(iterators::StandaloneIndexIterator<std::size_t>{}, iterators::StandaloneIndexIterator<std::size_t>{ size() });
+            return makeNew(iterators::StandaloneIndexIterator<std::size_t>{}, iterators::StandaloneIndexIterator<std::size_t>{ size() }, size());
         }
 
         auto indexLazy() const requires (!hasCompTimeSize)
@@ -470,6 +470,11 @@ namespace cpputils::range
         auto enumerate() const
         {
             return zip(index());
+        }
+
+        auto enumerateLazy() const requires (!hasCompTimeSize)
+        {
+            return zip(indexLazy());
         }
 
         template<typename TAccumulator, typename TReduce>
