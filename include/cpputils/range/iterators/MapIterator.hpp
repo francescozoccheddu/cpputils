@@ -39,7 +39,7 @@ namespace cpputils::range::iterators
             : Base{ _data }, m_it{ _it }, m_mapper{ _mapper }
         {}
 
-        const TMapper mapper() const
+        const TMapper& mapper() const
         {
             return m_mapper;
         }
