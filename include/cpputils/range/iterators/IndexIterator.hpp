@@ -1,11 +1,12 @@
 #pragma once
 
 #include <iterator>
+#include <concepts>
 
 namespace cpputils::range::iterators
 {
 
-    template<typename TIndex>
+    template<std::integral TIndex>
     class IndexIterator final
     {
 
@@ -19,77 +20,72 @@ namespace cpputils::range::iterators
         using reference = TIndex&;
         using pointer = TIndex*;
         using difference_type = TIndex;
-        using iterator_category = std::bidirectional_iterator_tag;
+        using iterator_category = std::random_access_iterator_tag;
 
-        IndexIterator(const TIndex& _it)
+        inline IndexIterator(const TIndex& _it)
             : m_it{ _it }
         {}
 
-        value_type operator*() const
+        inline value_type operator*() const noexcept
         {
             return m_it;
         }
 
-        pointer operator->() const
-        {
-            return std::addressof(m_it);
-        }
-
-        value_type operator[](difference_type _offset) const
+        inline value_type operator[](difference_type _offset) const noexcept
         {
             return m_it + _offset;
         }
 
-        IndexIterator& operator++()
+        inline IndexIterator& operator++() noexcept
         {
             ++m_it;
             return *this;
         }
 
-        IndexIterator operator++(int)
+        inline IndexIterator operator++(int) noexcept
         {
             return { m_it++ };
         }
 
-        IndexIterator& operator+=(difference_type _offset)
+        inline IndexIterator& operator+=(difference_type _offset) noexcept
         {
             m_it += _offset;
             return *this;
         }
 
-        IndexIterator operator+(difference_type _offset) const
+        inline IndexIterator operator+(difference_type _offset) const noexcept
         {
             return { m_it + _offset };
         }
 
-        IndexIterator& operator--()
+        inline IndexIterator& operator--() noexcept
         {
             --m_it;
             return *this;
         }
 
-        IndexIterator operator--(int)
+        inline IndexIterator operator--(int) noexcept
         {
             return { m_it-- };
         }
 
-        IndexIterator& operator-=(difference_type _offset)
+        inline IndexIterator& operator-=(difference_type _offset) noexcept
         {
             m_it -= _offset;
             return *this;
         }
 
-        IndexIterator operator-(difference_type _offset) const
+        inline IndexIterator operator-(difference_type _offset) const noexcept
         {
             return { m_it - _offset };
         }
 
-        bool operator==(const IndexIterator& _other) const
+        inline bool operator==(const IndexIterator& _other) const noexcept
         {
             return m_it == _other.m_it;
         }
 
-        difference_type operator-(const IndexIterator& _other) const
+        inline difference_type operator-(const IndexIterator& _other) const noexcept
         {
             return m_it - _other.m_it;
         }

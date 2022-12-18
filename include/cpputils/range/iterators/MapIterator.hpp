@@ -12,7 +12,7 @@ namespace cpputils::range::iterators
     {
 
         template<typename TIterator, typename TMapper>
-        using MapperResult = std::invoke_result_t<TMapper, const std::iter_reference_t<const TIterator>>;
+        using MapperResult = std::invoke_result_t<const TMapper, std::iter_reference_t<const TIterator>>;
 
     }
 
@@ -51,7 +51,7 @@ namespace cpputils::range::iterators
 
         pointer operator->() const
         {
-            return std::addressof(*this);
+            return std::addressof(*(*this));
         }
 
         reference operator[](difference_type _offset) const

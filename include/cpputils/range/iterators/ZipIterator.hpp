@@ -20,7 +20,7 @@ namespace cpputils::range::iterators
         using reference = value_type&;
         using pointer = value_type*;
         using difference_type = std::iter_difference_t<TIterator>;
-        using iterator_category = internal::Category<TIterator>;
+        using iterator_category = internal::RandomAccessCategory<TIterator>;
 
         ZipIterator(const TIterator& _it, const TIterators &... _its)
             : m_it{ _it, _its ... }

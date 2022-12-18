@@ -11,7 +11,10 @@
         using ALIAS(Offset) = typename ALIAS(URange)::Offset;\
         using ALIAS(Data) = typename ALIAS(URange)::Data;\
         using ALIAS(Collected) = typename ALIAS(URange)::Collected;\
-        using ALIAS(Filtered) = typename ALIAS(URange)::Filtered;\
+        template<typename TPredicate>\
+        using ALIAS(ItFiltered) = typename ALIAS(URange)::ItFiltered<TPredicate>;\
+        template<typename TPredicate>\
+        using ALIAS(ValueFiltered) = typename ALIAS(URange)::ValueFiltered<TPredicate>;\
         using ALIAS(Distinct) = typename ALIAS(URange)::Distinct;\
         using ALIAS(Duplicated) = typename ALIAS(URange)::Duplicated;\
         template<typename TMapper>\
@@ -36,14 +39,18 @@
         ALIAS(Reference) first() CONST { return range().first();} \
         ALIAS(Reference) last() CONST { return range().last();} \
         ALIAS(Reference) single() CONST { return range().single();} \
+        bool isSingle() CONST { return range().isSingle();} \
         ALIAS(Offset) size() CONST { return range().size();} \
         bool empty() CONST { return range().empty();} \
         template<typename TIndex = ALIAS(Offset)>\
         ALIAS(Index)<TIndex> index() CONST { return range().template index<TIndex>();} \
         ALIAS(URange) take(ALIAS(Offset) _size) CONST { return range().take(_size);} \
         ALIAS(URange) skip(ALIAS(Offset) _size) CONST { return range().skip(_size);} \
-        ALIAS(Filtered) filter() CONST { return range().filter();} \
-        ALIAS(Reversed) reverse() CONST { return range().reverse();} \
+        template<typename TPredicate> \
+        ALIAS(ItFiltered)<TPredicate> filterIterator(const TPredicate& _predicate = {}) CONST { return range().template filterIterator<TPredicate>(_predicate); } \
+        template<typename TPredicate> \
+        ALIAS(ValueFiltered)<TPredicate> filter(const TPredicate& _predicate = {}) CONST { return range().template filter<TPredicate>(_predicate); } \
+        ALIAS(Reversed) reverse() CONST { return range().reverse(); } \
         template<typename TMapper>\
         ALIAS(Mapped)<TMapper> map(const TMapper& _mapper = {}) CONST { return range().template map<TMapper>(_mapper);} \
         template<typename TOutReference>\
@@ -103,6 +110,7 @@ namespace cpputils::range
 #undef ITERATOR
 #undef CONST
 #undef ALIAS
+
 #define ITERATOR TNonConstIterator
 #define CONST 
 #define ALIAS(type) NonConst##type
@@ -132,7 +140,7 @@ namespace cpputils::range
     {
 
 #define ITERATOR TIterator
-#define CONST
+#define CONST const
 #define ALIAS(type) type
         CPPUTILS_RANGE_RANGED_BODY
 #undef ITERATOR

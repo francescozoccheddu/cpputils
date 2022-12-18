@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cpputils/range/iterators/internal/IteratorBase.hpp>
 #include <memory>
 #include <iterator>
 #include <type_traits>
@@ -9,11 +8,22 @@ namespace cpputils::range::iterators::internal
 {
 
     template<typename TIterator>
-    using Category = std::conditional_t<std::bidirectional_iterator<TIterator>, std::bidirectional_iterator_tag, std::forward_iterator_tag>;
+    using BidirectionalCategory = std::conditional_t<std::bidirectional_iterator<TIterator>, std::bidirectional_iterator_tag, std::forward_iterator_tag>;
 
-    template<typename TIterator, typename TReference = std::iter_reference_t<const TIterator>>
-    class Iterator: public IteratorBase<TIterator>
+    template<typename TIterator>
+    using RandomAccessCategory = std::conditional_t<std::random_access_iterator<TIterator>, std::random_access_iterator_tag, BidirectionalCategory<TIterator>>;
+
+    template<typename TIterator, typename TReference = std::iter_reference_t<const TIterator>, typename TCategory = RandomAccessCategory<const TIterator>>
+    class Iterator
     {
+
+    private:
+
+        std::shared_ptr<range::internal::Data<TIterator>> m_data;
+
+    protected:
+
+        Iterator(const std::shared_ptr<range::internal::Data<TIterator>>& _data): m_data{ _data } {}
 
     public:
 
@@ -21,11 +31,17 @@ namespace cpputils::range::iterators::internal
         using reference = TReference;
         using pointer = std::remove_reference_t<TReference>*;
         using difference_type = std::iter_difference_t<const TIterator>;
-        using iterator_category = Category<const TIterator>;
+        using iterator_category = TCategory;
 
-    protected:
+        inline const TIterator& begin() const noexcept
+        {
+            return m_data->begin();
+        }
 
-        using IteratorBase<TIterator>::IteratorBase;
+        inline const TIterator& end() const noexcept
+        {
+            return m_data->end();
+        }
 
     };
 

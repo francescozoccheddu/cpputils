@@ -35,7 +35,7 @@ namespace cpputils::range::iterators
 
         pointer operator->() const
         {
-            return m_it.operator->();
+            return std::addressof(*(*this));
         }
 
         reference operator[](difference_type _offset) const
