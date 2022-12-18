@@ -7,7 +7,7 @@ namespace cpputils::range::iterators::internal
 {
 
     template<typename TIterator>
-    using Category = std::iterator_traits<TIterator>::iterator_category;
+    using Category = std::iterator_traits<TIterator>::template iterator_category;
 
     template<typename TCategory>
     constexpr bool isRandomAccessCategory = std::is_same_v<std::random_access_iterator_tag, TCategory>;
