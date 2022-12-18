@@ -6,7 +6,7 @@
 #include <cpputils/iterators/StandaloneIndexIterator.hpp>
 #include <cpputils/iterators/LinkedIndexIterator.hpp>
 #include <cpputils/range/Range.hpp>
-#include <cpputils/range/sizeHint.hpp>
+#include <cpputils/range/RangeMaker.hpp>
 
 namespace cpputils::range
 {
@@ -20,31 +20,33 @@ namespace cpputils::range
     template<std::integral TIndex = std::size_t, typename TIterable>
     auto index(TIterable& _iterable)
     {
-        return index<TIndex>(static_cast<TIndex>(std::size(_iterable)), TIndex{});
+        const RangeMaker<TIterable> maker{ _iterable };
+        return maker.make(iterators::StandaloneIndexIterator<TIndex>{}, iterators::StandaloneIndexIterator<TIndex>{ maker.size() });
     }
 
     template<std::integral TIndex = std::size_t, typename TIterable>
     auto index(const TIterable& _iterable)
     {
-        return index<TIndex>(static_cast<TIndex>(std::size(_iterable)), TIndex{});
+        const RangeMaker<TIterable> maker{ _iterable };
+        return maker.make(iterators::StandaloneIndexIterator<TIndex>{}, iterators::StandaloneIndexIterator<TIndex>{ maker.size() });
     }
 
     template<std::integral TIndex = std::size_t, typename TIterable>
     auto indexLazy(TIterable& _iterable)
     {
-        return Range<iterators::LinkedIndexIterator<decltype(std::begin(_iterable)), TIndex>>{ { std::begin(_iterable) }, { std::end(_iterable) }, sizeHint(_iterable) };
+        return RangeMaker<TIterable>{_iterable}.template make<iterators::LinkedIndexIterator<decltype(std::begin(_iterable)), TIndex>>({ std::begin(_iterable) }, { std::end(_iterable) });
     }
 
     template<std::integral TIndex = std::size_t, typename TIterable>
     auto indexLazy(const TIterable& _iterable)
     {
-        return Range<iterators::LinkedIndexIterator<decltype(std::begin(_iterable)), TIndex>>{ { std::begin(_iterable) }, { std::end(_iterable) }, sizeHint(_iterable) };
+        return RangeMaker<TIterable>{_iterable}.template make<iterators::LinkedIndexIterator<decltype(std::begin(_iterable)), TIndex>>({ std::begin(_iterable) }, { std::end(_iterable) });
     }
 
     template<std::integral TIndex = std::size_t, typename TIterable>
     auto indexLazyc(const TIterable& _iterable)
     {
-        return Range<iterators::LinkedIndexIterator<decltype(std::cbegin(_iterable)), TIndex>>{ { std::cbegin(_iterable) }, { std::cend(_iterable) }, sizeHint(_iterable) };
+        return RangeMaker<TIterable>{_iterable}.template make<iterators::LinkedIndexIterator<decltype(std::cbegin(_iterable)), TIndex>>({ std::cbegin(_iterable) }, { std::cend(_iterable) });
     }
 
 }

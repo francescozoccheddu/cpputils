@@ -43,19 +43,19 @@ namespace cpputils::range
         template<typename TType>
         using ConstRefOrPtr = std::conditional_t<std::is_pointer_v<TType>, ConstPtr<TType>, ConstRef<TType>>;
 
-        constexpr std::size_t noCompTimeSize = std::numeric_limits<std::size_t>::max();
-
         struct EmptyStruct final {};
 
     }
 
-    template<std::forward_iterator TIterator, std::size_t TCompTimeSize = internal::noCompTimeSize> requires cpputils::concepts::SimpleClass<TIterator>
+    constexpr std::size_t noCompTimeSize = std::numeric_limits<std::size_t>::max();
+
+    template<std::forward_iterator TIterator, std::size_t TCompTimeSize = noCompTimeSize>
     class Range final
     {
 
     public:
 
-        static constexpr bool hasCompTimeSize = TCompTimeSize != internal::noCompTimeSize;
+        static constexpr bool hasCompTimeSize = TCompTimeSize != noCompTimeSize;
         static constexpr std::optional<std::size_t> compTimeSize = hasCompTimeSize ? std::optional<std::size_t>{TCompTimeSize} : std::optional<std::size_t>{ std::nullopt };
 
         using Iterator = TIterator;
@@ -89,15 +89,15 @@ namespace cpputils::range
         }
 
         template<std::forward_iterator TNewIterator = Iterator>
-        Range<TNewIterator, internal::noCompTimeSize> makeNewWithSize(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _size = std::nullopt) const
+        Range<TNewIterator, noCompTimeSize> makeNewWithSize(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _size = std::nullopt) const
         {
-            return makeNew<TNewIterator, internal::noCompTimeSize>(_begin, _end, _size);
+            return makeNew<TNewIterator, noCompTimeSize>(_begin, _end, _size);
         }
 
         template<std::forward_iterator TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
         Range<TNewIterator, TNewCompTimeSize> makeNew(const TNewIterator& _begin, const TNewIterator& _end) const
         {
-            if constexpr (TNewCompTimeSize != internal::noCompTimeSize)
+            if constexpr (TNewCompTimeSize != noCompTimeSize)
             {
                 return makeNew<TNewIterator, TNewCompTimeSize>(_begin, _end, std::nullopt);
             }
@@ -110,7 +110,7 @@ namespace cpputils::range
         template<std::forward_iterator TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
         Range<TNewIterator, TNewCompTimeSize> makeNew(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _sizeHint) const
         {
-            if constexpr (TNewCompTimeSize != internal::noCompTimeSize)
+            if constexpr (TNewCompTimeSize != noCompTimeSize)
             {
                 return Range<TNewIterator, TNewCompTimeSize>(_begin, _end);
             }
