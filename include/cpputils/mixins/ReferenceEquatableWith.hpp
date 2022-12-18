@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cpputils/mixins/WithVirtualDestructor.hpp>
+#include <memory>
 
 namespace cpputils::mixins
 {
