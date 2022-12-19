@@ -6,7 +6,7 @@
 namespace cpputils::iterators
 {
 
-    template<std::input_iterator TIterator, std::integral TIndex = std::iter_difference_t<TIterator>>
+    template<typename TIterator, std::integral TIndex = std::iter_difference_t<TIterator>>
     class LinkedIndexIterator final
     {
 

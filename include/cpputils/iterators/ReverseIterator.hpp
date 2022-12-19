@@ -5,7 +5,7 @@
 namespace cpputils::iterators
 {
 
-    template<std::bidirectional_iterator TIterator>
+    template<typename TIterator>
     class ReverseIterator final
     {
 

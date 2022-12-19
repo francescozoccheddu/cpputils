@@ -49,7 +49,7 @@ namespace cpputils::range
 
     constexpr std::size_t noCompTimeSize = std::numeric_limits<std::size_t>::max();
 
-    template<std::forward_iterator TIterator, std::size_t TCompTimeSize = noCompTimeSize>
+    template<typename TIterator, std::size_t TCompTimeSize = noCompTimeSize>
     class Range final
     {
 
@@ -88,13 +88,13 @@ namespace cpputils::range
             }
         }
 
-        template<std::forward_iterator TNewIterator = Iterator>
+        template<typename TNewIterator = Iterator>
         Range<TNewIterator, noCompTimeSize> makeNewWithSize(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _size = std::nullopt) const
         {
             return makeNew<TNewIterator, noCompTimeSize>(_begin, _end, _size);
         }
 
-        template<std::forward_iterator TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
+        template<typename TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
         Range<TNewIterator, TNewCompTimeSize> makeNew(const TNewIterator& _begin, const TNewIterator& _end) const
         {
             if constexpr (TNewCompTimeSize != noCompTimeSize)
@@ -107,7 +107,7 @@ namespace cpputils::range
             }
         }
 
-        template<std::forward_iterator TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
+        template<typename TNewIterator = Iterator, std::size_t TNewCompTimeSize = TCompTimeSize>
         Range<TNewIterator, TNewCompTimeSize> makeNew(const TNewIterator& _begin, const TNewIterator& _end, std::optional<std::size_t> _sizeHint) const
         {
             if constexpr (TNewCompTimeSize != noCompTimeSize)
@@ -349,7 +349,7 @@ namespace cpputils::range
             return out;
         }
 
-        template<std::output_iterator<Value> TOutIterator>
+        template<typename TOutIterator>
         void assign(const TOutIterator& _begin) const
         {
             TOutIterator it{ _begin };
@@ -362,7 +362,7 @@ namespace cpputils::range
             hintSize(i);
         }
 
-        template<std::output_iterator<Value> TOutIterator>
+        template<typename TOutIterator>
         TOutIterator assign(const TOutIterator& _begin, const TOutIterator& _end) const
         {
             TOutIterator outIt{ _begin };
@@ -376,7 +376,7 @@ namespace cpputils::range
             return outIt;
         }
 
-        template<std::output_iterator<Value> TOutIterator>
+        template<typename TOutIterator>
         void assign(const TOutIterator& _begin, const TOutIterator& _end, const Value& _defaultValue) const
         {
             TOutIterator outIt{ assign(_begin, _end) };

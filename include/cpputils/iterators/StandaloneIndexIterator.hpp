@@ -6,7 +6,7 @@
 namespace cpputils::iterators
 {
 
-    template<std::integral TIndex = std::size_t>
+    template<typename TIndex = std::size_t>
     class StandaloneIndexIterator final
     {
 

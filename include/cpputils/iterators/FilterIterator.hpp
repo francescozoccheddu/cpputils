@@ -7,7 +7,7 @@
 namespace cpputils::iterators
 {
 
-    template<std::input_iterator TIterator, std::predicate<const std::iter_reference_t<TIterator>> TPredicate>
+    template<typename TIterator, std::predicate<const std::iter_reference_t<TIterator>> TPredicate>
     class FilterIterator final
     {
 
