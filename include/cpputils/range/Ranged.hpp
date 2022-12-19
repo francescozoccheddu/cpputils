@@ -12,18 +12,18 @@
     protected:\
         virtual ALIAS(URange) range() CONST = 0;\
     public:\
-        auto begin() CONST { return range().begin();}\
-        auto end() CONST { return range().end();}\
-        auto size() CONST { return range().size();}\
-        auto empty() CONST { return range().empty();}\
-        auto isSingle() CONST { return range().isSingle();}\
-        auto operator[](std::size_t _offset) CONST { return range()[_offset];}\
-        auto first() CONST { return range().first();}\
-        auto last() CONST { return range().last();}\
-        auto single() CONST { return range().single();}\
-        auto first(ALIAS(Reference) _else) CONST { return range().first(_else);}\
-        auto last(ALIAS(Reference) _else) CONST { return range().last(_else);}\
-        auto single(ALIAS(Reference) _else) CONST { return range().single(_else);}\
+        ALIAS(Iterator) begin() CONST { return range().begin();}\
+        ALIAS(Iterator) end() CONST { return range().end();}\
+        std::size_t size() CONST { return range().size();}\
+        bool empty() CONST { return range().empty();}\
+        bool isSingle() CONST { return range().isSingle();}\
+        ALIAS(Reference) operator[](std::size_t _offset) CONST { return range()[_offset];}\
+        ALIAS(Reference) first() CONST { return range().first();}\
+        ALIAS(Reference) last() CONST { return range().last();}\
+        ALIAS(Reference) single() CONST { return range().single();}\
+        ALIAS(Reference) first(ALIAS(Reference) _else) CONST { return range().first(_else);}\
+        ALIAS(Reference) last(ALIAS(Reference) _else) CONST { return range().last(_else);}\
+        ALIAS(Reference) single(ALIAS(Reference) _else) CONST { return range().single(_else);}\
         auto toVector() CONST { return range().toVector();}\
         template<std::size_t TSize>\
         auto toArray(const ALIAS(Value)& _defaultValue = {}) CONST { return range().template toArray<TSize>(_defaultValue);}\
@@ -34,9 +34,9 @@
         auto toList() CONST { return range().toList(); }\
         auto toUnorderedSet() CONST { return range().toUnorderedSet();}\
         template<typename TOutIterator>\
-        auto assign(const TOutIterator& _begin) CONST { return range().template assign(_begin);}\
+        void assign(const TOutIterator& _begin) CONST { return range().template assign(_begin);}\
         template<typename TOutIterator>\
-        auto assign(const TOutIterator& _begin, const TOutIterator& _end) CONST { return range().template assign<TOutIterator>(_begin, _end);}\
+        TOutIterator assign(const TOutIterator& _begin, const TOutIterator& _end) CONST { return range().template assign<TOutIterator>(_begin, _end);}\
         template<typename TOutIterator>\
         void assign(const TOutIterator& _begin, const TOutIterator& _end, const ALIAS(Value)& _defaultValue) CONST { return range().template assign<TOutIterator>(_begin, _end, _defaultValue); }\
         auto take(std::size_t _size) CONST { return range().take(_size);}\
@@ -64,23 +64,23 @@
         auto enumerate() CONST { return range().enumerate(); }\
         auto enumerateLazy() CONST requires (!ALIAS(URange)::hasCompTimeSize) { return range().enumerateLazy(); }\
         template<typename TAccumulator, typename TReduce>\
-        auto reduce(const TReduce& _reduce, const TAccumulator& _start) CONST { return range().template reduce<TAccumulator, TReduce>(_reduce, _start); }\
+        TAccumulator reduce(const TReduce& _reduce, const TAccumulator& _start) CONST { return range().template reduce<TAccumulator, TReduce>(_reduce, _start); }\
         template<typename TCompare>\
-        auto best(const TCompare& _compare) CONST { return range().template best<TCompare>(_compare); }\
+        ALIAS(Reference) best(const TCompare& _compare) CONST { return range().template best<TCompare>(_compare); }\
         template<typename TCompare>\
-        auto best(const TCompare& _compare, ALIAS(Reference) _else) CONST { return range().template best<TCompare>(_compare, _else); }\
+        ALIAS(Reference) best(const TCompare& _compare, ALIAS(Reference) _else) CONST { return range().template best<TCompare>(_compare, _else); }\
         template<typename TCompare>\
-        auto bestIt(const TCompare& _compare) CONST { return range().template bestIt<TCompare>(_compare); }\
-        auto min() CONST { return range().min(); }\
-        auto max() CONST { return range().max(); }\
-        auto min(ALIAS(Reference) _else) CONST { return range().min(_else); }\
-        auto max(ALIAS(Reference) _else) CONST { return range().max(_else); }\
+        ALIAS(Iterator) bestIt(const TCompare& _compare) CONST { return range().template bestIt<TCompare>(_compare); }\
+        ALIAS(Reference) min() CONST { return range().min(); }\
+        ALIAS(Reference) max() CONST { return range().max(); }\
+        ALIAS(Reference) min(ALIAS(Reference) _else) CONST { return range().min(_else); }\
+        ALIAS(Reference) max(ALIAS(Reference) _else) CONST { return range().max(_else); }\
         template<typename TSum = ALIAS(Value)>\
-        auto sum() CONST { return range().template sum<TSum>(); }\
+        TSum sum() CONST { return range().template sum<TSum>(); }\
         template<typename TSum = ALIAS(Value)>\
-        auto avg(TSum _else) CONST { return range().template avg<TSum>(_else); }\
+        TSum avg(TSum _else) CONST { return range().template avg<TSum>(_else); }\
         template<typename TSum = ALIAS(Value)>\
-        auto avg() CONST { return range().template avg<TSum>(); }\
+        TSum avg() CONST { return range().template avg<TSum>(); }\
 
 namespace cpputils::range
 {
