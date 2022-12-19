@@ -101,11 +101,29 @@ namespace cpputils::iterators
             return { _iterator.m_it + _offset };
         }
 
-        bool operator==(const ReverseIterator& _other) const = default;
-
-        auto operator<=>(const ReverseIterator& _other) const
+        bool operator==(const ReverseIterator& _other) const
         {
-            return _other.m_it <=> m_it;
+            return _other.m_it == m_it;
+        }
+
+        bool operator< (const ReverseIterator& _other) const
+        {
+            return _other.m_it < m_it;
+        }
+
+        bool operator> (const ReverseIterator& _other) const
+        {
+            return _other.m_it > m_it;
+        }
+
+        bool operator<= (const ReverseIterator& _other) const
+        {
+            return _other.m_it <= m_it;
+        }
+
+        bool operator>= (const ReverseIterator& _other) const
+        {
+            return _other.m_it >= m_it;
         }
 
         difference_type operator-(const ReverseIterator& _other) const

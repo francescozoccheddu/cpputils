@@ -132,9 +132,30 @@ namespace cpputils::iterators
             return _iterator - _offset;
         }
 
-        bool operator==(const ZipIterator& _other) const = default;
+        bool operator==(const ZipIterator& _other) const
+        {
+            return m_it == _other.m_it;
+        }
 
-        auto operator<=>(const ZipIterator& _other) const = default;
+        bool operator< (const ZipIterator& _other) const
+        {
+            return m_it < _other.m_it;
+        }
+
+        bool operator> (const ZipIterator& _other) const
+        {
+            return m_it > _other.m_it;
+        }
+
+        bool operator<= (const ZipIterator& _other) const
+        {
+            return m_it <= _other.m_it;
+        }
+
+        bool operator>= (const ZipIterator& _other) const
+        {
+            return m_it >= _other.m_it;
+        }
 
         difference_type operator-(const ZipIterator& _other) const
         {

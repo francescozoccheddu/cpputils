@@ -25,80 +25,101 @@ namespace cpputils::iterators
             : m_i{ _index }
         {}
 
-        reference operator*() const noexcept
+        reference operator*() const
         {
             return m_i;
         }
 
-        pointer operator->() const noexcept
+        pointer operator->() const
         {
             return std::addressof(m_i);
         }
 
-        reference operator[](difference_type _offset) const noexcept
+        reference operator[](difference_type _offset) const
         {
             return m_i + _offset;
         }
 
-        StandaloneIndexIterator& operator++() noexcept
+        StandaloneIndexIterator& operator++()
         {
             ++m_i;
             return *this;
         }
 
-        StandaloneIndexIterator operator++(int) noexcept
+        StandaloneIndexIterator operator++(int)
         {
             return { m_i++ };
         }
 
-        StandaloneIndexIterator& operator+=(difference_type _offset) noexcept
+        StandaloneIndexIterator& operator+=(difference_type _offset)
         {
             m_i += _offset;
             return *this;
         }
 
-        StandaloneIndexIterator operator+(difference_type _offset) const noexcept
+        StandaloneIndexIterator operator+(difference_type _offset) const
         {
             return { m_i + _offset };
         }
 
-        friend StandaloneIndexIterator operator+(difference_type _offset, const StandaloneIndexIterator& _iterator) noexcept
+        friend StandaloneIndexIterator operator+(difference_type _offset, const StandaloneIndexIterator& _iterator)
         {
             return { _iterator.m_i + _offset };
         }
 
-        StandaloneIndexIterator& operator--() noexcept
+        StandaloneIndexIterator& operator--()
         {
             --m_i;
             return *this;
         }
 
-        StandaloneIndexIterator operator--(int) noexcept
+        StandaloneIndexIterator operator--(int)
         {
             return { m_i-- };
         }
 
-        StandaloneIndexIterator& operator-=(difference_type _offset) noexcept
+        StandaloneIndexIterator& operator-=(difference_type _offset)
         {
             m_i -= _offset;
             return *this;
         }
 
-        StandaloneIndexIterator operator-(difference_type _offset) const noexcept
+        StandaloneIndexIterator operator-(difference_type _offset) const
         {
             return { m_i - _offset };
         }
 
-        friend StandaloneIndexIterator operator-(difference_type _offset, const StandaloneIndexIterator& _iterator) noexcept
+        friend StandaloneIndexIterator operator-(difference_type _offset, const StandaloneIndexIterator& _iterator)
         {
             return { _iterator.m_i - _offset };
         }
 
-        bool operator==(const StandaloneIndexIterator& _other) const noexcept = default;
+        bool operator==(const StandaloneIndexIterator& _other) const
+        {
+            return m_i == _other.m_i;
+        }
 
-        auto operator<=>(const StandaloneIndexIterator& _other) const noexcept = default;
+        bool operator< (const StandaloneIndexIterator& _other) const
+        {
+            return m_i < _other.m_i;
+        }
 
-        difference_type operator-(const StandaloneIndexIterator& _other) const noexcept
+        bool operator> (const StandaloneIndexIterator& _other) const
+        {
+            return m_i > _other.m_i;
+        }
+
+        bool operator<= (const StandaloneIndexIterator& _other) const
+        {
+            return m_i <= _other.m_i;
+        }
+
+        bool operator>= (const StandaloneIndexIterator& _other) const
+        {
+            return m_i >= _other.m_i;
+        }
+
+        difference_type operator-(const StandaloneIndexIterator& _other) const
         {
             return m_i - _other.m_i;
         }

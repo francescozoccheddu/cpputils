@@ -113,9 +113,24 @@ namespace cpputils::iterators
             return m_it == _other.m_it;
         }
 
-        auto operator<=>(const MapIterator& _other) const
+        bool operator< (const MapIterator& _other) const
         {
-            return m_it <=> _other.m_it;
+            return m_it < _other.m_it;
+        }
+
+        bool operator> (const MapIterator& _other) const
+        {
+            return m_it > _other.m_it;
+        }
+
+        bool operator<= (const MapIterator& _other) const
+        {
+            return m_it <= _other.m_it;
+        }
+
+        bool operator>= (const MapIterator& _other) const
+        {
+            return m_it >= _other.m_it;
         }
 
         difference_type operator-(const MapIterator& _other) const
