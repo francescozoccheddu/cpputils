@@ -218,6 +218,11 @@ namespace cpputils::range
             }
         }
 
+        Reference operator[](std::size_t _offset) const
+        {
+            return *std::next(m_begin, static_cast<std::iter_difference_t<Iterator>>(_offset));
+        }
+
         Reference first() const
         {
             return *m_begin;
@@ -235,11 +240,6 @@ namespace cpputils::range
             }
         }
 
-        Reference operator[](std::size_t _offset) const
-        {
-            return *std::next(m_begin, static_cast<std::iter_difference_t<Iterator>>(_offset));
-        }
-
         Reference single() const
         {
             if (!isSingle())
@@ -247,6 +247,21 @@ namespace cpputils::range
                 throw std::logic_error{ "not single" };
             }
             return first();
+        }
+
+        Reference first(Reference _else) const
+        {
+            return empty() ? _else : first();
+        }
+
+        Reference last(Reference _else) const
+        {
+            return empty() ? _else : last();
+        }
+
+        Reference single(Reference _else) const
+        {
+            return isSingle() ? first() : _else;
         }
 
         std::vector<Value> toVector() const
@@ -504,15 +519,15 @@ namespace cpputils::range
         }
 
         template<typename TCompare>
-        Reference best(const TCompare& _compare, Reference _else) const
-        {
-            return empty() ? _else : best(_compare);
-        }
-
-        template<typename TCompare>
         Reference best(const TCompare& _compare) const
         {
             return *bestIt(_compare);
+        }
+
+        template<typename TCompare>
+        Reference best(const TCompare& _compare, Reference _else) const
+        {
+            return empty() ? _else : best(_compare);
         }
 
         template<typename TCompare>
@@ -534,16 +549,6 @@ namespace cpputils::range
             return best;
         }
 
-        Reference min(Reference _else) const
-        {
-            return empty() ? _else : min();
-        }
-
-        Reference max(Reference _else) const
-        {
-            return empty() ? _else : max();
-        }
-
         Reference min() const
         {
             return best(std::less<Value>{});
@@ -552,6 +557,16 @@ namespace cpputils::range
         Reference max() const
         {
             return best(std::greater<Value>{});
+        }
+
+        Reference min(Reference _else) const
+        {
+            return empty() ? _else : min();
+        }
+
+        Reference max(Reference _else) const
+        {
+            return empty() ? _else : max();
         }
 
         template<typename TSum = Value>
@@ -580,21 +595,6 @@ namespace cpputils::range
             }
             hintSize(i);
             return sum / static_cast<TSum>(i);
-        }
-
-        Reference first(Reference _else) const
-        {
-            return empty() ? _else : first();
-        }
-
-        Reference last(Reference _else) const
-        {
-            return empty() ? _else : last();
-        }
-
-        Reference single(Reference _else) const
-        {
-            return isSingle() ? first() : _else;
         }
 
     };
