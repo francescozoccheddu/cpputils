@@ -5,7 +5,7 @@
 namespace cpputils::iterators
 {
 
-    template<typename TIterator, std::invocable<const std::iter_reference_t<TIterator>> TMapper>
+    template<typename TIterator, typename TMapper>
     class MapIterator final
     {
 

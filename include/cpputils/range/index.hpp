@@ -2,7 +2,6 @@
 
 #include <iterator>
 #include <cstddef>
-#include <concepts>
 #include <cpputils/iterators/StandaloneIndexIterator.hpp>
 #include <cpputils/iterators/LinkedIndexIterator.hpp>
 #include <cpputils/range/Range.hpp>

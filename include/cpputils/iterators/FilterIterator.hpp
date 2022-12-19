@@ -1,13 +1,12 @@
 #pragma once
 
 #include <iterator>
-#include <concepts>
 #include <type_traits>
 
 namespace cpputils::iterators
 {
 
-    template<typename TIterator, std::predicate<const std::iter_reference_t<TIterator>> TPredicate>
+    template<typename TIterator, typename TPredicate>
     class FilterIterator final
     {
 

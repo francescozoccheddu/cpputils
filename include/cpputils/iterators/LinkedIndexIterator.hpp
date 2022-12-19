@@ -1,25 +1,24 @@
 #pragma once
 
 #include <iterator>
-#include <concepts>
 
 namespace cpputils::iterators
 {
 
-    template<typename TIterator, std::integral TIndex = std::iter_difference_t<TIterator>>
+    template<typename TIterator, typename TIndex = std::iter_difference_t<TIterator>>
     class LinkedIndexIterator final
     {
 
     private:
 
         TIterator m_it;
-        std::ptrdiff_t m_i;
+        TIndex m_i;
 
     public:
 
         using value_type = TIndex;
         using reference = TIndex;
-        using pointer = const std::ptrdiff_t*;
+        using pointer = const TIndex*;
         using difference_type = std::iter_difference_t<TIterator>;
         using iterator_category = typename std::template iterator_traits<TIterator>::iterator_category;
 
@@ -27,12 +26,12 @@ namespace cpputils::iterators
         {}
 
         LinkedIndexIterator(const TIterator& _it, const TIndex& _index = {})
-            : m_it{ _it }, m_i{ static_cast<std::ptrdiff_t>(_index) }
+            : m_it{ _it }, m_i{ _index }
         {}
 
         reference operator*() const noexcept
         {
-            return static_cast<TIndex>(m_i);
+            return m_i;
         }
 
         pointer operator->() const noexcept
@@ -42,7 +41,7 @@ namespace cpputils::iterators
 
         reference operator[](difference_type _offset) const noexcept
         {
-            return static_cast<TIndex>(m_i + _offset);
+            return m_i + _offset;
         }
 
         LinkedIndexIterator& operator++()
