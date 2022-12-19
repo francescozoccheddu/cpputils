@@ -256,7 +256,7 @@ namespace cpputils::range
             {
                 out.reserve(size());
             }
-            std::copy(out.begin(), out.end(), std::back_inserter(out));
+            std::copy(m_begin, m_end, std::back_inserter(out));
             hintSize(out.size());
             return out;
         }
@@ -329,7 +329,7 @@ namespace cpputils::range
             {
                 out.reserve(size());
             }
-            std::copy(out.begin(), out.end(), std::back_inserter(out));
+            std::copy(m_begin, m_end, std::back_inserter(out));
             hintSize(out.size());
             return out;
         }
@@ -379,9 +379,9 @@ namespace cpputils::range
             }
             else
             {
-                Iterator it{ begin() };
+                Iterator it{ m_begin };
                 std::size_t i{};
-                while (it != end() && i < _size)
+                while (it != m_end && i < _size)
                 {
                     ++it;
                     ++i;
@@ -470,13 +470,13 @@ namespace cpputils::range
         template<typename TIterable, typename ... TIterables>
         auto zip(TIterable& _iterable, TIterables& ..._iterables) const
         {
-            return makeNew(iterators::ZipIterator{ m_begin, _iterable.begin(), _iterables.begin()... }, iterators::ZipIterator{ m_end, _iterable.end(), _iterables.end()... });
+            return makeNew(iterators::ZipIterator{ m_begin, std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ m_end, std::end(_iterable), std::end(_iterables)... });
         }
 
         template<typename TIterable, typename ... TIterables>
         auto zip(const TIterable& _iterable, const TIterables& ..._iterables) const
         {
-            return makeNew(iterators::ZipIterator{ m_begin, _iterable.begin(), _iterables.begin()... }, iterators::ZipIterator{ m_end, _iterable.end(), _iterables.end()... });
+            return makeNew(iterators::ZipIterator{ m_begin, std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ m_end, std::end(_iterable), std::end(_iterables)... });
         }
 
         auto enumerate() const
