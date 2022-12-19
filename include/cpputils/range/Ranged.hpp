@@ -27,10 +27,10 @@
         auto toVector() CONST { return range().toVector();}\
         template<std::size_t TSize>\
         auto toArray(const ALIAS(Value)& _defaultValue = {}) CONST { return range().template toArray<TSize>(_defaultValue);}\
-        auto toArray() CONST requires hasCompTimeSize { return range().toArray();}\
+        auto toArray() CONST requires ALIAS(URange)::hasCompTimeSize { return range().toArray();}\
         template<std::size_t TCapacity>\
         auto toFixedVector() CONST { return range().template toFixedVector<TCapacity>(); }\
-        auto toFixedVector() CONST requires hasCompTimeSize { return range().toFixedVector(); }\
+        auto toFixedVector() CONST requires ALIAS(URange)::hasCompTimeSize { return range().toFixedVector(); }\
         auto toList() CONST { return range().toList(); }\
         auto toUnorderedSet() CONST { return range().toUnorderedSet();}\
         template<typename TOutIterator>\

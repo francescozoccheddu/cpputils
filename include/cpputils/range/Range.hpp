@@ -454,7 +454,7 @@ namespace cpputils::range
         template<typename TOutReference>
         auto cast() const
         {
-            return map([](auto&& _x) { return static_cast<TOutReference>(_x); });
+            return map([](auto&& _x) -> TOutReference { return static_cast<TOutReference>(_x); });
         }
 
         auto address() const
@@ -464,7 +464,7 @@ namespace cpputils::range
 
         auto dereference() const
         {
-            return map([](auto&& _x) { return *_x; });
+            return map([](auto&& _x) -> auto&& { return *_x; });
         }
 
         auto immutable() const

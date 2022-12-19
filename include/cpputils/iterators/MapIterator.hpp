@@ -16,9 +16,9 @@ namespace cpputils::iterators
 
     public:
 
-        using value_type = std::invoke_result_t<TMapper, const std::iter_reference_t<TIterator>>;
-        using reference = value_type;
-        using pointer = value_type;
+        using reference = std::invoke_result_t<TMapper, const std::iter_reference_t<TIterator>>;
+        using value_type = std::remove_reference_t<reference>;
+        using pointer = reference;
         using difference_type = std::iter_difference_t<TIterator>;
         using iterator_category = typename std::template iterator_traits<TIterator>::iterator_category;
 
