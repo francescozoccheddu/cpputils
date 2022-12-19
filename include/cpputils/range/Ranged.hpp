@@ -125,7 +125,7 @@ namespace cpputils::range
     {
 
 #define ITERATOR TIterator
-#define CONST const
+#define CONST
 #define ALIAS(type) type
         CPPUTILS_RANGE_RANGED_BODY
 #undef ITERATOR
