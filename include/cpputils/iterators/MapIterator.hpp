@@ -22,7 +22,10 @@ namespace cpputils::iterators
         using difference_type = std::iter_difference_t<TIterator>;
         using iterator_category = typename std::template iterator_traits<TIterator>::iterator_category;
 
-        MapIterator(const TMapper& _mapper = {})
+        MapIterator()
+        {}
+
+        MapIterator(const TMapper& _mapper)
             : m_mapper{ _mapper }
         {}
 

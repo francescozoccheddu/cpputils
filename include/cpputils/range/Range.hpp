@@ -4,7 +4,6 @@
 #include <type_traits>
 #include <cstddef>
 #include <utility>
-#include <limits>
 #include <optional>
 #include <stdexcept>
 #include <vector>
@@ -16,9 +15,11 @@
 #include <cpputils/iterators/FilterIterator.hpp>
 #include <cpputils/iterators/MapIterator.hpp>
 #include <cpputils/iterators/ZipIterator.hpp>
+#include <cpputils/iterators/JoinIterator.hpp>
 #include <cpputils/iterators/LinkedIndexIterator.hpp>
-#include <cpputils/iterators/StandaloneIndexIterator.hpp>
+#include <cpputils/iterators/IndexIterator.hpp>
 #include <cpputils/iterators/ReverseIterator.hpp>
+#include <cpputils/range/RangeSizer.hpp>
 
 namespace cpputils::range
 {
@@ -45,8 +46,6 @@ namespace cpputils::range
 
     }
 
-    constexpr std::size_t noCompTimeSize = std::numeric_limits<std::size_t>::max();
-
     template<typename TIterator, std::size_t TCompTimeSize = noCompTimeSize>
     class Range final
     {
@@ -54,7 +53,7 @@ namespace cpputils::range
     public:
 
         static constexpr bool hasCompTimeSize = TCompTimeSize != noCompTimeSize;
-        static constexpr std::optional<std::size_t> compTimeSize = hasCompTimeSize ? std::optional<std::size_t>{TCompTimeSize} : std::optional<std::size_t>{ std::nullopt };
+        static constexpr std::size_t compTimeSize = TCompTimeSize;
 
         using Iterator = TIterator;
         using Value = std::iter_value_t<Iterator>;
@@ -71,6 +70,18 @@ namespace cpputils::range
             if constexpr (!hasCompTimeSize)
             {
                 m_size = _size;
+            }
+        }
+
+        inline std::optional<std::size_t> sizeHint() const noexcept
+        {
+            if constexpr (hasCompTimeSize)
+            {
+                return compTimeSize;
+            }
+            else
+            {
+                return m_size;
             }
         }
 
@@ -472,7 +483,7 @@ namespace cpputils::range
 
         auto index() const
         {
-            return makeNew(iterators::StandaloneIndexIterator<std::size_t>{}, iterators::StandaloneIndexIterator<std::size_t>{ size() }, size());
+            return makeNew(iterators::IndexIterator<std::size_t>{}, iterators::IndexIterator<std::size_t>{ size() }, size());
         }
 
         auto indexLazy() const requires (!hasCompTimeSize)
@@ -490,6 +501,68 @@ namespace cpputils::range
         auto zip(const TIterable& _iterable, const TIterables& ..._iterables) const
         {
             return makeNew(iterators::ZipIterator{ m_begin, std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ m_end, std::end(_iterable), std::end(_iterables)... });
+        }
+
+        template<typename TIterable> requires (!(hasCompTimeSize && (internal::compTimeSize<TIterable> != noCompTimeSize)))
+            auto join(TIterable& _iterable) const
+        {
+            auto secondBegin{ std::begin(_iterable) };
+            return makeNewWithSize(
+                iterators::JoinIterator{ m_begin, m_end, secondBegin, iterators::joinFirstTag },
+                iterators::JoinIterator{ std::end(_iterable), m_end, secondBegin, iterators::joinSecondTag },
+                internal::sumSizeHints(sizeHint(), RangeSizer<TIterable>{_iterable}.sizeHint())
+            );
+        }
+
+        template<typename TIterable> requires (!(hasCompTimeSize && (internal::compTimeSize<TIterable> != noCompTimeSize)))
+            auto join(const TIterable& _iterable) const
+        {
+            auto secondBegin{ std::begin(_iterable) };
+            return makeNewWithSize(
+                iterators::JoinIterator{ m_begin, m_end, secondBegin, iterators::joinFirstTag },
+                iterators::JoinIterator{ std::end(_iterable), m_end, secondBegin, iterators::joinSecondTag },
+                internal::sumSizeHints(sizeHint(), RangeSizer<TIterable>{_iterable}.sizeHint())
+            );
+        }
+
+        template<typename TIterable> requires (hasCompTimeSize && (internal::compTimeSize<TIterable> != noCompTimeSize))
+            auto join(TIterable& _iterable) const
+        {
+            auto secondBegin{ std::begin(_iterable) };
+            return makeNew <iterators::JoinIterator<Iterator, decltype(secondBegin)>, internal::compTimeSize<TIterable> +compTimeSize>(
+                iterators::JoinIterator{ m_begin, m_end, secondBegin, iterators::joinFirstTag },
+                iterators::JoinIterator{ std::end(_iterable), m_end, secondBegin, iterators::joinSecondTag }
+            );
+        }
+
+        template<typename TIterable> requires (hasCompTimeSize && (internal::compTimeSize<TIterable> != noCompTimeSize))
+            auto join(const TIterable& _iterable) const
+        {
+            auto secondBegin{ std::begin(_iterable) };
+            return makeNew <iterators::JoinIterator<Iterator, decltype(secondBegin)>, internal::compTimeSize<TIterable> +compTimeSize>(
+                iterators::JoinIterator{ m_begin, m_end, secondBegin, iterators::joinFirstTag },
+                iterators::JoinIterator{ std::end(_iterable), m_end, secondBegin, iterators::joinSecondTag }
+            );
+        }
+
+        auto fill(std::size_t _size, const Value& _value = {})
+        {
+            const std::size_t count{ _size > size() ? _size - size() : 0 };
+            return join(Range<iterators::IndexIterator<std::size_t>>{ { 0 }, { count }, count }.map([_value](std::size_t) {return _value;}));
+        }
+
+        auto resize(std::size_t _size, const Value& _value = {})
+        {
+            const std::size_t takeCount{ _size < size() ? _size : size() };
+            const std::size_t joinCount{ _size > size() ? _size - size() : 0 };
+            return take(takeCount).join(Range<iterators::IndexIterator<std::size_t>>{ { 0 }, { joinCount }}.map([_value](std::size_t) {return _value;}));
+        }
+
+        template<std::size_t TSize>
+        auto resize(const Value& _value = {})
+        {
+            const auto range{ resize(TSize, _value) };
+            return Range<typename decltype(range)::Iterator, TSize>(range.begin(), range.end());
         }
 
         auto enumerate() const

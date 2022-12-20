@@ -38,6 +38,9 @@ namespace cpputils::iterators
             UnderlyingCategory
         >;
 
+        FilterIterator()
+        {}
+
         FilterIterator(const TPredicate& _predicate = {})
             : m_predicate{ _predicate }
         {}
