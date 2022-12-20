@@ -4,6 +4,7 @@
 #include <iterator>
 #include <initializer_list>
 #include <utility>
+#include <algorithm>
 
 namespace cpputils::collections
 {
@@ -112,9 +113,23 @@ namespace cpputils::collections
             return std::move(m_data[m_size]);
         }
 
+        TValue&& swapLastAndRemove(std::size_t _index)
+        {
+            std::swap(m_data[m_size - 1], m_data[_index]);
+            return std::move(removeLast());
+        }
+
         void clear()
         {
             m_size = 0;
+        }
+
+        void reverse()
+        {
+            for (std::size_t i{}; i < m_size / 2; ++i)
+            {
+                std::swap(m_data[i], m_data[m_size - 1 - i]);
+            }
         }
 
         template<typename TIterator>
