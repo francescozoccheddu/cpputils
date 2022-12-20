@@ -668,6 +668,22 @@ namespace cpputils::range
             return sum / static_cast<TSum>(i);
         }
 
+        bool isSet() const
+        {
+            if constexpr (hasCompTimeSize)
+            {
+                auto data{ toArray() };
+                std::sort(data.begin(), data.end());
+                return std::adjacent_find(data.begin(), data.end()) == data.end();
+            }
+            else
+            {
+                auto data{ toVector() };
+                std::sort(data.begin(), data.end());
+                return std::adjacent_find(data.begin(), data.end()) == data.end();
+            }
+        }
+
     };
 
 }

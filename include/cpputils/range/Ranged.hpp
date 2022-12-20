@@ -89,6 +89,8 @@
         TSum avg(TSum _else) CONST { return range().template avg<TSum>(_else); }\
         template<typename TSum = ALIAS(Value)>\
         TSum avg() CONST { return range().template avg<TSum>(); }\
+        bool isSet() CONST { return range().isSet(); }\
+
 
 namespace cpputils::range
 {
