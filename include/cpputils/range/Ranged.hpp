@@ -58,9 +58,17 @@
         auto index() CONST { return range().index(); }\
         auto indexLazy() CONST requires (!ALIAS(URange)::hasCompTimeSize) { return range().indexLazy(); }\
         template<typename TIterable, typename ... TIterables>\
-        auto zip(TIterable& _iterable, TIterables& ..._iterables) CONST { return range().zip(_iterable, _iterables...); }\
+        auto zip(TIterable& _iterable, TIterables& ..._iterables) CONST { return range().template zip<TIterable, TIterables...>(_iterable, _iterables...); }\
         template<typename TIterable, typename ... TIterables>\
-        auto zip(const TIterable& _iterable, const TIterables& ..._iterables) CONST { return range().zip(_iterable, _iterables...); }\
+        auto zip(const TIterable& _iterable, const TIterables& ..._iterables) CONST { return range().template zip<TIterable, TIterables...>(_iterable, _iterables...); }\
+        template<typename TIterable> \
+        auto join(TIterable& _iterable) CONST { return range().template join<TIterable>(_iterable); }\
+        template<typename TIterable> \
+        auto join(const TIterable& _iterable) CONST { return range().template join<TIterable>(_iterable); }\
+        auto fill(std::size_t _size, const ALIAS(Value)& _value = {}) CONST { return range().fill(_size, _value); }\
+        auto resize(std::size_t _size, const ALIAS(Value)& _value = {}) CONST { return range().resize(_size, _value); }\
+        template<std::size_t TSize>\
+        auto resize(const ALIAS(Value)& _value = {}) CONST { return range().template resize<TSize>(_value); }\
         auto enumerate() CONST { return range().enumerate(); }\
         auto enumerateLazy() CONST requires (!ALIAS(URange)::hasCompTimeSize) { return range().enumerateLazy(); }\
         template<typename TAccumulator, typename TReduce>\
