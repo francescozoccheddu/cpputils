@@ -2,6 +2,7 @@
 
 #include <optional>
 #include <cstddef>
+#include <cpputils/range/RangeSizer.hpp>
 #include <cpputils/range/Range.hpp>
 
 namespace cpputils::range
@@ -18,6 +19,12 @@ namespace cpputils::range
         {
             return Range<TIterator>{ _begin, _end, _sizeHint};
         }
+    }
+
+    template<typename TIterable, typename TIterator>
+    inline auto makeRangeFrom(const TIterator& _begin, const TIterator& _end, const TIterable& _sourceIterable)
+    {
+        return makeRange<TIterator, internal::compTimeSize<TIterable>>(_begin, _end, RangeSizer<TIterable>{_sourceIterable}.sizeHint());
     }
 
 }

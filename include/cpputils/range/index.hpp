@@ -27,32 +27,32 @@ namespace cpputils::range
     auto index(TIterable& _iterable)
     {
         const RangeSizer<TIterable> sizer{ _iterable };
-        return makeRange(iterators::IndexIterator<TIndex>{}, iterators::IndexIterator<TIndex>{ sizer.size() }, sizer.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::IndexIterator<TIndex>{}, iterators::IndexIterator<TIndex>{ sizer.size() }, _iterable);
     }
 
     template<typename TIndex = std::size_t, typename TIterable>
     auto index(const TIterable& _iterable)
     {
         const RangeSizer<TIterable> sizer{ _iterable };
-        return makeRange(iterators::IndexIterator<TIndex>{}, iterators::IndexIterator<TIndex>{ sizer.size() }, sizer.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::IndexIterator<TIndex>{}, iterators::IndexIterator<TIndex>{ sizer.size() }, _iterable);
     }
 
     template<typename TIndex = std::size_t, typename TIterable>
     auto indexLazy(TIterable& _iterable)
     {
-        return makeRange<iterators::LinkedIndexIterator<decltype(std::begin(_iterable)), TIndex>>({ std::begin(_iterable) }, { std::end(_iterable) }, RangeSizer<TIterable>{ _iterable }.sizeHint());
+        return makeRangeFrom<TIterable, iterators::LinkedIndexIterator<decltype(std::begin(_iterable))>>({ std::begin(_iterable) }, { std::end(_iterable) }, _iterable);
     }
 
     template<typename TIndex = std::size_t, typename TIterable>
     auto indexLazy(const TIterable& _iterable)
     {
-        return makeRange<iterators::LinkedIndexIterator<decltype(std::begin(_iterable)), TIndex>>({ std::begin(_iterable) }, { std::end(_iterable) }, RangeSizer<TIterable>{ _iterable }.sizeHint());
+        return makeRangeFrom<TIterable, iterators::LinkedIndexIterator<decltype(std::begin(_iterable))>>({ std::begin(_iterable) }, { std::end(_iterable) }, _iterable);
     }
 
     template<typename TIndex = std::size_t, typename TIterable>
     auto indexLazyc(const TIterable& _iterable)
     {
-        return makeRange<iterators::LinkedIndexIterator<decltype(std::cbegin(_iterable)), TIndex>>({ std::cbegin(_iterable) }, { std::cend(_iterable) }, RangeSizer<TIterable>{ _iterable }.sizeHint());
+        return makeRangeFrom<TIterable, iterators::LinkedIndexIterator<decltype(std::cbegin(_iterable))>>({ std::cbegin(_iterable) }, { std::cend(_iterable) }, _iterable);
     }
 
 }

@@ -11,37 +11,37 @@ namespace cpputils::range
     template<typename TIterable, typename ... TIterables>
     auto zip(TIterable& _iterable, TIterables& ..._iterables)
     {
-        return makeRange(iterators::ZipIterator{ std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ std::end(_iterable), std::end(_iterables)... }, RangeSizer<TIterable>{_iterable}.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::ZipIterator{ std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ std::end(_iterable), std::end(_iterables)... }, _iterable);
     }
 
     template<typename TIterable, typename ... TIterables>
     auto zip(const TIterable& _iterable, const TIterables& ..._iterables)
     {
-        return makeRange(iterators::ZipIterator{ std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ std::end(_iterable), std::end(_iterables)... }, RangeSizer<TIterable>{_iterable}.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::ZipIterator{ std::begin(_iterable), std::begin(_iterables)... }, iterators::ZipIterator{ std::end(_iterable), std::end(_iterables)... }, _iterable);
     }
 
     template<typename TIterable, typename ... TIterables>
     auto zipc(const TIterable& _iterable, const TIterables& ..._iterables)
     {
-        return makeRange(iterators::ZipIterator{ std::cbegin(_iterable), std::cbegin(_iterables)... }, iterators::ZipIterator{ std::cend(_iterable), std::cend(_iterables)... }, RangeSizer<TIterable>{_iterable}.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::ZipIterator{ std::cbegin(_iterable), std::cbegin(_iterables)... }, iterators::ZipIterator{ std::cend(_iterable), std::cend(_iterables)... }, _iterable);
     }
 
     template<typename TIterable, typename ... TIterables>
     auto zipr(TIterable& _iterable, TIterables& ..._iterables)
     {
-        return makeRange(iterators::ZipIterator{ std::rbegin(_iterable), std::rbegin(_iterables)... }, iterators::ZipIterator{ std::rend(_iterable), std::rend(_iterables)... }, RangeSizer<TIterable>{_iterable}.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::ZipIterator{ std::rbegin(_iterable), std::rbegin(_iterables)... }, iterators::ZipIterator{ std::rend(_iterable), std::rend(_iterables)... }, _iterable);
     }
 
     template<typename TIterable, typename ... TIterables>
     auto zipr(const TIterable& _iterable, const TIterables& ..._iterables)
     {
-        return makeRange(iterators::ZipIterator{ std::rbegin(_iterable), std::rbegin(_iterables)... }, iterators::ZipIterator{ std::rend(_iterable), std::rend(_iterables)... }, RangeSizer<TIterable>{_iterable}.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::ZipIterator{ std::rbegin(_iterable), std::rbegin(_iterables)... }, iterators::ZipIterator{ std::rend(_iterable), std::rend(_iterables)... }, _iterable);
     }
 
     template<typename TIterable, typename ... TIterables>
     auto zipcr(const TIterable& _iterable, const TIterables& ..._iterables)
     {
-        return makeRange(iterators::ZipIterator{ std::crbegin(_iterable), std::crbegin(_iterables)... }, iterators::ZipIterator{ std::crend(_iterable), std::crend(_iterables)... }, RangeSizer<TIterable>{_iterable}.sizeHint());
+        return makeRangeFrom<TIterable>(iterators::ZipIterator{ std::crbegin(_iterable), std::crbegin(_iterables)... }, iterators::ZipIterator{ std::crend(_iterable), std::crend(_iterables)... }, _iterable);
     }
 
 }
