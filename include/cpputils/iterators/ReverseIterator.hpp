@@ -30,21 +30,21 @@ namespace cpputils::iterators
 
         reference operator*() const
         {
-            return *m_it;
+            return *std::prev(m_it);
         }
 
         pointer operator->() const
         {
             if constexpr (requires{ m_it.operator->(); })
             {
-                return m_it.operator->();
+                return std::prev(m_it).operator->();
             }
             return std::addressof(*m_it);
         }
 
         reference operator[](difference_type _offset) const
         {
-            return *(m_it - _offset);
+            return *std::prev(m_it - _offset);
         }
 
         ReverseIterator& operator++()

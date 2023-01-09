@@ -451,11 +451,7 @@ namespace cpputils::range
 
         auto reverse() const
         {
-            if (empty())
-            {
-                return makeNew(iterators::ReverseIterator{ m_end }, iterators::ReverseIterator{ m_begin });
-            }
-            return makeNew(iterators::ReverseIterator{ std::prev(m_end) }, iterators::ReverseIterator{ std::prev(m_begin) });
+            return makeNew(iterators::ReverseIterator{ m_end }, iterators::ReverseIterator{ m_begin });
         }
 
         template<typename TMapper>
