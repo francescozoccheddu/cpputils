@@ -353,7 +353,7 @@ namespace cpputils::range
             {
                 out.reserve(size());
             }
-            std::copy(m_begin, m_end, std::back_inserter(out));
+            std::copy(m_begin, m_end, std::inserter(out, out.begin()));
             hintSize(out.size());
             return out;
         }
