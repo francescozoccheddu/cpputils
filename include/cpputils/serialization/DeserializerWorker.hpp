@@ -4,6 +4,7 @@
 #include <type_traits>
 #include <string>
 #include <istream>
+#include <sstream>
 
 namespace cpputils::serialization
 {
