@@ -1,23 +1,27 @@
 #pragma once
 
-#define _cpputils_map_1(_func, _sep, _x) _func(_x)
-#define _cpputils_map_2(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_1(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_3(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_2(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_4(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_3(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_5(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_4(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_6(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_5(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_7(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_6(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_8(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_7(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_9(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_8(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_10(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_9(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_11(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_10(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_12(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_11(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_13(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_12(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_14(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_13(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_15(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_14(_func, _sep, __VA_ARGS__)
-#define _cpputils_map_16(_func, _sep, _x, ...) _func(_x)_sep##_cpputils_map_15(_func, _sep, __VA_ARGS__)
+#define _cpputils_map1(_func, _sep, _x) _func(_x)
+#define _cpputils_map2(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map1(_func, _sep, __VA_ARGS__)
+#define _cpputils_map3(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map2(_func, _sep, __VA_ARGS__)
+#define _cpputils_map4(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map3(_func, _sep, __VA_ARGS__)
+#define _cpputils_map5(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map4(_func, _sep, __VA_ARGS__)
+#define _cpputils_map6(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map5(_func, _sep, __VA_ARGS__)
+#define _cpputils_map7(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map6(_func, _sep, __VA_ARGS__)
+#define _cpputils_map8(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map7(_func, _sep, __VA_ARGS__)
+#define _cpputils_map9(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map8(_func, _sep, __VA_ARGS__)
+#define _cpputils_map10(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map9(_func, _sep, __VA_ARGS__)
+#define _cpputils_map11(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map10(_func, _sep, __VA_ARGS__)
+#define _cpputils_map12(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map11(_func, _sep, __VA_ARGS__)
+#define _cpputils_map13(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map12(_func, _sep, __VA_ARGS__)
+#define _cpputils_map14(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map13(_func, _sep, __VA_ARGS__)
+#define _cpputils_map15(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map14(_func, _sep, __VA_ARGS__)
+#define _cpputils_map16(_func, _sep, _x, ...) _func(_x)_sep()_cpputils_map15(_func, _sep, __VA_ARGS__)
 
-#define _cpputils_map_getn(_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_name,...) _name 
+#define _cpputils_mapGetMap(_1,_2,_3,_4,_5,_6,_7,_8,_9,_10,_11,_12,_13,_14,_15,_16,_name,...) _name 
 
-#define cpputils_map(_func,_sep,...) \
-  _cpputils_map_getn(__VA_ARGS__,_cpputils_map_16,_cpputils_map_15,_cpputils_map_14,_cpputils_map_13,_cpputils_map_12,_cpputils_map_11,_cpputils_map_10,_cpputils_map_9,_cpputils_map_8,_cpputils_map_7,_cpputils_map_6,_cpputils_map_5,_cpputils_map_4,_cpputils_map_3,_cpputils_map_2,_cpputils_map_1)(_func,_sep,__VA_ARGS__)
+#define cpputils_mapWithSep(_func,_sep,...) \
+  _cpputils_mapGetMap(__VA_ARGS__,_cpputils_map16,_cpputils_map15,_cpputils_map14,_cpputils_map13,_cpputils_map12,_cpputils_map11,_cpputils_map10,_cpputils_map9,_cpputils_map8,_cpputils_map7,_cpputils_map6,_cpputils_map5,_cpputils_map4,_cpputils_map3,_cpputils_map2,_cpputils_map1)(_func,_sep,__VA_ARGS__)
+
+#define cpputils_mapNoSep()
+
+#define cpputils_map(_func,...) cpputils_mapWithSep(_func, cpputils_mapNoSep, __VA_ARGS__)
